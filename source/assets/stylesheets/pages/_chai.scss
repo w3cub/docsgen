@@ -1,0 +1,5 @@
+._chai {
+  @extend %simple;
+
+  li.tag span { margin-right: 5px; }
+}

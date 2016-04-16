@@ -1,0 +1,14 @@
+---
+layout: default
+---
+
+<section class="_container index">
+	<div class="_content">
+	  <div class="_list">
+	    {% for link in site.data.docs %}
+	      <a href="/{{link.slug}}/" class="_list-item _icon-{{link.slug | split: '~' | first }} _list-dir" title=""><img src="/images/docs/{{link.slug | split: '~' | first }}.png" alt=""><span class="name">
+	      {%if link.version%}{{link.slug | capitalize }}{%else%} {{link.name | capitalize }}{%endif%}</span></a>
+	    {% endfor %}
+	  </div>
+	</div>
+</section>

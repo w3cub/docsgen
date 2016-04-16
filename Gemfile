@@ -1,4 +1,4 @@
-source "https://rubygems.org"
+source "https://ruby.taobao.org"
 
 group :development do
   gem 'rake', '~> 10.0'
@@ -13,6 +13,14 @@ group :development do
   gem 'sass-globbing', '~> 1.0.0'
   gem 'rb-fsevent', '~> 0.9'
   gem 'stringex', '~> 1.4.0'
-end
+  gem 'uglifier'
+  gem 'sprockets', '~> 2.0'
+  gem 'sprockets-sass'
+  gem 'sprockets-helpers'
+  gem 'coffee-script'
+  gem 'sass'
+  # gem 'thin'
+  # gem 'erubis'
 
+end
 gem 'sinatra', '~> 1.4.2'

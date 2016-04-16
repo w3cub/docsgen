@@ -3,8 +3,14 @@
 .sass-cache
 .gist-cache
 .pygments-cache
+.assets-cache
+.docs-cache
+.themes
 _deploy
 public
+source/_docs
+source/json
+source/_data
 sass.old
 source.old
 source/_stash

@@ -1,0 +1,11 @@
+{% capture root_url %}{{ site.root | strip_slash }}{% endcapture %}
+{% include head.html %}
+<body>
+<div class="_app">
+	{% include doc/header.html disablesearch=true  %}
+
+	{{content | expand_urls: root_url }}
+</div>
+ {% include after_footer.html %}
+</body>
+</html>

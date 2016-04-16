@@ -9,7 +9,7 @@ ssh_port       = "22"
 document_root  = "~/website.com/"
 rsync_delete   = false
 rsync_args     = ""  # Any extra arguments to pass to rsync
-deploy_default = "rsync"
+deploy_default = "push"
 
 # This will be configured for you when you run config_deploy
 deploy_branch  = "gh-pages"
@@ -56,7 +56,7 @@ desc "Generate jekyll site"
 task :generate do
   raise "### You haven't set anything up yet. First run `rake install` to set up an Octopress theme." unless File.directory?(source_dir)
   puts "## Generating Site with Jekyll"
-  system "compass compile --css-dir #{source_dir}/stylesheets"
+  # system "compass compile --css-dir #{source_dir}/stylesheets"
   system "jekyll build"
 end
 
@@ -66,14 +66,18 @@ task :watch do
   puts "Starting to watch source with Jekyll and Compass."
   system "compass compile --css-dir #{source_dir}/stylesheets" unless File.exist?("#{source_dir}/stylesheets/screen.css")
   jekyllPid = Process.spawn({"OCTOPRESS_ENV"=>"preview"}, "jekyll build --watch")
-  compassPid = Process.spawn("compass watch")
+  # compassPid = Process.spawn("compass watch")
 
   trap("INT") {
-    [jekyllPid, compassPid].each { |pid| Process.kill(9, pid) rescue Errno::ESRCH }
+    [jekyllPid
+      # , compassPid
+      ].each { |pid| Process.kill(9, pid) rescue Errno::ESRCH }
     exit 0
   }
 
-  [jekyllPid, compassPid].each { |pid| Process.wait(pid) }
+  [jekyllPid
+    # , compassPid
+    ].each { |pid| Process.wait(pid) }
 end
 
 desc "preview the site in a web browser"
@@ -82,15 +86,19 @@ task :preview do
   puts "Starting to watch source with Jekyll and Compass. Starting Rack on port #{server_port}"
   system "compass compile --css-dir #{source_dir}/stylesheets" unless File.exist?("#{source_dir}/stylesheets/screen.css")
   jekyllPid = Process.spawn({"OCTOPRESS_ENV"=>"preview"}, "jekyll build --watch")
-  compassPid = Process.spawn("compass watch")
+  # compassPid = Process.spawn("compass watch")
   rackupPid = Process.spawn("rackup --port #{server_port}")
 
   trap("INT") {
-    [jekyllPid, compassPid, rackupPid].each { |pid| Process.kill(9, pid) rescue Errno::ESRCH }
+    [jekyllPid, 
+      # compassPid, 
+      rackupPid].each { |pid| Process.kill(9, pid) rescue Errno::ESRCH }
     exit 0
   }
 
-  [jekyllPid, compassPid, rackupPid].each { |pid| Process.wait(pid) }
+  [jekyllPid, 
+    # compassPid, 
+    rackupPid].each { |pid| Process.wait(pid) }
 end
 
 # usage rake new_post[my-new-post] or rake new_post['my new post'] or rake new_post (defaults to "new-post")
@@ -115,6 +123,10 @@ task :new_post, :title do |t, args|
     post.puts "date: #{Time.now.strftime('%Y-%m-%d %H:%M:%S %z')}"
     post.puts "comments: true"
     post.puts "categories: "
+    post.puts "statement: true|false"
+    post.puts "translate: false|true"
+    post.puts "originaltitle: "
+    post.puts "originalurl: "
     post.puts "---"
   end
 end

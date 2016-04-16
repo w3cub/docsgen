@@ -14,6 +14,8 @@ css_dir = "public/stylesheets"
 sass_dir = "sass"
 images_dir = "source/images"
 fonts_dir = "source/fonts"
+js_dir = "source/javascripts"
 
 line_comments = false
 output_style = :compressed
+

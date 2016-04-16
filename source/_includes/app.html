@@ -1,0 +1,32 @@
+<div class="_app">
+  <header class="_header">
+    <a class="_home-link"></a>
+    <a class="_menu-link"></a>
+    <form class="_search">
+      <input type="search" class="_search-input" placeholder="Search&hellip;" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="20">
+      <a class="_search-clear"></a>
+      <div class="_search-tag"></div>
+    </form>
+    <h1 class="_logo">
+      <a href="/" class="_nav-link" title="Offline API Documentation Browser">DevDocs</a><%= "/ #{@doc['name']}" if @doc %>
+    </h1>
+    <nav class="_nav">
+      <a href="/offline" class="_nav-link">Offline</a>
+      <a href="/about" class="_nav-link">About</a>
+      <a href="/news" class="_nav-link">News</a>
+      <a href="/help" class="_nav-link">Tips</a>
+    </nav>
+  </header>
+  <section class="_sidebar">
+    <div class="_list">
+      <% unless @doc %>
+      <% App.docs.each do |slug, doc| %>
+      <a href="/<%= slug %>/" class="_list-item _icon-<%= slug %> _list-dir"><span class="_list-arrow"></span><%= doc['name'] %></a>
+      <% end %>
+      <% end %>
+    </div>
+  </section>
+  <section class="_container">
+    <div class="_content _content-loading"></div>
+  </section>
+</div>

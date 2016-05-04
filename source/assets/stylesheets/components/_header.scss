@@ -69,7 +69,7 @@
 // Logo
 //
 
-._logo {
+._logo,._logo-sub-nav {
   position: relative;
   float: left;
   height: $headerHeight;
@@ -129,6 +129,11 @@
       border-color: $inputFocusBorder;
       box-shadow: 0 0 1px $inputFocusBorder;
     }
+  }
+
+  &[disabled] {
+    background: $sidebarBackground;
+    cursor: not-allowed;
   }
 }
 

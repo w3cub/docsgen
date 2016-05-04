@@ -110,3 +110,5 @@ facebook_like: false
 
 exclude:
     - assets/*
+    - javascripts/*
+    - stylesheets/*

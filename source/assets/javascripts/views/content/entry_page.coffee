@@ -1,12 +1,15 @@
 class app.views.EntryPage extends app.View
   @className: '_page'
   @errorClass: '_page-error'
-
+  constructor: (el, entry = {}) -> 
+    @el = $ el || '._content > ._page'
+    super
+  # el: '._content > ._page'
   @events:
     click: 'onClick'
 
-  @routes:
-    before: 'beforeRoute'
+  # @routes:
+  #   before: 'beforeRoute'
 
   init: ->
     @cacheMap = {}
@@ -26,16 +29,16 @@ class app.views.EntryPage extends app.View
 
   render: (content = '', fromCache = false) ->
     return unless @activated
-    @empty()
+    # @empty()
+    # content = $ '._content > ._page'
     @subview = new (@subViewClass()) @el, @entry
+    @subview.render(@el, fromCache)
+    @addClipboardLinks() unless fromCache
+    # $.batchUpdate @el, =>
+    #   return
 
-    $.batchUpdate @el, =>
-      @subview.render(content, fromCache)
-      @addClipboardLinks() unless fromCache
-      return
-
-    if app.disabledDocs.findBy 'slug', @entry.doc.slug
-      @hiddenView = new app.views.HiddenPage @el, @entry
+    # if app.disabledDocs.findBy 'slug', @entry.doc.slug
+    #   @hiddenView = new app.views.HiddenPage @el, @entry
 
     @trigger 'loaded'
     return
@@ -71,11 +74,10 @@ class app.views.EntryPage extends app.View
     return
 
   subViewClass: ->
-    docType = @entry.doc.type
-    app.views["#{docType[0].toUpperCase()}#{docType[1..]}Page"] or app.views.BasePage
+    app.views["#{$.classify(@entry.doc.type)}Page"] or app.views.BasePage
 
   getTitle: ->
-    @entry.doc.name + if @entry.isIndex() then ' documentation' else "/#{@entry.name}"
+    @entry.doc.fullName + if @entry.isIndex() then ' documentation' else " / #{@entry.name}"
 
   beforeRoute: =>
     @abort()
@@ -83,9 +85,9 @@ class app.views.EntryPage extends app.View
     return
 
   onRoute: (context) ->
-    isSameFile = context.entry.filePath() is @entry?.filePath()
+    # isSameFile = context.entry.filePath() is @entry?.filePath()
     @entry = context.entry
-    @restore() or @load() unless isSameFile
+    # @restore() or @load() unless isSameFile
     return
 
   load: ->
@@ -108,6 +110,7 @@ class app.views.EntryPage extends app.View
   onError: =>
     @xhr = null
     @render @tmpl('pageLoadError')
+    @resetClass()
     @addClass @constructor.errorClass
     app.appCache?.update()
     return

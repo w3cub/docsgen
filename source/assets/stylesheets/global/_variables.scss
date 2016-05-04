@@ -7,13 +7,14 @@ $maxWidth: 80rem;
 $headerHeight: 3rem;
 $sidebarWidth: 18rem;
 $sidebarMediumWidth: 16rem;
+$sidebarHiddenWidth: 9px;
 
 $contentBackground: #fff;
 $documentBackground: #fafafa;
 
 $textColor: #333;
 $textColorLight: #666;
-$textColorLighter: #999;
+$textColorLighter: #888;
 
 $inputFocusBorder: #35b5f4;
 
@@ -22,8 +23,7 @@ $focusBorder: #d4d4d4;
 $focusText: #000;
 
 $loadingText: #ccc;
-$splashText: #bbb;
-$promoText: #bbb;
+$splashText: #ccc;
 
 $selectionBackground: #398df0;
 $selectionBorder: #196fc2;
@@ -31,8 +31,8 @@ $selectionText: #fff;
 
 $highlightBackground: #fffdcd;
 
-$linkColor: #0082c6;
-$linkColorHover: #0072c5;
+$linkColor: #3377c0;
+$linkColorHover: #2f6cb6;
 
 $headerBackground: #f0f0f0;
 $headerBorder: #d9d9d9;
@@ -73,12 +73,14 @@ $labelBackground: #f4f4f4;
 
 $notifBackground: rgba(#333, .85);
 $notifColor: #fff;
-$notifColorLight: #bbb;
+$notifColorLight: #ccc;
 
 $tipBackground: #fffdcd;
 $tipBorder: #e7dca9;
 
 $mediumScreen: '(max-width: 800px)';
+
+$mobileScreen: '(max-width: 767px)';
 
 $contentZ: 1;
 $sidebarZ: 2;

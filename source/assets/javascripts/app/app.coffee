@@ -16,6 +16,7 @@
     @store = new Store
     @appCache = new app.AppCache if app.AppCache.isEnabled()
     @settings = new app.Settings @store
+    @db = new app.DB()
 
     @docs = new app.collections.Docs
     @disabledDocs = new app.collections.Docs
@@ -25,9 +26,6 @@
     @shortcuts = new app.Shortcuts
     @document = new app.views.Document
     @mobile = new app.views.Mobile if @isMobile()
-
-    if navigator.userAgent.match /iPad;.*CPU.*OS 7_\d/i
-      document.documentElement.style.height = "#{window.innerHeight}px"
 
     if @DOC
       @bootOne()
@@ -58,6 +56,9 @@
           tags:
             mode: if @DOC then 'single' else 'full'
             iframe: (window.top isnt window).toString()
+          dataCallback: (data) ->
+            try $.extend(data.user ||= {}, app.settings.settings)
+            data
         .install()
       @previousErrorHandler = onerror
       window.onerror = @onWindowError.bind(@)
@@ -75,6 +76,7 @@
     docs = @settings.getDocs()
     for doc in @DOCS
       (if docs.indexOf(doc.slug) >= 0 then @docs else @disabledDocs).add(doc)
+    @migrateDocs()
     @docs.sort()
     @disabledDocs.sort()
     @docs.load @start.bind(@), @onBootError.bind(@), readCache: true, writeCache: true
@@ -85,7 +87,6 @@
     @entries.add doc.toEntry() for doc in @docs.all()
     @entries.add doc.toEntry() for doc in @disabledDocs.all()
     @initDoc(doc) for doc in @docs.all()
-    @db = new app.DB()
     @trigger 'ready'
     @router.start()
     @hideLoading()
@@ -99,26 +100,46 @@
     @entries.add doc.entries.all()
     return
 
+  migrateDocs: ->
+    for slug in @settings.getDocs() when not @docs.findBy('slug', slug)
+      needsSaving = true
+      doc = @disabledDocs.findBy('slug', 'node~4_lts') if slug == 'node~4.2_lts'
+      doc = @disabledDocs.findBy('slug', 'xslt_xpath') if slug == 'xpath'
+      doc ||= @disabledDocs.findBy('slug_without_version', slug)
+      if doc
+        @disabledDocs.remove(doc)
+        @docs.add(doc)
+
+    @saveDocs() if needsSaving
+    return
+
   enableDoc: (doc, _onSuccess, onError) ->
     return if @docs.contains(doc)
+
     onSuccess = =>
+      return if @docs.contains(doc)
       @disabledDocs.remove(doc)
       @docs.add(doc)
       @docs.sort()
       @initDoc(doc)
-      @settings.setDocs(doc.slug for doc in @docs.all())
+      @saveDocs()
       _onSuccess()
-      @appCache?.updateInBackground()
       return
 
     doc.load onSuccess, onError, writeCache: true
     return
+
+  saveDocs: ->
+    @settings.setDocs(doc.slug for doc in @docs.all())
+    @db.migrate()
+    @appCache?.updateInBackground()
 
   welcomeBack: ->
     visitCount = @settings.get('count')
     @settings.set 'count', ++visitCount
     new app.views.Notif 'Share', autoHide: null if visitCount is 5
     new app.views.News()
+    new app.views.Updates()
     @updateChecker = new app.UpdateChecker()
 
   reload: ->
@@ -222,15 +243,7 @@
     !!(@DOC or @doc)
 
   isMobile: ->
-    try
-      # Need to sniff the user agent because some Android and Windows Phone devices don't take
-      # resolution (dpi) into account when reporting device width/height.
-      @_isMobile ?= (window.matchMedia('(max-device-width: 767px)').matches) or
-                    (window.matchMedia('(max-device-height: 767px) and (max-device-width: 1024px)').matches) or
-                    (navigator.userAgent.indexOf('Android') isnt -1 and navigator.userAgent.indexOf('Mobile') isnt -1) or
-                    (navigator.userAgent.indexOf('IEMobile') isnt -1)
-    catch
-      @_isMobile = false
+    @_isMobile ?= app.views.Mobile.detect()
 
   isInvalidLocation: ->
     @config.env is 'production' and location.host.indexOf(app.config.production_host) isnt 0

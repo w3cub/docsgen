@@ -29,8 +29,7 @@ app.templates.offlinePage = (docs) -> """
     <dt>Can I close the tab/browser?
     <dd>#{canICloseTheTab()}
     <dt>What if I don't update a documentation?
-    <dd>You'll see outdated content and some pages will be missing or broken, since the rest of the app (including data for the search and sidebar) uses a different caching mechanism which is updated automatically.<br>
-        Documentation versioning is planned for the future but not yet supported, sorry.
+    <dd>You'll see outdated content and some pages will be missing or broken, since the rest of the app (including data for the search and sidebar) uses a different caching mechanism which is updated automatically.
     <dt>I found a bug, where do I report it?
     <dd>In the <a href="https://github.com/Thibaut/devdocs/issues">issue tracker</a>. Thanks!
     <dt>How do I uninstall/reset the app?
@@ -42,11 +41,11 @@ app.templates.offlinePage = (docs) -> """
 
 canICloseTheTab = ->
   if app.AppCache.isEnabled()
-    """ Yes! Even offline, you can open a new tab, go to <a href="http://devdocs.io">devdocs.io</a>, and everything will work as if you were online (provided you installed all the documentations you want to use beforehand). """
+    """ Yes! Even offline, you can open a new tab, go to <a href="//devdocs.io">devdocs.io</a>, and everything will work as if you were online (provided you installed all the documentations you want to use beforehand). """
   else if app.mozApp
     """ Yes! Even offline, you can open the app and everything will work as if you were online (provided you installed all the documentations you want to use beforehand). """
   else
-    """ No. AppCache isn't available in your browser (or is disabled) so loading <a href="http://devdocs.io">devdocs.io</a> offline won't work.<br>
+    """ No. AppCache isn't available in your browser (or is disabled) so loading <a href="//devdocs.io">devdocs.io</a> offline won't work.<br>
         The current tab will continue to work, though (provided you installed all the documentations you want to use beforehand). """
 
 app.templates.offlineDoc = (doc, status) ->
@@ -54,7 +53,7 @@ app.templates.offlineDoc = (doc, status) ->
 
   html = """
     <tr data-slug="#{doc.slug}"#{if outdated then ' class="_highlight"' else ''}>
-      <td class="_docs-name _icon-#{doc.slug}">#{doc.name}</td>
+      <td class="_docs-name _icon-#{doc.icon}">#{doc.fullName}</td>
       <td class="_docs-size">#{Math.ceil(doc.db_size / 100000) / 10} MB</td>
   """
 

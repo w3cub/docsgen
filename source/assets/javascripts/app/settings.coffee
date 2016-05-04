@@ -5,18 +5,19 @@ class app.Settings
   LAYOUT_KEY = 'layout'
   SIZE_KEY = 'size'
 
-  @defaults: ->
+  @defaults:
     count: 0
     hideDisabled: false
     hideIntro: false
     news: 0
     autoUpdate: true
+    schema: 0
 
   constructor: (@store) ->
     @create() unless @settings = @store.get(SETTINGS_KEY)
 
   create: ->
-    @settings = @constructor.defaults()
+    @settings = $.extend({}, @constructor.defaults)
     @applyLegacyValues @settings
     @save()
     return
@@ -35,7 +36,7 @@ class app.Settings
     @save()
 
   get: (key) ->
-    @settings[key]
+    @settings[key] ? @constructor.defaults[key]
 
   hasDocs: ->
     try !!Cookies.get DOCS_KEY
@@ -61,10 +62,18 @@ class app.Settings
     catch
     return
 
-  setLayout: (value) ->
+  setLayout: (name, enable) ->
     try
-      if value
-        Cookies.set LAYOUT_KEY, value, path: '/', expires: 1e8
+      layout = (Cookies.get(LAYOUT_KEY) || '').split(' ')
+      $.arrayDelete(layout, '')
+
+      if enable
+        layout.push(name) if layout.indexOf(name) is -1
+      else
+        $.arrayDelete(layout, name)
+
+      if layout.length > 0
+        Cookies.set LAYOUT_KEY, layout.join(' '), path: '/', expires: 1e8
       else
         Cookies.expire LAYOUT_KEY
     catch

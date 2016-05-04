@@ -12,7 +12,8 @@
 
   @media #{$mediumScreen} { margin-left: $sidebarMediumWidth; }
 
-  &.static{
+// modify to w3cub
+  .static-page &{
     margin-left: 0px;
     pointer-events: auto;
     ._content{
@@ -20,8 +21,8 @@
       background-color: #fff;
     }
   }
-
-  &.index{
+  
+  .index-page &{
     margin-left: 0px;
     pointer-events: auto;
     ._content{
@@ -31,17 +32,18 @@
     ._list{
       box-shadow:none;
       width: auto;
-      width: 95%;
+      width: 100%;
       margin: auto;
+      text-align: center;
 
       ._list-item{
-          float: left;
+          // float: left;
           box-shadow: none;
           background: none;
           padding: .75rem .75rem;
-          width: 8rem;
+          width: 7rem;
           height: 7rem;
-          display: block;
+          display: inline-block;
           text-align: center;
           cursor: auto;
           &::before{

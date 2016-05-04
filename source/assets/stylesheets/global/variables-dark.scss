@@ -7,6 +7,7 @@ $maxWidth: 80rem;
 $headerHeight: 3rem;
 $sidebarWidth: 18rem;
 $sidebarMediumWidth: 16rem;
+$sidebarHiddenWidth: 9px;
 
 $contentBackground: #303030;
 $documentBackground: #404040;
@@ -23,7 +24,6 @@ $focusText: #f7f2f2;
 
 $loadingText: #666;
 $splashText: #666;
-$promoText: #666;
 
 $selectionBackground: #346fce;
 $selectionBorder: #346fce;
@@ -73,7 +73,7 @@ $labelBackground: #3c3c3e;
 
 $notifBackground: rgba(#000, .85);
 $notifColor: #fff;
-$notifColorLight: #bbb;
+$notifColorLight: #ccc;
 
 $tipBackground: #3d4449;
 $tipBorder: #566166;

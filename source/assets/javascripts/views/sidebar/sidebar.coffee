@@ -16,8 +16,10 @@ class app.views.Sidebar extends app.View
     @search
       .on 'searching', @showResults
       .on 'clear', @showDocList
+    .scope
+      .on 'change', @onScopeChange
 
-    @results = new app.views.Results @search
+    @results = new app.views.Results @, @search
     @docList = new app.views.DocList
     @docPicker = new app.views.DocPicker unless app.isSingleDoc()
 
@@ -34,6 +36,7 @@ class app.views.Sidebar extends app.View
       @append @tmpl('sidebarSettings') if @view is @docList and @docPicker
       @view.activate()
       @restoreScrollPosition()
+      if view is @docPicker then @search.disable() else @search.enable()
     return
 
   showDocList: (reset) =>
@@ -53,6 +56,12 @@ class app.views.Sidebar extends app.View
 
   reset: ->
     @showDocList true
+    return
+
+  onScopeChange: (newDoc, previousDoc) =>
+    @docList.closeDoc(previousDoc) if previousDoc
+    if newDoc then @docList.reveal(newDoc.toEntry()) else @scrollToTop()
+    return
 
   saveScrollPosition: ->
     if @view is @docList
@@ -105,3 +114,7 @@ class app.views.Sidebar extends app.View
     @reset()
     @scrollToTop()
     return
+
+  onDocEnabled: ->
+    @docList.onEnabled()
+    @reset()

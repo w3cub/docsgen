@@ -111,9 +111,9 @@ $.after = (el, value) ->
 
 $.remove = (value) ->
   if $.isCollection(value)
-    el.parentElement.removeChild(el) for el in $.makeArray(value)
+    el.parentElement?.removeChild(el) for el in $.makeArray(value)
   else
-    value.parentElement.removeChild(value)
+    value.parentElement?.removeChild(value)
   return
 
 $.empty = (el) ->
@@ -239,6 +239,14 @@ $.makeArray = (object) ->
   else
     Array::slice.apply(object)
 
+$.arrayDelete = (array, object) ->
+  index = array.indexOf(object)
+  if index >= 0
+    array.splice(index, 1)
+    true
+  else
+    false
+
 # Returns true if the object is an array or a collection of DOM elements.
 $.isCollection = (object) ->
   Array.isArray(object) or typeof object?.item is 'function'
@@ -263,6 +271,12 @@ $.escapeRegexp = (string) ->
 
 $.urlDecode = (string) ->
   decodeURIComponent string.replace(/\+/g, '%20')
+
+$.classify = (string) ->
+  string = string.split('_')
+  for substr, i in string
+    string[i] = substr[0].toUpperCase() + substr[1..]
+  string.join('')
 
 #
 # Miscellaneous

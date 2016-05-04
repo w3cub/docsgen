@@ -48,17 +48,24 @@ class app.views.SearchScope extends app.View
     return
 
   selectDoc: (doc) ->
+    previousDoc = @doc
+    return if doc is previousDoc
     @doc = doc
 
-    @tag.textContent = doc.name
+    @tag.textContent = doc.fullName
     @tag.style.display = 'block'
 
     @input.removeAttribute 'placeholder'
     @input.value = @input.value[@input.selectionStart..]
     @input.style.paddingLeft = @tag.offsetWidth + 10 + 'px'
+
     $.trigger @input, 'input'
+    @trigger 'change', @doc, previousDoc
+    return
 
   reset: =>
+    return unless @doc
+    previousDoc = @doc
     @doc = null
 
     @tag.textContent = ''
@@ -66,6 +73,9 @@ class app.views.SearchScope extends app.View
 
     @input.setAttribute 'placeholder', @placeholder
     @input.style.paddingLeft = ''
+
+    @trigger 'change', null, previousDoc
+    return
 
   onKeydown: (event) =>
     return if event.ctrlKey or event.metaKey or event.altKey or event.shiftKey

@@ -1,9 +1,12 @@
 class app.models.Doc extends app.Model
-  # Attributes: name, slug, type, version, index_path, db_path, db_size, mtime, links
+  # Attributes: name, slug, type, version, release, db_size, mtime, links
 
   constructor: ->
     super
     @reset @
+    @slug_without_version = @slug.split('~')[0]
+    @fullName = "#{@name}" + if @version then " #{@version}" else ''
+    @icon = @slug_without_version
     @text = @toEntry().text
 
   reset: (data) ->
@@ -29,15 +32,15 @@ class app.models.Doc extends app.Model
     "#{app.config.docs_host}#{@fullPath(path)}?#{@mtime}"
 
   dbUrl: ->
-    "#{app.config.docs_host}/#{@db_path}?#{@mtime}"
+    "#{app.config.docs_host}/#{@slug}/#{app.config.db_filename}?#{@mtime}"
 
   indexUrl: ->
-    "#{app.indexHost()}/#{@index_path}?#{@mtime}"
+    "#{app.indexHost()}/#{@slug}/#{app.config.index_filename}?#{@mtime}"
 
   toEntry: ->
     @entry ||= new app.models.Entry
       doc: @
-      name: @name
+      name: @fullName
       path: 'index'
 
   findEntryByPathAndHash: (path, hash) ->

@@ -1,10 +1,11 @@
-._sphinx {
+%sphinx {
   h2, h3 { @extend %block-heading; }
   dl:not(.docutils) > dt { @extend %block-label, %label-blue; }
   dt + dt { margin-top: -.5em; }
 
   .note, .admonition, .versionadded, .versionchanged, .deprecated-removed { @extend %note; }
-  .deprecated-removed { @extend %note-red; }
+  .important { @extend %note-orange; }
+  .warning, .deprecated-removed { @extend %note-red; }
   .versionmodified { font-weight: bold; }
 
   p > code, li > code { @extend %label; }
@@ -23,4 +24,10 @@
   }
 
   ul.simple { margin: 1em 0; }
+
+  dt > a.external { float: right; }
+}
+
+._sphinx {
+  @extend %sphinx;
 }

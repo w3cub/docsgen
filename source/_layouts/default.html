@@ -1,6 +1,6 @@
 {% capture root_url %}{{ site.root | strip_slash }}{% endcapture %}
 {% include head.html %}
-<body>
+<body class="{{page.className}}">
 <div class="_app">
 	{% include doc/header.html disablesearch=true  %}
 

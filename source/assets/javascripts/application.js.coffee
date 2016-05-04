@@ -4,7 +4,7 @@
 #= require_tree ./lib
 
 #= require app/app
-# = require app/config
+#= require app/config
 #= require_tree ./app
 
 #= require collections/collection

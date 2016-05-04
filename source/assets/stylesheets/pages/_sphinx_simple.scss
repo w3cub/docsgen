@@ -1,0 +1,12 @@
+._sphinx_simple {
+  @extend %simple;
+
+  .admonition { @extend %note; }
+  .admonition.warning { @extend %note-orange; }
+  .admonition-title {
+    margin: 0 0 .25rem;
+    font-weight: bold;
+  }
+
+  code { @extend %label; }
+}

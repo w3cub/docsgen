@@ -1,6 +1,4 @@
 <header class="_header">
-  <a class="_home-link"></a>
-  <a class="_menu-link"></a>
   {% if include.disablesearch !=  true %}
   <form class="_search">
     <input type="search" class="_search-input" placeholder="Search&hellip;" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="20">
@@ -8,10 +6,13 @@
     <div class="_search-tag"></div>
   </form>
   {%endif %}
+  <a class="_home-link" href="/" ></a>
+  <a class="_menu-link"></a>
   <h1 class="_logo">
     <a href="/" class="_nav-link" title="API Documents">Docs · w3cub</a>
   </h1>
-  {%if page.slug %}<span class="_logo">/<a href="/{{page.slug}}/" class="_nav-link" title="" style="margin-left:0;">{{page.slug | titlecase}}</a></span>
+  {%if page.slug %}
+  <span class="_logo-sub-nav">/</span><span class="_logo-sub-nav"><a href="/{{page.slug}}/" class="_nav-link" title="" style="margin-left:0;">{{page.slug}}</a></span>
   {%endif%}
   <nav class="_nav">
     <a href="/app/" class="_nav-link {% if page.url == '/app/' %} _nav-current{% endif %}">App</a>

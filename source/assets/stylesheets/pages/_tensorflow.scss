@@ -1,0 +1,6 @@
+._tensorflow {
+  @extend %simple;
+
+  h4 { @extend %block-label; }
+  > .toc ul ul { margin: .25rem 0; }
+}

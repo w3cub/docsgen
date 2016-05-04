@@ -3,7 +3,7 @@ class app.views.BasePage extends app.View
 
   render: (content, fromCache = false) ->
     @addClass "_#{@entry.doc.type}" unless @constructor.className
-    @html content
+    # @html content
     @prepare?() unless fromCache
     @activate()
     @delay @afterRender if @afterRender

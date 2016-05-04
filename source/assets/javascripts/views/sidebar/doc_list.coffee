@@ -54,7 +54,21 @@ class app.views.DocList extends app.View
     return
 
   appendDisabledList: ->
-    @append @tmpl('sidebarDisabledList', docs: app.disabledDocs.all())
+    html = ''
+    docs = [].concat(app.disabledDocs.all()...)
+
+    while doc = docs.shift()
+      if doc.version?
+        versions = ''
+        loop
+          versions += @tmpl('sidebarDoc', doc, disabled: true)
+          break if docs[0]?.name isnt doc.name
+          doc = docs.shift()
+        html += @tmpl('sidebarDisabledVersionedDoc', doc, versions)
+      else
+        html += @tmpl('sidebarDoc', doc, disabled: true)
+
+    @append @tmpl('sidebarDisabledList', html)
     @disabledTitle.classList.add('open-title')
     @refreshElements()
     return
@@ -100,8 +114,13 @@ class app.views.DocList extends app.View
   reveal: (model) ->
     @openDoc model.doc
     @openType model.getType() if model.type
+    @focus model
     @paginateTo model
     @scrollTo model
+    return
+
+  focus: (model) ->
+    @listFocus?.focus @find("a[href='#{model.fullPath()}']")
     return
 
   revealCurrent: ->
@@ -111,7 +130,12 @@ class app.views.DocList extends app.View
     return
 
   openDoc: (doc) ->
+    @listFold.open @find("[data-slug='#{doc.slug_without_version}']") if app.disabledDocs.contains(doc) and doc.version
     @listFold.open @find("[data-slug='#{doc.slug}']")
+    return
+
+  closeDoc: (doc) ->
+    @listFold.close @find("[data-slug='#{doc.slug}']")
     return
 
   openType: (type) ->
@@ -142,10 +166,10 @@ class app.views.DocList extends app.View
     else if slug = event.target.getAttribute('data-enable')
       $.stopEvent(event)
       doc = app.disabledDocs.findBy('slug', slug)
-      app.enableDoc(doc, @onEnable, @onEnable)
+      app.enableDoc(doc, @onEnabled, @onEnabled)
     return
 
-  onEnable: =>
+  onEnabled: =>
     @reset()
     @render()
     return

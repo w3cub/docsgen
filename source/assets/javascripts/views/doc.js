@@ -1,4 +1,4 @@
-$(function() {
+jQuery(function($) {
     var locapath = location.pathname.split('/').slice(2).join('/') + location.hash;
 
     function sidebarDoc(doc, options) {
@@ -133,10 +133,10 @@ $(function() {
 
 
     function getTypeData(callback) {
-        if (menuJson) {
+        if (app.DOC) {
             if (!app.docs)
-                app.docs = menuJson;
-            callback(menuJson);
+                app.docs = app.DOC;
+            callback(app.DOC);
             return false;
         }
         // var docsIndex = Store.get(PageConfig.doctype);
@@ -595,10 +595,17 @@ $(function() {
 
     if(isDocPage()){
         initEvent(); // init event listen
-        var useHighlightCode = getHighlightCode[PageConfig.docData.type];
-        if (useHighlightCode)
-            useHighlightCode();
-        addClipboardLinks();
+
+        var currentPage = new app.views.EntryPage();
+        var docs = new app.models.Doc(PageConfig.docData);
+        currentPage.onRoute(docs);
+        currentPage.activate();
+        currentPage.render();
+
+        // var useHighlightCode = getHighlightCode[PageConfig.docData.type];
+        // if (useHighlightCode)
+        //     useHighlightCode();
+        // addClipboardLinks();
     }
 
     toTop();

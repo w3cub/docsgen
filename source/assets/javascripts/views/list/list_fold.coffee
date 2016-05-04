@@ -60,5 +60,5 @@ class app.views.ListFold extends app.View
       $.stopEvent(event)
       @toggle el.parentElement
     else if el.classList.contains @constructor.targetClass
-      @open el
+      if el.hasAttribute('href') then @open(el) else @toggle(el)
     return

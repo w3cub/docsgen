@@ -4,7 +4,7 @@ class app.views.Resizer extends app.View
   @events:
     dragstart: 'onDragStart'
     dragend: 'onDragEnd'
-    drag: 'onDrag'
+    dblclick: 'onDblClick'
 
   @isSupported: ->
     'ondragstart' of document.createElement('div') and !app.isMobile()
@@ -32,21 +32,28 @@ class app.views.Resizer extends app.View
       app.appCache?.updateInBackground()
     return
 
+  onDblClick: (event) ->
+    app.document.toggleSidebar()
+    return
+
   onDragStart: (event) =>
     @style.removeAttribute('disabled')
     event.dataTransfer.effectAllowed = 'link'
     event.dataTransfer.setData('Text', '')
+    $.on(window, 'dragover', @onDrag)
     return
 
   onDrag: (event) =>
-    return if @lastDrag and @lastDrag > Date.now() - 50
     value = event.pageX
-    @lastDrag = Date.now()
+    return unless value > 0
     @lastDragValue = value
+    return if @lastDrag and @lastDrag > Date.now() - 50
+    @lastDrag = Date.now()
     @resize(value, false)
     return
 
   onDragEnd: (event) =>
+    $.off(window, 'dragover', @onDrag)
     value = event.pageX or (event.screenX - window.screenX)
     if @lastDragValue and not (@lastDragValue - 5 < value < @lastDragValue + 5) # https://github.com/Thibaut/devdocs/issues/265
       value = @lastDragValue

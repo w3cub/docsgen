@@ -25,8 +25,6 @@
   {% capture canonical %}{{ site.url }}{% if site.permalink contains '.html' %}{{ page.url }}{% else %}{{ page.url | remove:'index.html' }}{% endif %}{% endcapture %}
   <link rel="canonical" href="{{ canonical }}">
   <link href="{{root_url}}/favicon.png" rel="icon">
-  <script src="{{root_url}}/javascripts/modernizr-2.0.js"></script>
-  <script src="{{root_url}}/javascripts/libs/jquery.min.js"></script>
   {% javascript_tag application.js %}
   {% stylesheet_tag application.css %}
 

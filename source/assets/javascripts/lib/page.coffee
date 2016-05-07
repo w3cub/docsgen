@@ -24,14 +24,14 @@ page.start = (options = {}) ->
   unless running
     running = true
     addEventListener 'popstate', onpopstate
-    addEventListener 'click', onclick
+    # addEventListener 'click', onclick
     page.replace currentPath(), null, null, true
   return
 
 page.stop = ->
   if running
     running = false
-    removeEventListener 'click', onclick
+    # removeEventListener 'click', onclick
     removeEventListener 'popstate', onpopstate
   return
 

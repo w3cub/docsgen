@@ -49,7 +49,6 @@ class app.Router
 
   type: (context, next) ->
     doc = app.docs.findBySlug(context.params.doc)
-
     if type = doc?.types.findBy 'slug', context.params.type
       context.doc = doc
       context.type = type
@@ -60,7 +59,6 @@ class app.Router
 
   entry: (context, next) ->
     doc = app.docs.findBySlug(context.params.doc)
-
     if entry = doc?.findEntryByPathAndHash(context.params.path, context.hash)
       context.doc = doc
       context.entry = entry

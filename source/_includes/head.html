@@ -6,8 +6,8 @@
 {% endif %}
 <head>
   <meta charset="utf-8">
-  <title>{% if page.title %}{% if site.titlecase %}{{ page.title | titlecase }}{% else %}{{ page.title }}{% endif %} - {% endif %}{{ site.title }}</title>
-  <meta name="author" content="{{ site.author }}">
+  <title>{% if page.url != "/index.html" %}{{page.title}}{% else %}{% if page.title %}{% if site.titlecase %}{{ page.title | titlecase }}{% else %}{{ page.title }}{% endif %} - {% endif %}{{ site.title }}{% endif %}</title>
+  <!-- <meta name="author" content="{{ site.author }}"> -->
   {% capture description %}
     {% if page.url == "/index.html" %} {{ site.description }}
     {% elsif page.description %}{{ page.description }}
@@ -16,7 +16,6 @@
   {% endcapture %}
   <meta name="description" content="{{ description | strip_html | condense_spaces | truncate:150 }}">
   {% if page.keywords %}<meta name="keywords" content="{{ page.keywords }}">{% endif %}
-
   <!-- http://t.co/dKP3o1e -->
   <meta name="HandheldFriendly" content="True">
   <meta name="MobileOptimized" content="320">
@@ -25,18 +24,10 @@
   {% capture canonical %}{{ site.url }}{% if site.permalink contains '.html' %}{{ page.url }}{% else %}{{ page.url | remove:'index.html' }}{% endif %}{% endcapture %}
   <link rel="canonical" href="{{ canonical }}">
   <link href="{{root_url}}/favicon.png" rel="icon">
-  {% javascript_tag application.js %}
   {% stylesheet_tag application.css %}
+  {% javascript_tag application.js %}
 
   {%if page.slug %}
-  <script type="text/javascript" >
-  var PageConfig = {
-    doctype : "{{page.slug}}",
-    doclink : "{{root_url}}/data/{{page.slug}}.json",
-    link: "{{canonical}}",
-    docData: {{ site.data.docs | where: "slug", page.slug | first | jsonify }}
-  };
-  </script>
   <script src="{{root_url}}/json/{{page.slug}}.js"></script>
   {%endif %}
   {% include google_analytics.html %}

@@ -26,7 +26,7 @@ class app.models.Entry extends app.Model
     result
 
   isIndex: ->
-    @path is 'index'
+    @path is '/'
 
   getType: ->
     @doc.types.findBy 'name', @type

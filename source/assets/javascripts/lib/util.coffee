@@ -321,3 +321,41 @@ $.copyToClipboard = (string) ->
   finally
     document.body.removeChild(textarea)
   result
+
+
+$.easing =
+  linear: (p) ->
+    p
+  swing: (p) ->
+    0.5 - (Math.cos(p * Math.PI) / 2)
+
+$.animate = do ->
+  INTERVAL = 13
+
+  now = ->
+    (new Date).getTime()
+
+  _anim = (begin, el, changeAttr, start, end, duration, easing) ->
+    pos = (now() - begin) / duration
+    if pos >= 1.0
+      return false
+    pos = $.easing[easing](pos)
+    changeAttr.call(el, start + (end - start) * pos)
+    true
+
+  (el, changeAttr, start, end, duration, easing) ->
+    begin = undefined
+    begin = now()
+    duration = duration or 1000
+    easing = easing or 'swing'
+    changeAttr = changeAttr or ->
+
+    step = ->
+      if _anim(begin, el, changeAttr, start, end, duration, easing)
+        setTimeout step, INTERVAL
+      else
+        changeAttr.call el, end
+      return
+
+    setTimeout step, INTERVAL
+    return

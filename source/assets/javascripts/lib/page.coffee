@@ -86,7 +86,8 @@ class Context
     @state.path = @path
 
   pushState: ->
-    history.pushState @state, '', @path
+    location.replace @path
+    # history.pushState @state, '', @path
     return
 
   replaceState: ->

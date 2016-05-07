@@ -41,12 +41,12 @@ class app.models.Doc extends app.Model
     @entry ||= new app.models.Entry
       doc: @
       name: @fullName
-      path: 'index'
+      path: '/'
 
   findEntryByPathAndHash: (path, hash) ->
     if hash and entry = @entries.findBy 'path', "#{path}##{hash}"
       entry
-    else if path is 'index'
+    else if path is '/'
       @toEntry()
     else
       @entries.findBy 'path', path

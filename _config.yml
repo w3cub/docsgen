@@ -2,12 +2,12 @@
 #      Main Configs       #
 # ----------------------- #
 
-url: http://docs.w3cub.com/docshub
-title: API Documents - w3cub
+url: http://docs.w3cub.com/
+title: W3cubDocs
 # subtitle: A blogging framework for hackers.
 author: w3cub
 simple_search: https://www.google.com/search
-description:
+description: W3cubDocs is a based Github Pages service API documentation browser with 80+ docs including HTML, CSS, JavaScript, PHP, Ruby, Python, Go, C, C++, jQuery, and more.
 
 # Default date format is "ordinal" (resulting in "July 22nd 2007")
 # You can customize the format as defined in

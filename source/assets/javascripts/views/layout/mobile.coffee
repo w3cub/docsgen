@@ -1,5 +1,5 @@
 class app.views.Mobile extends app.View
-  @className: '_mobile'
+  # @className: '_mobile'
 
   @elements:
     body:     'body'
@@ -31,7 +31,7 @@ class app.views.Mobile extends app.View
       app.shortcuts.stop()
 
     $.on @body, 'click', @onClick
-    $.on $('._home-link'), 'click', @onClickHome
+    # $.on $('._home-link'), 'click', @onClickHome
     $.on $('._menu-link'), 'click', @onClickMenu
     $.on $('._search'), 'touchend', @onTapSearch
 
@@ -45,8 +45,9 @@ class app.views.Mobile extends app.View
   showSidebar: =>
     return if @isSidebarShown()
     @contentTop = @body.scrollTop
-    @content.style.display = 'none'
-    @sidebar.style.display = 'block'
+    @addClass '_open-sidebar'
+    # @content.style.display = 'none'
+    # @sidebar.style.display = 'block'
 
     if selection = @findByClass app.views.ListSelect.activeClass
       $.scrollTo selection, @body, 'center'
@@ -57,13 +58,15 @@ class app.views.Mobile extends app.View
   hideSidebar: =>
     return unless @isSidebarShown()
     @sidebarTop = @body.scrollTop
-    @sidebar.style.display = 'none'
-    @content.style.display = 'block'
+    @removeClass '_open-sidebar'
+    # @sidebar.style.display = 'none'
+    # @content.style.display = 'block'
     @body.scrollTop = @contentTop or 0
     return
 
   isSidebarShown: ->
-    @sidebar.style.display isnt 'none'
+    ~[].slice.call(@el.classList, 0).indexOf('_open-sidebar')
+    # @sidebar.style.display isnt 'none'
 
   onClick: (event) =>
     if event.target.hasAttribute 'data-pick-docs'

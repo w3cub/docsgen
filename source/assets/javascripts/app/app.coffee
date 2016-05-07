@@ -1,3 +1,4 @@
+
 @app =
   _$: $
   _$$: $$
@@ -8,33 +9,35 @@
   views:       {}
 
   init: ->
-    try @initErrorTracking() catch
-    return unless @browserCheck()
-    @showLoading()
+    # try @initErrorTracking() catch
+    # return unless @browserCheck()
+    # @showLoading()
 
     @el = $('._app')
     @store = new Store
-    @appCache = new app.AppCache if app.AppCache.isEnabled()
-    @settings = new app.Settings @store
-    @db = new app.DB()
+    # @appCache = new app.AppCache if app.AppCache.isEnabled()
+    # @settings = new app.Settings @store
+    # @db = new app.DB()
 
-    @docs = new app.collections.Docs
-    @disabledDocs = new app.collections.Docs
-    @entries = new app.collections.Entries
+      
 
     @router = new app.Router
     @shortcuts = new app.Shortcuts
-    @document = new app.views.Document
-    @mobile = new app.views.Mobile if @isMobile()
-
     if @DOC
-      @bootOne()
-    else if @DOCS
-      @bootAll()
-    else
-      @onBootError()
-    return
+      @docs = new app.collections.Docs
+      @disabledDocs = new app.collections.Docs
+      @entries = new app.collections.Entries
 
+      @document = new app.views.Document
+      
+      @mobile = new app.views.Mobile
+      # if @isMobile()
+      @bootOne()
+    # else if @DOCS
+    #   @bootAll()
+    # else
+    #   @onBootError()
+    return
   browserCheck: ->
     return true if @isSupportedBrowser()
     document.body.className = ''
@@ -67,9 +70,11 @@
   bootOne: ->
     @doc = new app.models.Doc @DOC
     @docs.reset [@doc]
-    @doc.load @start.bind(@), @onBootError.bind(@), readCache: true
-    new app.views.Notice 'singleDoc', @doc
-    delete @DOC
+    @doc.reset app.INDEXDOC
+    @start()
+    # @doc.load @start.bind(@), @onBootError.bind(@), readCache: true
+    # new app.views.Notice 'singleDoc', @doc
+    # delete @DOC
     return
 
   bootAll: ->
@@ -89,10 +94,10 @@
     @initDoc(doc) for doc in @docs.all()
     @trigger 'ready'
     @router.start()
-    @hideLoading()
-    @welcomeBack() unless @doc
+    # @hideLoading()
+    # @welcomeBack() unless @doc
     @removeEvent 'ready bootError'
-    try navigator.mozApps?.getSelf().onsuccess = -> app.mozApp = true catch
+    # try navigator.mozApps?.getSelf().onsuccess = -> app.mozApp = true catch
     return
 
   initDoc: (doc) ->

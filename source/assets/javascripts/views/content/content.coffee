@@ -23,11 +23,18 @@ class app.views.Content extends app.View
     @scrollMap = {}
     @scrollStack = []
 
-    @rootPage    = new app.views.RootPage
-    @staticPage  = new app.views.StaticPage
-    @offlinePage = new app.views.OfflinePage
-    @typePage    = new app.views.TypePage
+    # @rootPage    = new app.views.RootPage
+    # @staticPage  = new app.views.StaticPage
+    # @offlinePage = new app.views.OfflinePage
+    # @typePage    = new app.views.TypePage
     @entryPage   = new app.views.EntryPage
+
+    # @entryPage = new app.views.EntryPage
+    # docs = new app.models.Doc app.DOC
+    # @entryPage.onRoute docs
+    # @entryPage.activate()
+    # @entryPage.render()
+    
 
     @entryPage
       .on 'loading', @onEntryLoading

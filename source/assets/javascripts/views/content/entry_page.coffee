@@ -2,20 +2,18 @@ class app.views.EntryPage extends app.View
   @className: '_page'
   @errorClass: '_page-error'
   constructor: (el, entry = {}) -> 
-    @el = $ el || '._content > ._page'
+    @el = $ el || '._page'
     super
-  # el: '._content > ._page'
   @events:
     click: 'onClick'
 
-  # @routes:
-  #   before: 'beforeRoute'
+  @routes:
+    before: 'beforeRoute'
 
   init: ->
     @cacheMap = {}
     @cacheStack = []
     return
-
   deactivate: ->
     if super
       @empty()
@@ -26,7 +24,6 @@ class app.views.EntryPage extends app.View
     @empty()
     @trigger 'loading'
     return
-
   render: (content = '', fromCache = false) ->
     return unless @activated
     # @empty()
@@ -87,6 +84,8 @@ class app.views.EntryPage extends app.View
   onRoute: (context) ->
     # isSameFile = context.entry.filePath() is @entry?.filePath()
     @entry = context.entry
+
+    @render()
     # @restore() or @load() unless isSameFile
     return
 

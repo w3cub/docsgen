@@ -14,12 +14,15 @@ class app.views.Document extends app.View
     superRight: 'onForward'
 
   init: ->
+
+    
+
     @addSubview @nav     = new app.views.Nav,
     @addSubview @sidebar = new app.views.Sidebar
-    @addSubview @resizer = new app.views.Resizer if app.views.Resizer.isSupported()
+    # @addSubview @resizer = new app.views.Resizer if app.views.Resizer.isSupported()
     @addSubview @content = new app.views.Content
     @addSubview @path    = new app.views.Path unless app.isSingleDoc() or app.isMobile()
-
+    @addSubview @totop = new app.views.ToTopView
     @activate()
     return
 
@@ -47,7 +50,7 @@ class app.views.Document extends app.View
     return
 
   setTitle: (title) ->
-    @el.title = if title then "DevDocs - #{title}" else 'DevDocs API Documentation'
+    # @el.title = if title then "DevDocs - #{title}" else 'DevDocs API Documentation'
 
   onVisibilityChange: =>
     return unless @el.visibilityState is 'visible'

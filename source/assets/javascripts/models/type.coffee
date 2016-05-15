@@ -2,7 +2,8 @@ class app.models.Type extends app.Model
   # Attributes: name, slug, count
 
   fullPath: ->
-    "javascript:;" # /#{@doc.slug}-#{@slug}/
+    "javascript:;"
+    # "/#{@doc.slug}-#{@slug}/" 
 
   entries: ->
     @doc.entries.findAllBy 'type', @name
@@ -11,4 +12,5 @@ class app.models.Type extends app.Model
     new app.models.Entry
       doc: @doc
       name: "#{@doc.name} / #{@name}"
-      path: '..' + @fullPath()
+      path: @fullPath()
+      # path: '..' + @fullPath()

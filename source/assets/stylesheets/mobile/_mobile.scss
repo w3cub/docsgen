@@ -6,12 +6,16 @@ body:not(.index-page):not(.static-page){
 	}
 
 	._sidebar{
+		display: block;
 	    @media #{$mobileScreen} {
-			transition: transform .3s cubic-bezier(0.86,0,0.07,1);
-		    transform: translateX(-100%) translateZ(0);
-
+	    	z-index: 1;
+			// transition: transform .3s cubic-bezier(0.86,0,0.07,1);
+		    // transform: translateX(-100%) translateZ(0);
+			// transform: translateX(0%) translateZ(0);
+			display: none;
 		    ._open-sidebar &{
-		    	transform: translateX(0%) translateZ(0);
+		    	display: block;
+		    	// transform: translateX(0%) translateZ(0);
 		    }
 	    }
 	}
@@ -37,8 +41,13 @@ body:not(.index-page):not(.static-page){
 	._container{
 	    @media #{$mobileScreen} {
 	    	margin-left: 0rem;
-			transition: margin .3s cubic-bezier(0.86,0,0.07,1);
-
+	    	background-color: #fff;
+			// transition: transform 300ms ease;
+			transform: translateX(0px) translateZ(0);
+		    ._open-sidebar &{
+		    	overflow: hidden;
+		    	transform: translateX(250px) translateZ(0);
+		    }
 	    }
 	}
 

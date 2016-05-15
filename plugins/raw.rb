@@ -37,4 +37,5 @@ module Jekyll
   end
 end
 
-Liquid::Template.register_tag('raw', Jekyll::RawTag)
+Liquid::Template.register_tag('oopsraw', Jekyll::RawTag)
+

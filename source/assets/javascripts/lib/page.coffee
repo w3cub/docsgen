@@ -24,14 +24,14 @@ page.start = (options = {}) ->
   unless running
     running = true
     addEventListener 'popstate', onpopstate
-    # addEventListener 'click', onclick
+    addEventListener 'click', onclick
     page.replace currentPath(), null, null, true
   return
 
 page.stop = ->
   if running
     running = false
-    # removeEventListener 'click', onclick
+    removeEventListener 'click', onclick
     removeEventListener 'popstate', onpopstate
   return
 
@@ -156,7 +156,7 @@ onclick = (event) ->
   link = link.parentElement while link and link.tagName isnt 'A'
 
   if link and not link.target and isSameOrigin(link.href)
-    event.preventDefault()
+    # event.preventDefault()
     page.show link.pathname + link.search + link.hash
   return
 

@@ -343,19 +343,49 @@ $.animate = do ->
     changeAttr.call(el, start + (end - start) * pos)
     true
 
-  (el, changeAttr, start, end, duration, easing) ->
+  (el, changeAttr, start, end, duration, easing, callback) ->
     begin = undefined
     begin = now()
     duration = duration or 1000
     easing = easing or 'swing'
     changeAttr = changeAttr or ->
+    callback = callback or ->
 
     step = ->
       if _anim(begin, el, changeAttr, start, end, duration, easing)
         setTimeout step, INTERVAL
       else
         changeAttr.call el, end
+        callback()
       return
-
     setTimeout step, INTERVAL
     return
+
+requestAnimFrame = do ->
+  window.requestAnimationFrame or window.webkitRequestAnimationFrame or (callback) ->
+    window.setTimeout callback, 1000 / 60
+    return
+
+$.decouple = (node, event, fn) ->
+  eve = undefined
+  tracking = false
+
+  captureEvent = (e) ->
+    eve = e
+    track()
+    return
+
+  track = ->
+    if !tracking
+      requestAnimFrame update
+      tracking = true
+    return
+
+  update = ->
+    fn.call node, eve
+    tracking = false
+    return
+
+  node.addEventListener event, captureEvent, false
+  captureEvent
+

@@ -27,6 +27,9 @@ new_post_ext    = "markdown"  # default new post file extension when using the n
 new_page_ext    = "markdown"  # default new page file extension when using the new_page task
 server_port     = "4000"      # port for preview server eg. localhost:4000
 
+
+repo_url = "git@github.com:icai/docshub.git"
+
 if (/cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM) != nil
   puts '## Set the codepage to 65001 for Windows machines'
   `chcp 65001`
@@ -69,7 +72,7 @@ desc "preview the site in a web browser"
 task :preview do
   raise "### You haven't set anything up yet. First run `rake install` to set up an Octopress theme." unless File.directory?(source_dir)
   puts "Starting to watch source with Jekyll and Compass. Starting Rack on port #{server_port}"
-  system "compass compile --css-dir #{source_dir}/stylesheets" unless File.exist?("#{source_dir}/stylesheets/screen.css")
+  # system "compass compile --css-dir #{source_dir}/stylesheets" unless File.exist?("#{source_dir}/stylesheets/screen.css")
   jekyllPid = Process.spawn({"OCTOPRESS_ENV"=>"preview"}, "jekyll build --watch")
   # compassPid = Process.spawn("compass watch")
   rackupPid = Process.spawn("rackup --port #{server_port}")
@@ -111,7 +114,7 @@ task :deploy do
 end
 
 desc "Generate website and deploy"
-task :gen_deploy => [:integrate, :generate, :deploy] do
+task :gen_deploy => [:generate, :deploy] do
 end
 
 desc "copy dot files for deployment"
@@ -138,17 +141,23 @@ multitask :push do
   # cd "#{deploy_dir}" do 
   #   Bundler.with_clean_env { system "git pull" }
   # end
-  (Dir["#{deploy_dir}/*"]).each { |f| rm_rf(f) }
-  Rake::Task[:copydot].invoke(public_dir, deploy_dir)
-  puts "\n## Copying #{public_dir} to #{deploy_dir}"
-  cp_r "#{public_dir}/.", deploy_dir
+  # (Dir["#{deploy_dir}/*"]).each { |f| rm_rf(f) }
+  # Rake::Task[:copydot].invoke(public_dir, deploy_dir)
+  # puts "\n## Copying #{public_dir} to #{deploy_dir}"
+  # cp_r "#{public_dir}/.", deploy_dir
   cd "#{deploy_dir}" do
+    puts "\n## Removeing all history"
+    system "rm -rf .git"
+    puts "\n## Initializing git"
+    system "git init"
     system "git add -A"
     message = "Site updated at #{Time.now.utc}"
     puts "\n## Committing: #{message}"
     system "git commit -m \"#{message}\""
-    puts "\n## Pushing generated #{deploy_dir} website"
-    Bundler.with_clean_env { system "git push origin #{deploy_branch}" }
+    system "git remote add origin #{repo_url}"
+    system "git branch -m #{deploy_branch}"
+    puts "\n## Force pushing generated #{deploy_dir} website"
+    Bundler.with_clean_env { system "git push origin #{deploy_branch} --force" }
     puts "\n## Github Pages deploy complete"
   end
 end

@@ -12,7 +12,7 @@
     <a href="/" class="_nav-link" title="API Documentation Browser">W3cubDocs</a>
   </h1>
   {%if page.slug %}
-  <span class="_logo-sub-nav">/</span><span class="_logo-sub-nav"><a href="/{{page.slug}}/" class="_nav-link" title="" style="margin-left:0;">{{page.slug}}</a></span>
+  <span class="_logo-sub-nav">/</span><span class="_logo-sub-nav"><a href="/{{page.slug}}/" class="_nav-link" title="" style="margin-left:0;">{{page.slugtitle}}</a></span>
   {%endif%}
   <nav class="_nav">
     <a href="/app/" class="_nav-link {% if page.url == '/app/' %} _nav-current{% endif %}">App</a>

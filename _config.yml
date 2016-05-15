@@ -1,8 +1,8 @@
 # ----------------------- #
 #      Main Configs       #
 # ----------------------- #
-
-url: http://docs.w3cub.com/
+encoding: "utf-8"
+url: http://docs.w3cub.com
 title: W3cubDocs
 lang: en
 

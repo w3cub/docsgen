@@ -25,9 +25,11 @@ class app.models.Doc extends app.Model
     return
 
   fullPath: (path = '') ->
-    path = "/#{path}" unless path[0] is '/'
-    "/#{@slug}#{path}"
-
+    if path == "javascript:;"
+      path
+    else
+      path = "/#{path}" unless path[0] is '/'
+      "/#{@slug}#{path}"
   fileUrl: (path) ->
     "#{app.config.docs_host}#{@fullPath(path)}?#{@mtime}"
 

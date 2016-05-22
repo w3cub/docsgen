@@ -28,7 +28,7 @@ new_page_ext    = "markdown"  # default new page file extension when using the n
 server_port     = "4000"      # port for preview server eg. localhost:4000
 
 
-repo_url = "git@github.com:icai/docshub.git"
+repo_url = "git@github.com:icai/docshub-dist.git"
 
 if (/cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM) != nil
   puts '## Set the codepage to 65001 for Windows machines'
@@ -75,7 +75,7 @@ task :preview do
   # system "compass compile --css-dir #{source_dir}/stylesheets" unless File.exist?("#{source_dir}/stylesheets/screen.css")
   jekyllPid = Process.spawn({"OCTOPRESS_ENV"=>"preview"}, "jekyll build --watch")
   # compassPid = Process.spawn("compass watch")
-  rackupPid = Process.spawn("rackup --port #{server_port}")
+  rackupPid = Process.spawn("rackup --host 0.0.0.0  --port #{server_port}")
 
   trap("INT") {
     [jekyllPid, 
@@ -145,21 +145,51 @@ multitask :push do
   # Rake::Task[:copydot].invoke(public_dir, deploy_dir)
   # puts "\n## Copying #{public_dir} to #{deploy_dir}"
   # cp_r "#{public_dir}/.", deploy_dir
-  cd "#{deploy_dir}" do
-    puts "\n## Removeing all history"
-    system "rm -rf .git"
-    puts "\n## Initializing git"
-    system "git init"
-    system "git add -A"
-    message = "Site updated at #{Time.now.utc}"
+
+  commitdir = "#{deploy_dir}"
+  FileUtils.cd(commitdir) do |path|
+    dir = File.join(File.dirname(__FILE__), path, "*")
+    subdir = File.join(File.dirname(__FILE__), path)
+    Dir[dir].each { |x|
+      if FileTest.directory?(x)
+        cmdir = x.sub(File.join(File.dirname(__FILE__), commitdir, "/"), "")
+        # puts x
+        puts "\n add directory #{cmdir}"
+        system "git add -A #{cmdir}/"
+        message = "Site updated #{cmdir} directory at #{Time.now.utc}"
+        puts "\n## Committing: #{message}"
+        system "git commit -m \"#{message}\""
+        puts "\n## Pushing generated #{cmdir} website"
+        Bundler.with_clean_env { system "git push origin #{deploy_branch}" }
+        puts "\n## Github Pages deploy complete"
+      end
+    }
+    puts "\n add directory #{commitdir}"
+    system "git add -A ."
+    message = "Site updated #{commitdir} directory at #{Time.now.utc}"
     puts "\n## Committing: #{message}"
     system "git commit -m \"#{message}\""
-    system "git remote add origin #{repo_url}"
-    system "git branch -m #{deploy_branch}"
-    puts "\n## Force pushing generated #{deploy_dir} website"
-    Bundler.with_clean_env { system "git push origin #{deploy_branch} --force" }
+    puts "\n## Pushing generated #{commitdir} website"
+    Bundler.with_clean_env { system "git push origin #{deploy_branch}" }
     puts "\n## Github Pages deploy complete"
   end
+
+  # cd "#{deploy_dir}" do
+  #   # puts "\n## Removeing all history"
+  #   # system "rm -rf .git"
+  #   # puts "\n## Initializing git"
+  #   # system "git init"
+  #   # system "git config http.postBuffer 524288000"
+  #   system "git add -A"
+  #   message = "Site updated at #{Time.now.utc}"
+  #   puts "\n## Committing: #{message}"
+  #   system "git commit -m \"#{message}\""
+  #   # system "git remote add origin #{repo_url}"
+  #   # system "git branch -m #{deploy_branch}"
+  #   puts "\n## Pushing generated #{deploy_dir} website"
+  #   Bundler.with_clean_env { system "git push origin #{deploy_branch}" }
+  #   puts "\n## Github Pages deploy complete"
+  # end
 end
 
 desc "Update configurations to support publishing to root or sub directory"

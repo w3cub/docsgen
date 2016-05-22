@@ -8,7 +8,7 @@ className: index-page
 	<div class="_content">
 	  <div class="_list">
 	    {% for link in site.data.docs %}
-	      <a href="/{{link.slug}}/" class="_list-item _icon-{{link.slug | split: '~' | first }} _list-dir" title=""><img src="/images/docs/{{link.slug | split: '~' | first }}.png" alt=""><span class="name">{{link.name}}{%if link.version%}~{{link.version}}{%endif%}</span></a>
+	      <a href="/{{link.slug}}/" class="_list-item _icon-{{link.slug | split: '~' | first }} _list-dir" title=""><img src="/images/docs/{{link.slug | split: '~' | first }}.png" alt=""><span class="name">{{link.name}}{%if link.version and link.version != "" %}~{{link.version}}{%endif%}</span></a>
 	    {% endfor %}
 	  </div>
 	</div>

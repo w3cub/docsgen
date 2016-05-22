@@ -33,6 +33,7 @@ class app.views.Mobile extends app.View
     doc = window.document
     html = @el
     @panel = $ "._container"
+    @panelCentent = $ "._content"
     @sidebar = $ "._sidebar"
     self = @
     msPointerSupported = window.navigator.msPointerEnabled
@@ -82,7 +83,7 @@ class app.views.Mobile extends app.View
     @_translateTo *= @_orientation;
 
 
-    @_onScrollFn = $.decouple(doc, 'scroll', ->
+    @_onScrollFn = $.decouple(@panelCentent, 'scroll', ->
       if !self._moved
         clearTimeout scrollTimeout
         scrolling = true
@@ -101,8 +102,7 @@ class app.views.Mobile extends app.View
       if self._moved
         eve.preventDefault()
       return
-
-    doc.addEventListener touch.move, @_preventMove
+    @panel.addEventListener touch.move, @_preventMove
 
     ###*
     # Resets values on touchstart
@@ -118,6 +118,7 @@ class app.views.Mobile extends app.View
       return
 
     @panel.addEventListener touch.start, @_resetTouchFn
+
 
     ###*
     # Resets values on touchcancel
@@ -174,9 +175,9 @@ class app.views.Mobile extends app.View
     @panel.addEventListener touch.move, @_onTouchMoveFn
 
 
-    app.document.sidebar.search
-      .on 'searching', @showSidebar
-      .on 'clear', @hideSidebar
+    # app.document.sidebar.search
+    #   .on 'searching', @showSidebar
+    #   .on 'clear', @hideSidebar
 
     @activate()
     return

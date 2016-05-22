@@ -356,7 +356,7 @@ $.animate = do ->
         setTimeout step, INTERVAL
       else
         changeAttr.call el, end
-        callback()
+        callback.call el, el
       return
     setTimeout step, INTERVAL
     return

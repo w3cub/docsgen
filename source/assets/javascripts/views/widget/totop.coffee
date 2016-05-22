@@ -4,6 +4,7 @@ class app.views.ToTopView extends app.View
 
   @events:
     click: 'onClick'
+    touchend: 'onTouchEnd'
 
   init: ->
     @activate()
@@ -25,8 +26,11 @@ class app.views.ToTopView extends app.View
 
   hide: ->
     @el.style.display = 'none'
-
+  onTouchEnd: =>
+    # cancel hover status
+    @el.blur()
   onClick: =>
+    @el.focus()
     content = @_content
     $.animate content, ((process)->
         @scrollTop = process

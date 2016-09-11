@@ -9,6 +9,7 @@
   font-size: .75rem;
   color: $notifColor;
   background: $notifBackground;
+  border: $notifBorder;
   border-radius: .25rem;
   transition: opacity .2s;
   opacity: 0;
@@ -43,11 +44,17 @@
   position: absolute;
   top: 0;
   right: 0;
-  padding: .625rem;
+  width: 2.25rem;
+  height: 2.25rem;
   opacity: .9;
-  cursor: pointer;
+  @extend %hide-text;
 
-  &:before { @extend %icon, %icon-close-white; }
+  &:before {
+    position: absolute;
+    top: .625rem;
+    left: .625rem;
+    @extend %icon, %icon-close-white;
+  }
 }
 
 ._notif-content {
@@ -121,8 +128,8 @@
 
 ._notif-tip {
   color: $textColor;
-  background: rgba($tipBackground, .95);
-  border: 1px solid $tipBorder;
+  background: $tipBackground;
+  border: $tipBorder;
 
   ._notif-info { color: $textColorLight; }
 }

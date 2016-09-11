@@ -12,6 +12,7 @@
   overflow-x: hidden;
   overflow-y: scroll;
   background: $sidebarBackground;
+  background-clip: content-box;
   -webkit-overflow-scrolling: touch;
   -ms-overflow-style: none; // IE 10 doesn't support pointer-events
   @extend %user-select-none;
@@ -32,7 +33,9 @@
     }
   }
 
-  a:focus { outline: 0; }
+  ._sidebar-hidden & {
+    display: none;
+  }
 }
 
 ._resizer {
@@ -44,6 +47,27 @@
   margin-left: -2px;
   width: 3px;
   cursor: col-resize;
+
+  ._sidebar-hidden & {
+    left: 0;
+    margin-left: 0;
+    background: $headerBackground;
+    border-right: 1px solid $headerBorder;
+    width: 8px;
+    cursor: pointer;
+
+    &:before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 3px;
+      margin-top: -.5rem;
+      width: 1px;
+      height: 1rem;
+      border-left: 1px solid $textColorLighter;
+      border-right: 1px solid $textColorLighter;
+    }
+  }
 }
 
 //
@@ -64,6 +88,8 @@
     min-height: 100%;
     padding-bottom: 3.5rem;
   }
+
+  a:focus { outline: 0; }
 }
 
 ._list-title {
@@ -80,14 +106,9 @@
 ._list-item {
   display: block;
   position: relative;
-  overflow: hidden;
   padding: .25rem .75rem;
   line-height: 1.5rem;
   font-size: .875rem;
-  white-space: nowrap;
-  word-wrap: normal;
-  overflow-wrap: normal;
-  text-overflow: ellipsis;
   cursor: default;
   background: $sidebarBackground;
   box-shadow: inset -1px 0 $sidebarBorder;
@@ -116,7 +137,7 @@
   &:before {
     float: left;
     margin: .25rem .625rem 0 0;
-    @extend %icon;
+    @extend %doc-icon;
   }
 }
 
@@ -187,6 +208,11 @@
 
   &:hover { opacity: .65; }
 
+  ._list-rdir > & {
+    left: auto;
+    right: .25rem;
+  }
+
   &:before {
     @if $style == 'dark' {
       @extend %icon, %icon-dir-white;
@@ -239,6 +265,7 @@
   padding-right: 1.75rem;
 
   > ._list-reveal { display: block; }
+  > ._list-count { display: none; }
 }
 
 ._list-reveal {
@@ -247,14 +274,14 @@
   top: 0;
   bottom: 0;
   right: 0;
-  width: 1.75rem;
+  width: 2rem;
   cursor: pointer;
 
   &:before {
     content: '';
     position: absolute;
     bottom: 50%;
-    left: .5rem;
+    left: .75rem;
     width: .75rem;
     height: 1px;
     background: rgba($selectionText, .9);
@@ -313,10 +340,12 @@
 //
 
 ._list-picker {
-  opacity: 0;
-  transition: .2s;
+  > ._list, > ._list-item {
+    opacity: 0;
+    transition: .2s;
+  }
+  &._in { > ._list, > ._list-item { opacity: 1; } }
 
-  &._in { opacity: 1; }
   ._list-item { cursor: pointer; }
   ._list-sub > ._list-item { padding-left: 2.375rem; }
 }
@@ -352,6 +381,8 @@
   width: $sidebarWidth;
   background: $sidebarBackground;
   box-shadow: inset -1px 0 $sidebarBorder;
+  -webkit-transform: translateZ(0);
+          transform: translateZ(0);
 
   @media #{$mediumScreen} { width: $sidebarMediumWidth; }
 
@@ -397,6 +428,7 @@
 }
 
 ._sidebar-footer-edit {
+  display: inline-block;
   @if $style == 'dark' {
     &:before { @extend %icon-settings-white; }
   } @else {
@@ -409,6 +441,7 @@
   width: 2rem;
   padding: 0;
   opacity: .65;
+  @extend %hide-text;
 
   &:before {
     float: none;
@@ -429,6 +462,7 @@
   width: 2rem;
   padding: 0;
   opacity: .65;
+  @extend %hide-text;
 
   &:before {
     float: none;

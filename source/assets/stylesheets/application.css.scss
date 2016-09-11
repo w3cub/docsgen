@@ -1,5 +1,7 @@
 //= depend_on icons.png
 //= depend_on icons@2x.png
+//= depend_on docs.png
+//= depend_on docs@2x.png
 
 //= require vendor/open-sans
 
@@ -35,13 +37,16 @@
 
 @import 'pages/simple',
         'pages/angular',
+        'pages/angularjs',
         'pages/apache',
+        'pages/bootstrap',
         'pages/bower',
         'pages/c',
         'pages/cakephp',
-        'pages/chai',
         'pages/clojure',
         'pages/coffeescript',
+        'pages/cordova',
+        'pages/crystal',
         'pages/d3',
         'pages/dojo',
         'pages/drupal',
@@ -55,7 +60,9 @@
         'pages/haskell',
         'pages/jquery',
         'pages/knockout',
+        'pages/kotlin',
         'pages/laravel',
+        'pages/love',
         'pages/lua',
         'pages/mdn',
         'pages/meteor',
@@ -77,6 +84,7 @@
         'pages/requirejs',
         'pages/rethinkdb',
         'pages/rfc',
+        'pages/rubydoc',
         'pages/rust',
         'pages/socketio',
         'pages/sphinx',

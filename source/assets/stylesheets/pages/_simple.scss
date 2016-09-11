@@ -12,12 +12,15 @@
     h1, h2, h3 { margin-left: 0; }
   }
 
-  p > code, li > code { @extend %label; }
+  p > code, li > code, td > code { @extend %label; }
   blockquote { @extend %note; }
+  blockquote > h4, blockquote > h5 { margin-top: .25rem; }
 }
 
 ._apache_pig,
-._cordova,
+._chai,
+._docker,
+._fish,
 ._gnu,
 ._grunt,
 ._haxe,
@@ -28,6 +31,7 @@
 ._markdown,
 ._mocha,
 ._mongoose,
+._redux,
 ._sinon,
 ._typescript,
 ._webpack {

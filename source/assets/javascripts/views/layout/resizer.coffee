@@ -1,10 +1,12 @@
 class app.views.Resizer extends app.View
   @className: '_resizer'
+  @attributes:
+    title: 'Click to toggle sidebar on/off'
 
   @events:
     dragstart: 'onDragStart'
     dragend: 'onDragEnd'
-    dblclick: 'onDblClick'
+    click: 'onClick'
 
   @isSupported: ->
     'ondragstart' of document.createElement('div') and !app.isMobile()
@@ -32,8 +34,8 @@ class app.views.Resizer extends app.View
       app.appCache?.updateInBackground()
     return
 
-  onDblClick: (event) ->
-    app.document.toggleSidebar()
+  onClick: ->
+    app.document.toggleSidebar(save: true)
     return
 
   onDragStart: (event) =>

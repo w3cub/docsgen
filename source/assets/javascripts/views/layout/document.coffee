@@ -23,6 +23,12 @@ class app.views.Document extends app.View
     @addSubview @content = new app.views.Content
     @addSubview @path    = new app.views.Path unless app.isSingleDoc() or app.isMobile()
     @addSubview @totop = new app.views.ToTopView
+    @sidebar.search
+      .on 'searching', @onSearching
+      .on 'clear', @onSearchClear
+
+    $.on document.body, 'click', @onClick
+
     @activate()
     return
 
@@ -42,11 +48,33 @@ class app.views.Document extends app.View
     app.appCache?.updateInBackground()
     return
 
-  toggleSidebar: ->
-    sidebarHidden = app.el.classList.contains(HIDE_SIDEBAR_CLASS)
-    app.el.classList[if sidebarHidden then 'remove' else 'add'](HIDE_SIDEBAR_CLASS)
-    app.settings.setLayout(HIDE_SIDEBAR_CLASS, !sidebarHidden)
-    app.appCache?.updateInBackground()
+  showSidebar: (options = {}) ->
+    @toggleSidebar(options, true)
+    return
+
+  hideSidebar: (options = {}) ->
+    @toggleSidebar(options, false)
+    return
+
+  toggleSidebar: (options = {}, shouldShow) ->
+    shouldShow ?= if options.save then !@hasSidebar() else app.el.classList.contains(HIDE_SIDEBAR_CLASS)
+    app.el.classList[if shouldShow then 'remove' else 'add'](HIDE_SIDEBAR_CLASS)
+    if options.save
+      app.settings.setLayout(HIDE_SIDEBAR_CLASS, !shouldShow)
+      app.appCache?.updateInBackground()
+    return
+
+  hasSidebar: ->
+    !app.settings.hasLayout(HIDE_SIDEBAR_CLASS)
+
+  onSearching: =>
+    unless @hasSidebar()
+      @showSidebar()
+    return
+
+  onSearchClear: =>
+    unless @hasSidebar()
+      @hideSidebar()
     return
 
   setTitle: (title) ->
@@ -76,3 +104,14 @@ class app.views.Document extends app.View
 
   onForward: ->
     history.forward()
+
+  onClick: (event) ->
+    return unless event.target.hasAttribute('data-behavior')
+    $.stopEvent(event)
+    switch event.target.getAttribute('data-behavior')
+      when 'back'         then history.back()
+      when 'reload'       then window.location.reload()
+      when 'reboot'       then window.location = '/'
+      when 'hard-reload'  then app.reload()
+      when 'reset'        then app.reset() if confirm('Are you sure you want to reset DevDocs?')
+    return

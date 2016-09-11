@@ -14,6 +14,13 @@
           user-select: none;
 }
 
+%hide-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-indent: 100%;
+  @extend %user-select-none;
+}
+
 //
 // Boxes
 //
@@ -25,6 +32,7 @@
 }
 
 %heading-box {
+  color: $boxHeaderColor;
   background: $boxHeaderBackground;
   border: 1px solid $boxBorder;
   border-radius: 3px;
@@ -37,6 +45,21 @@
   font-size: 1rem;
   overflow: hidden;
   @extend %heading-box;
+}
+
+%pre-heading {
+  padding: .375rem .625rem;
+  line-height: 1.5;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  @extend %heading-box;
+
+  + pre {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-top: 0;
+    margin-top: 0;
+  }
 }
 
 //
@@ -65,6 +88,7 @@
   padding-left: .5em;
   padding-right: .5em;
   font-size: inherit;
+  color: $boxHeaderColor;
   border: 1px solid $boxBorder;
   border-radius: 2px;
   @extend %label;

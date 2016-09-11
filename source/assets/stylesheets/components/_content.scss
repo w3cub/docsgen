@@ -28,6 +28,8 @@
     ._content{
       margin-left: 0px;
       background-color: #f5f5f5;
+      -webkit-padding-start: 0rem;
+      -webkit-padding-end: 0rem;
     }
     ._list{
       box-shadow:none;
@@ -290,7 +292,7 @@
 ._docs-name:before {
   float: left;
   margin: .25rem .5rem .25rem 0;
-  @extend %icon;
+  @extend %doc-icon;
 }
 
 ._docs-size { text-align: right; }

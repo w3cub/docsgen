@@ -1,11 +1,14 @@
 class app.views.DocPicker extends app.View
   @className: '_list _list-picker'
+  @attributes:
+    role: 'form'
 
   @elements:
     saveLink: '._sidebar-footer-save'
 
   @events:
     click: 'onClick'
+    mousedown: 'onMouseDown'
 
   @shortcuts:
     enter: 'onEnter'
@@ -17,16 +20,16 @@ class app.views.DocPicker extends app.View
   activate: ->
     if super
       @render()
-      @findByTag('input')?.focus()
       app.appCache?.on 'progress', @onAppCacheProgress
-      $.on @el, 'focus', @onFocus, true
+      $.on @el, 'focus', @onDOMFocus, true
     return
 
   deactivate: ->
     if super
       @empty()
       app.appCache?.off 'progress', @onAppCacheProgress
-      $.off @el, 'focus', @onFocus, true
+      $.off @el, 'focus', @onDOMFocus, true
+      @focusEl = null
     return
 
   render: ->
@@ -43,9 +46,9 @@ class app.views.DocPicker extends app.View
     @html html + @tmpl('sidebarPickerNote') + @tmpl('sidebarSave')
     @refreshElements()
 
-    @delay -> # trigger animation
-      @el.offsetWidth
+    $.requestAnimationFrame =>
       @addClass '_in'
+      @findByTag('input')?.focus()
     return
 
   renderVersions: (docs) ->
@@ -88,8 +91,27 @@ class app.views.DocPicker extends app.View
       @save()
     return
 
-  onFocus: (event) ->
-    $.scrollTo event.target.parentNode, null, 'continuous', bottomGap: 2
+  onMouseDown: =>
+    @mouseDown = Date.now()
+
+  onDOMFocus: (event) =>
+    target = event.target
+    if target.tagName is 'INPUT'
+      $.scrollTo target.parentNode, null, 'continuous', bottomGap: 2
+    else if target.classList.contains(app.views.ListFold.targetClass)
+      target.blur()
+      unless @mouseDown and @mouseDown > Date.now() - 100
+        if @focusEl is $('input', target.nextElementSibling)
+          @listFold.close(target) if target.classList.contains(app.views.ListFold.activeClass)
+          prev = target.previousElementSibling
+          prev = prev.previousElementSibling until prev.tagName is 'LABEL' or prev.classList.contains(app.views.ListFold.targetClass)
+          prev = $.makeArray($$('input', prev.nextElementSibling)).pop() if prev.classList.contains(app.views.ListFold.activeClass)
+          @delay -> prev.focus()
+        else
+          @listFold.open(target) unless target.classList.contains(app.views.ListFold.activeClass)
+          @delay -> $('input', target.nextElementSibling).focus()
+    @focusEl = target
+    return
 
   onEnter: =>
     @save()

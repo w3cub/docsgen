@@ -61,6 +61,12 @@ page.dispatch = (context) ->
   next()
   return
 
+page.canGoBack = ->
+  not Context.isIntialState(currentState)
+
+page.canGoForward = ->
+  not Context.isLastState(currentState)
+
 currentPath = ->
   location.pathname + location.search + location.hash
 
@@ -68,6 +74,12 @@ class Context
   @initialPath: currentPath()
   @sessionId: Date.now()
   @stateId: 0
+
+  @isIntialState: (state) ->
+    state.id == 0
+
+  @isLastState: (state) ->
+    state.id == @stateId - 1
 
   @isInitialPopState: (state) ->
     state.path is @initialPath and @stateId is 1
@@ -150,7 +162,10 @@ onpopstate = (event) ->
   return
 
 onclick = (event) ->
-  return if event.which isnt 1 or event.metaKey or event.ctrlKey or event.shiftKey or event.defaultPrevented
+  try
+    return if event.which isnt 1 or event.metaKey or event.ctrlKey or event.shiftKey or event.defaultPrevented
+  catch
+    return
 
   link = event.target
   link = link.parentElement while link and link.tagName isnt 'A'

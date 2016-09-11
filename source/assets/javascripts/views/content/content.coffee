@@ -58,6 +58,9 @@ class app.views.Content extends app.View
     @addClass @constructor.loadingClass
     return
 
+  isLoading: ->
+    @el.classList.contains @constructor.loadingClass
+
   hideLoading: ->
     @removeClass @constructor.loadingClass
     return
@@ -66,41 +69,47 @@ class app.views.Content extends app.View
     @scrollEl.scrollTop = value or 0
     return
 
+  smoothScrollTo: (value) ->
+    $.smoothScroll @scrollEl, value or 0
+    return
+
   scrollBy: (n) ->
-    @scrollEl.scrollTop += n
+    @smoothScrollTo @scrollEl.scrollTop + n
     return
 
   scrollToTop: =>
-    @scrollTo 0
+    @smoothScrollTo 0
     return
 
   scrollToBottom: =>
-    @scrollTo @scrollEl.scrollHeight
+    @smoothScrollTo @scrollEl.scrollHeight
     return
 
   scrollStepUp: =>
-    @scrollBy -50
+    @scrollBy -80
     return
 
   scrollStepDown: =>
-    @scrollBy 50
+    @scrollBy 80
     return
 
   scrollPageUp: =>
-    @scrollBy 80 - @scrollEl.clientHeight
+    @scrollBy 40 - @scrollEl.clientHeight
     return
 
   scrollPageDown: =>
-    @scrollBy @scrollEl.clientHeight - 80
+    @scrollBy @scrollEl.clientHeight - 40
     return
 
   scrollToTarget: ->
+    return if @isLoading()
     if @routeCtx.hash and el = @findTargetByHash @routeCtx.hash
       $.scrollToWithImageLock el, @scrollEl, 'top',
         margin: 20 + if @scrollEl is @el then 0 else $.offset(@el).top
       $.highlight el, className: '_highlight'
     else
       @scrollTo @scrollMap[@routeCtx.state.id]
+    clearTimeout @scrollTimeout
     return
 
   onReady: =>
@@ -124,7 +133,7 @@ class app.views.Content extends app.View
   beforeRoute: (context) =>
     @cacheScrollPosition()
     @routeCtx = context
-    @delay @scrollToTarget
+    @scrollTimeout = @delay @scrollToTarget
     return
 
   cacheScrollPosition: ->
@@ -164,7 +173,7 @@ class app.views.Content extends app.View
 
   onAltF: (event) =>
     unless document.activeElement and $.hasChild @el, document.activeElement
-      @findByTag('a')?.focus()
+      @find('a:not(:empty)')?.focus()
       $.stopEvent(event)
 
   findTargetByHash: (hash) ->

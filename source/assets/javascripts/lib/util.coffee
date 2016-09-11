@@ -157,7 +157,7 @@ $.offset = (el, container = document.body) ->
 $.scrollParent = (el) ->
   while el = el.parentElement
     break if el.scrollTop > 0
-    break if getComputedStyle(el).overflowY in ['auto', 'scroll']
+    break if getComputedStyle(el)?.overflowY in ['auto', 'scroll']
   el
 
 $.scrollTo = (el, parent, position = 'center', options = {}) ->
@@ -223,6 +223,36 @@ $.lockScroll = (el, fn) ->
     fn()
   return
 
+smoothScroll =  smoothStart = smoothEnd = smoothDistance = smoothDuration = null
+
+$.smoothScroll = (el, end) ->
+  unless window.requestAnimationFrame
+    el.scrollTop = end
+    return
+
+  smoothEnd = end
+
+  if smoothScroll
+    newDistance = smoothEnd - smoothStart
+    smoothDuration += Math.min 300, Math.abs(smoothDistance - newDistance)
+    smoothDistance = newDistance
+    return
+
+  smoothStart = el.scrollTop
+  smoothDistance = smoothEnd - smoothStart
+  smoothDuration = Math.min 300, Math.abs(smoothDistance)
+  startTime = Date.now()
+
+  smoothScroll = ->
+    p = Math.min 1, (Date.now() - startTime) / smoothDuration
+    y = Math.max 0, Math.floor(smoothStart + smoothDistance * (if p < 0.5 then 2 * p * p else p * (4 - p * 2) - 1))
+    el.scrollTop = y
+    if p is 1
+      smoothScroll = null
+    else
+      requestAnimationFrame(smoothScroll)
+  requestAnimationFrame(smoothScroll)
+
 #
 # Utilities
 #
@@ -278,6 +308,19 @@ $.classify = (string) ->
     string[i] = substr[0].toUpperCase() + substr[1..]
   string.join('')
 
+$.framify = (fn, obj) ->
+  if window.requestAnimationFrame
+    (args...) -> requestAnimationFrame(fn.bind(obj, args...))
+  else
+    fn
+
+$.requestAnimationFrame = (fn) ->
+  if window.requestAnimationFrame
+    requestAnimationFrame(fn)
+  else
+    setTimeout(fn, 0)
+  return
+
 #
 # Miscellaneous
 #
@@ -285,7 +328,12 @@ $.classify = (string) ->
 $.noop = ->
 
 $.popup = (value) ->
-  open value.href or value, '_blank'
+  win = window.open()
+  if win
+    win.opener = null if win.opener
+    win.location = value.href or value
+  else
+    window.open value.href or value, '_blank'
   return
 
 $.isTouchScreen = ->

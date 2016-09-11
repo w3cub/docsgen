@@ -1,5 +1,7 @@
 class app.views.DocList extends app.View
   @className: '_list'
+  @attributes:
+    role: 'navigation'
 
   @events:
     open:  'onOpen'
@@ -16,9 +18,9 @@ class app.views.DocList extends app.View
   init: ->
     @lists = {}
 
-    @addSubview @listSelect = new app.views.ListSelect @el
     @addSubview @listFocus  = new app.views.ListFocus @el unless app.isMobile()
     @addSubview @listFold   = new app.views.ListFold @el
+    @addSubview @listSelect = new app.views.ListSelect @el
 
     app.on 'ready', @render
     return
@@ -46,10 +48,9 @@ class app.views.DocList extends app.View
     return
 
   renderDisabledList: ->
-    if (hidden = app.settings.get 'hideDisabled') is true
+    if app.settings.get('hideDisabled')
       @removeDisabledList()
     else
-      app.settings.set 'hideDisabled', false unless hidden is false
       @appendDisabledList()
     return
 

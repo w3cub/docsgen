@@ -1,5 +1,5 @@
 app.templates.aboutPage = -> """
-  <div class="_toc">
+  <nav class="_toc" role="directory">
     <h3 class="_toc-title">Table of Contents</h3>
     <ul class="_toc-list">
       <li><a href="#credits">Credits</a>
@@ -8,14 +8,14 @@ app.templates.aboutPage = -> """
       <li><a href="#plugins">Plugins</a>
       <li><a href="#privacy">Privacy Policy</a>
     </ul>
-  </div>
+  </nav>
 
   <h1 class="_lined-heading">API Documentation Browser</h1>
   <p>DevDocs combines multiple API documentations in a fast, organized, and searchable interface.
   <ul>
     <li>Created and maintained by <a href="http://thibaut.me">Thibaut Courouble</a>
     <li>Free and <a href="https://github.com/Thibaut/devdocs">open source</a>
-        <iframe class="_github-btn" src="https://ghbtns.com/github-btn.html?user=Thibaut&repo=devdocs&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="100" height="20"></iframe>
+        <iframe class="_github-btn" src="https://ghbtns.com/github-btn.html?user=Thibaut&repo=devdocs&type=watch&count=true" allowtransparency="true" frameborder="0" scrolling="0" width="100" height="20" tabindex="-1"></iframe>
   </ul>
   <p>To keep up-to-date with the latest news:
   <ul>
@@ -72,7 +72,6 @@ app.templates.aboutPage = -> """
     <li><a href="https://github.com/gruehle/dev-docs-viewer">Brackets extension</a>
     <li><a href="https://github.com/xuchunyang/DevDocs.el">Emacs Package</a>
   </ul>
-  <p>You can also use <a href="http://fluidapp.com">Fluid</a> to turn DevDocs into a real OS X app, or <a href="https://apps.ubuntu.com/cat/applications/fogger/">Fogger</a> on Ubuntu.
 
   <h2 class="_lined-heading" id="privacy">Privacy Policy</h2>
   <ul>
@@ -86,13 +85,13 @@ app.templates.aboutPage = -> """
 """
 
 credits = [
-  [ 'Angular.js',
+  [ 'Angular<br>Angular.js',
     '2010-2016 Google, Inc.',
     'CC BY',
     'https://creativecommons.org/licenses/by/4.0/'
   ], [
     'Ansible',
-    '2012-2016 Michael DeHaan',
+    '2012-2016 Michael DeHaan<br>&copy; 2016 Red Hat, Inc.',
     'GPLv3',
     'https://raw.githubusercontent.com/ansible/ansible/devel/COPYING'
   ], [
@@ -105,6 +104,11 @@ credits = [
     '2010-2016 Jeremy Ashkenas, DocumentCloud',
     'MIT',
     'https://raw.githubusercontent.com/jashkenas/backbone/master/LICENSE'
+  ], [
+    'Bootstrap',
+    '2011-2016 Twitter, Inc.',
+    'CC BY',
+    'https://creativecommons.org/licenses/by/3.0/'
   ], [
     'Bower',
     '2016 Bower contributors',
@@ -136,6 +140,11 @@ credits = [
     'EPL',
     'https://github.com/clojure/clojure/blob/master/epl-v10.html'
   ], [
+    'CMake',
+    '2000-2016 Kitware, Inc.<br>&copy; 2000-2011 Insight Software Consortium',
+    'BSD',
+    'https://cmake.org/licensing/'
+  ], [
     'CodeIgniter',
     '2014-2016 British Columbia Institute of Technology',
     'MIT',
@@ -156,15 +165,25 @@ credits = [
     'CC BY-SA',
     'https://creativecommons.org/licenses/by-sa/2.5/'
   ], [
+    'Crystal',
+    '2012-2016 Manas Technology Solutions',
+    'Apache',
+    'https://raw.githubusercontent.com/crystal-lang/crystal/master/LICENSE'
+  ], [
     'D3.js',
     '2010-2016 Michael Bostock',
     'BSD',
-    'https://raw.githubusercontent.com/mbostock/d3/master/LICENSE'
+    'https://raw.githubusercontent.com/d3/d3/master/LICENSE'
   ], [
     'Django',
     'Django Software Foundation and individual contributors',
     'BSD',
     'https://raw.githubusercontent.com/django/django/master/LICENSE'
+  ], [
+    'Docker',
+    '2013-2016 Docker, Inc.<br>Docker and the Docker logo are trademarks of Docker, Inc.',
+    'Apache',
+    'https://raw.githubusercontent.com/docker/docker/master/LICENSE'
   ], [
     'Dojo',
     '2005-2015 The Dojo Foundation',
@@ -246,10 +265,20 @@ credits = [
     'MIT',
     'https://raw.githubusercontent.com/jquery/api.jqueryui.com/master/LICENSE.txt'
   ], [
+    'Julia',
+    '2009-2015 Jeff Bezanson, Stefan Karpinski, Viral B. Shah, and other contributors',
+    'MIT',
+    'https://raw.githubusercontent.com/JuliaLang/julia/master/LICENSE.md'
+  ], [
     'Knockout.js',
     'Steven Sanderson, the Knockout.js team, and other contributors',
     'MIT',
     'https://raw.githubusercontent.com/knockout/knockout/master/LICENSE'
+  ], [
+    'Kotlin',
+    '2010-2016 JetBrains s.r.o.',
+    'Apache',
+    'https://raw.githubusercontent.com/JetBrains/kotlin-web-site/master/LICENSE'
   ], [
     'Laravel',
     'Taylor Otwell',
@@ -271,6 +300,11 @@ credits = [
     'MIT',
     'http://www.lua.org/license.html'
   ], [
+    'L&Ouml;VE',
+    '2006-2016 L&Ouml;VE Development Team',
+    'GFDL',
+    'http://www.gnu.org/copyleft/fdl.html'
+  ], [
     'Marionette.js',
     '2016 Muted Solutions, LLC',
     'MIT',
@@ -280,6 +314,11 @@ credits = [
     '2004 John Gruber',
     'BSD',
     'https://daringfireball.net/projects/markdown/license'
+  ], [
+    'Matplotlib',
+    '2012-2016 Matplotlib Development Team. All rights reserved.',
+    'Custom',
+    'https://raw.githubusercontent.com/matplotlib/matplotlib/master/LICENSE/LICENSE'
   ], [
     'Meteor',
     '2011-2016 Meteor Development Group',
@@ -292,9 +331,9 @@ credits = [
     'https://github.com/seattlerb/minitest/blob/master/README.rdoc#license'
   ], [
     'Mocha',
-    '2011-2016 TJ Holowaychuk',
-    'MIT',
-    'https://raw.githubusercontent.com/mochajs/mocha/master/LICENSE'
+    'Mocha contributors',
+    'CC BY',
+    'https://creativecommons.org/licenses/by/4.0/'
   ], [
     'Modernizr',
     '2009-2016 The Modernizr team',
@@ -346,13 +385,18 @@ credits = [
     'LGPLv2.1',
     'https://raw.githubusercontent.com/OpenTSDB/opentsdb.net/gh-pages/COPYING.LESSER'
   ], [
+    'Padrino',
+    '2010-2016 Padrino',
+    'MIT',
+    'https://raw.githubusercontent.com/padrino/padrino-framework/master/padrino/LICENSE.txt'
+  ], [
     'Perl',
     '1993-2016 Larry Wall and others',
     'GPLv1',
     'http://perldoc.perl.org/index-licence.html'
   ], [
     'Phalcon',
-    '2011-2015 Phalcon Framework Team',
+    '2011-2016 Phalcon Framework Team',
     'CC BY',
     'https://docs.phalconphp.com/en/latest/reference/license.html'
   ], [
@@ -391,6 +435,11 @@ credits = [
     'MIT',
     'https://raw.githubusercontent.com/kriskowal/q/v1/LICENSE'
   ], [
+    'Ramda',
+    '2013-2016 Scott Sauyet and Michael Hurley',
+    'MIT',
+    'https://raw.githubusercontent.com/ramda/ramda/master/LICENSE.txt'
+  ], [
     'React, React Native, Flow, Relay',
     '2013-2016 Facebook Inc.',
     'CC BY',
@@ -400,6 +449,11 @@ credits = [
     '2009-2016 Salvatore Sanfilippo',
     'CC BY-SA',
     'https://creativecommons.org/licenses/by-sa/4.0/'
+  ], [
+    'Redux',
+    '2015-2016 Dan Abramov',
+    'MIT',
+    'https://raw.githubusercontent.com/reactjs/redux/master/LICENSE.md'
   ], [
     'RequireJS',
     'jQuery Foundation and other contributors',
@@ -467,7 +521,7 @@ credits = [
     'https://raw.githubusercontent.com/jashkenas/underscore/master/LICENSE'
   ], [
     'Vagrant',
-    '2010-2015 Mitchell Hashimoto',
+    '2010-2016 Mitchell Hashimoto',
     'MIT',
     'https://raw.githubusercontent.com/mitchellh/vagrant/master/LICENSE'
   ], [

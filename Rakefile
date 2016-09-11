@@ -26,7 +26,8 @@ themes_dir      = ".themes"   # directory for blog files
 new_post_ext    = "markdown"  # default new post file extension when using the new_post task
 new_page_ext    = "markdown"  # default new page file extension when using the new_page task
 server_port     = "4000"      # port for preview server eg. localhost:4000
-
+docs_dir        = "_docs"
+docs_cache_dir  = ".docs-cache"
 
 repo_url = "git@github.com:icai/docshub-dist.git"
 
@@ -45,7 +46,7 @@ task :generate do
   raise "### You haven't set anything up yet. First run `rake install` to set up an Octopress theme." unless File.directory?(source_dir)
   puts "## Generating Site with Jekyll"
   # system "compass compile --css-dir #{source_dir}/stylesheets"
-  system "jekyll build"
+  system "JEKYLL_ENV=production jekyll build --incremental"
 end
 
 desc "Watch the site and regenerate when it changes"
@@ -117,6 +118,81 @@ desc "Generate website and deploy"
 task :gen_deploy => [:generate, :deploy] do
 end
 
+
+
+desc "Copy docs html to website, if debug param is set, only copy a part of docs"
+task :copy_html, :names do |t, args|
+  args.with_defaults(:names=> '')
+  names = args[:names]
+  (Dir["#{source_dir}/#{docs_dir}/*"]).each { |f| rm_rf(f) }
+  if names.is_a?(String) && names.match(/(\w+\|?\s?)*?/)
+    names = names.split(" ")
+    names.each { |name|  
+        target_path = "#{source_dir}/#{docs_dir}/#{name}"
+        mkdir_p(target_path)
+        cp_r("#{docs_cache_dir}/#{name}/.", target_path)
+    }
+  end
+end
+
+
+desc "This task for big Collection"
+task :multi_gen_deploy do 
+  names = [
+  'angularjs~1.2 angularjs~1.3 angularjs~1.4 angularjs~1.5 angular~2.0_typescript ansible ',
+  'apache_http_server apache_pig~0.13 apache_pig~0.14 apache_pig~0.15 apache_pig~0.16 backbone ',
+  'bootstrap~3 bootstrap~4 bottle~0.12 bower browser_support_tables c ',
+  'cakephp~2.7 cakephp~2.8 cakephp~3.1 cakephp~3.2 cakephp~3.3 chai ',
+  'chef~11 chef~12 clojure~1.7 clojure~1.8 cmake~3.5 codeigniter~3 ',
+  'coffeescript cordova cpp crystal css d3~3 ',
+  'd3~4 django~1.10 django~1.8 django~1.9 docker~1.10 docker~1.11 ',
+  'dojo dom dom_events drupal~7 drupal~8 elixir ',
+  'ember erlang~18 erlang~19 express fish~2.3 flow ',
+  'gcc~4 gcc~4_cpp gcc~5 gcc~5_cpp git gnu_fortran~4 ',
+  'gnu_fortran~5 gnu_fortran~6 go grunt haskell haxe ',
+  'haxe~cpp haxe~cs haxe~flash haxe~java haxe~javascript haxe~neko ',
+  'haxe~php haxe~python html http influxdata javascript ',
+  'jquery jquerymobile jqueryui julia knockout kotlin ',
+  'laravel~5.1 laravel~5.2 laravel~5.3 less lodash~3 lodash~4 ',
+  'love lua~5.1 lua~5.2 lua~5.3 marionette~2 marionette~3 ',
+  'markdown matplotlib~1.5 meteor~1.3 meteor~1.4 minitest mocha ',
+  'modernizr moment mongoose nginx nginx_lua_module node ',
+  'node~4_lts nokogiri npm numpy~1.10 numpy~1.11 opentsdb ',
+  'padrino perl~5.20 perl~5.22 perl~5.24 phalcon phaser ',
+  'phoenix php phpunit~4 phpunit~5 postgresql~9.4 postgresql~9.5 ',
+  'python~2.7 python~3.5 q rails~4.1 rails~4.2 rails~5.0 ',
+  'ramda react react_native redis redux relay ',
+  'requirejs rethinkdb~java rethinkdb~javascript rethinkdb~python rethinkdb~ruby ruby~2.2 ',
+  'ruby~2.3 rust sass scikit_image sinon socketio ',
+  'svg symfony~2.7 symfony~2.8 symfony~3.0 symfony~3.1 tcl_tk ',
+  'tensorflow~cpp tensorflow~python typescript underscore vagrant vue ',
+  'webpack xslt_xpath yii~1.1 yii~2.0 ']
+  queue = Queue.new
+  names.each do |item|
+    queue.push(item)
+  end
+  (Dir["#{deploy_dir}/*"]).each { |f| rm_rf(f) }  
+  until queue.empty?
+    docs = queue.pop rescue nil
+    puts docs
+    Rake::Task[:copy_html].invoke(docs)
+    Rake::Task[:copy_html].reenable
+    Rake::Task[:gen_deploy].invoke
+
+    Rake::Task[:gen_deploy].reenable
+    Rake::Task[:deploy].reenable
+    Rake::Task[:generate].reenable
+    Rake::Task[:copydot].reenable
+    Rake::Task["#{deploy_default}"].reenable
+
+    sleep 1
+  end
+  # Thread.new do
+  # end
+  puts "All Deploy Complete"
+end
+
+
 desc "copy dot files for deployment"
 task :copydot, :source, :dest do |t, args|
   FileList["#{args.source}/**/.*"].exclude("**/.", "**/..", "**/.DS_Store", "**/._*").each do |file|
@@ -124,15 +200,6 @@ task :copydot, :source, :dest do |t, args|
   end
 end
 
-desc "Deploy website via rsync"
-task :rsync do
-  exclude = ""
-  if File.exists?('./rsync-exclude')
-    exclude = "--exclude-from '#{File.expand_path('./rsync-exclude')}'"
-  end
-  puts "## Deploying website via Rsync"
-  ok_failed system("rsync -avze 'ssh -p #{ssh_port}' #{exclude} #{rsync_args} #{"--delete" unless rsync_delete == false} #{public_dir}/ #{ssh_user}:#{document_root}")
-end
 
 desc "deploy public directory to github pages"
 multitask :push do
@@ -146,51 +213,61 @@ multitask :push do
   # puts "\n## Copying #{public_dir} to #{deploy_dir}"
   # cp_r "#{public_dir}/.", deploy_dir
 
-  commitdir = "#{deploy_dir}"
-  FileUtils.cd(commitdir) do |path|
-    dir = File.join(File.dirname(__FILE__), path, "*")
-    subdir = File.join(File.dirname(__FILE__), path)
-    Dir[dir].each { |x|
-      if FileTest.directory?(x)
-        cmdir = x.sub(File.join(File.dirname(__FILE__), commitdir, "/"), "")
-        # puts x
-        puts "\n add directory #{cmdir}"
-        system "git add -A #{cmdir}/"
-        message = "Site updated #{cmdir} directory at #{Time.now.utc}"
-        puts "\n## Committing: #{message}"
-        system "git commit -m \"#{message}\""
-        puts "\n## Pushing generated #{cmdir} website"
-        Bundler.with_clean_env { system "git push origin #{deploy_branch}" }
-        puts "\n## Github Pages deploy complete"
-      end
-    }
-    puts "\n add directory #{commitdir}"
-    system "git add -A ."
-    message = "Site updated #{commitdir} directory at #{Time.now.utc}"
+  # commitdir = "#{deploy_dir}"
+  # FileUtils.cd(commitdir) do |path|
+  #   dir = File.join(File.dirname(__FILE__), path, "*")
+  #   subdir = File.join(File.dirname(__FILE__), path)
+  #   Dir[dir].each { |x|
+  #     if FileTest.directory?(x)
+  #       cmdir = x.sub(File.join(File.dirname(__FILE__), commitdir, "/"), "")
+  #       # puts x
+  #       puts "\n add directory #{cmdir}"
+  #       system "git add -A #{cmdir}/"
+  #       message = "Site updated #{cmdir} directory at #{Time.now.utc}"
+  #       puts "\n## Committing: #{message}"
+  #       system "git commit -m \"#{message}\""
+  #       puts "\n## Pushing generated #{cmdir} website"
+  #       Bundler.with_clean_env { system "git push origin #{deploy_branch}" }
+  #       puts "\n## Github Pages deploy complete"
+  #     end
+  #   }
+  #   puts "\n add directory #{commitdir}"
+  #   system "git add -A ."
+  #   message = "Site updated #{commitdir} directory at #{Time.now.utc}"
+  #   puts "\n## Committing: #{message}"
+  #   system "git commit -m \"#{message}\""
+  #   puts "\n## Pushing generated #{commitdir} website"
+  #   Bundler.with_clean_env { system "git push origin #{deploy_branch}" }
+  #   puts "\n## Github Pages deploy complete"
+  # end
+  Rake::Task[:copydot].invoke(public_dir, deploy_dir)
+  puts "\n## Copying #{public_dir} to #{deploy_dir}"
+  cp_r "#{public_dir}/.", deploy_dir
+  cd "#{deploy_dir}" do
+    system "git add -A"
+    message = "Site updated at #{Time.now.utc}"
     puts "\n## Committing: #{message}"
     system "git commit -m \"#{message}\""
-    puts "\n## Pushing generated #{commitdir} website"
+    puts "\n## Pushing generated #{deploy_dir} website"
     Bundler.with_clean_env { system "git push origin #{deploy_branch}" }
     puts "\n## Github Pages deploy complete"
   end
 
-  # cd "#{deploy_dir}" do
-  #   # puts "\n## Removeing all history"
-  #   # system "rm -rf .git"
-  #   # puts "\n## Initializing git"
-  #   # system "git init"
-  #   # system "git config http.postBuffer 524288000"
-  #   system "git add -A"
-  #   message = "Site updated at #{Time.now.utc}"
-  #   puts "\n## Committing: #{message}"
-  #   system "git commit -m \"#{message}\""
-  #   # system "git remote add origin #{repo_url}"
-  #   # system "git branch -m #{deploy_branch}"
-  #   puts "\n## Pushing generated #{deploy_dir} website"
-  #   Bundler.with_clean_env { system "git push origin #{deploy_branch}" }
-  #   puts "\n## Github Pages deploy complete"
-  # end
+  puts "continue"
+
 end
+
+desc "Deploy website via rsync"
+task :rsync do
+  exclude = ""
+  if File.exists?('./rsync-exclude')
+    exclude = "--exclude-from '#{File.expand_path('./rsync-exclude')}'"
+  end
+  puts "## Deploying website via Rsync"
+  ok_failed system("rsync -avze 'ssh -p #{ssh_port}' #{exclude} #{rsync_args} #{"--delete" unless rsync_delete == false} #{public_dir}/ #{ssh_user}:#{document_root}")
+end
+
+
 
 desc "Update configurations to support publishing to root or sub directory"
 task :set_root_dir, :dir do |t, args|

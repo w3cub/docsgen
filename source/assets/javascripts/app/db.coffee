@@ -22,16 +22,23 @@ class app.DB
     return
 
   onOpenSuccess: (event) =>
-    try
-      db = event.target.result
-      unless @checkedBuggyIDB
-        @idbTransaction(db, stores: ['docs', app.docs.all()[0].slug], mode: 'readwrite').abort() # https://bugs.webkit.org/show_bug.cgi?id=136937
-        @checkedBuggyIDB = true
-    catch
+    db = event.target.result
+
+    if db.objectStoreNames.length is 0
       try db.close()
-      @reason = 'apple'
+      @reason = 'empty'
       @onOpenError()
       return
+
+    unless @checkedBuggyIDB
+      @checkedBuggyIDB = true
+      try
+        @idbTransaction(db, stores: $.makeArray(db.objectStoreNames)[0..1], mode: 'readwrite').abort() # https://bugs.webkit.org/show_bug.cgi?id=136937
+      catch
+        try db.close()
+        @reason = 'apple'
+        @onOpenError()
+        return
 
     @runCallbacks(db)
     @open = false
@@ -62,7 +69,7 @@ class app.DB
     objectStoreNames = $.makeArray(db.objectStoreNames)
 
     unless $.arrayDelete(objectStoreNames, 'docs')
-      db.createObjectStore('docs')
+      try db.createObjectStore('docs')
 
     for doc in app.docs.all() when not $.arrayDelete(objectStoreNames, doc.slug)
       try db.createObjectStore(doc.slug)
@@ -71,7 +78,7 @@ class app.DB
       try db.deleteObjectStore(name)
     return
 
-  store: (doc, data, onSuccess, onError) ->
+  store: (doc, data, onSuccess, onError, _retry = true) ->
     @db (db) =>
       unless db
         onError()
@@ -82,9 +89,15 @@ class app.DB
         @cachedDocs?[doc.slug] = doc.mtime
         onSuccess()
         return
-      txn.onerror = (event) ->
+      txn.onerror = (event) =>
         event.preventDefault()
-        onError(event)
+        if txn.error?.name is 'NotFoundError' and _retry
+          @migrate()
+          setTimeout =>
+            @store(doc, data, onSuccess, onError, false)
+          , 0
+        else
+          onError(event)
         return
 
       store = txn.objectStore(doc.slug)
@@ -96,7 +109,7 @@ class app.DB
       return
     return
 
-  unstore: (doc, onSuccess, onError) ->
+  unstore: (doc, onSuccess, onError, _retry = true) ->
     @db (db) =>
       unless db
         onError()
@@ -109,14 +122,20 @@ class app.DB
         return
       txn.onerror = (event) ->
         event.preventDefault()
-        onError(event)
+        if txn.error?.name is 'NotFoundError' and _retry
+          @migrate()
+          setTimeout =>
+            @unstore(doc, onSuccess, onError, false)
+          , 0
+        else
+          onError(event)
         return
-
-      store = txn.objectStore(doc.slug)
-      store.clear()
 
       store = txn.objectStore('docs')
       store.delete(doc.slug)
+
+      store = txn.objectStore(doc.slug)
+      store.clear()
       return
     return
 
@@ -227,9 +246,11 @@ class app.DB
     @cachedDocs = {}
 
     txn = @idbTransaction db, stores: ['docs'], mode: 'readonly'
-    store = txn.objectStore('docs')
+    txn.oncomplete = =>
+      setTimeout(@checkForCorruptedDocs, 50)
+      return
 
-    req = store.openCursor()
+    req = txn.objectStore('docs').openCursor()
     req.onsuccess = (event) =>
       return unless cursor = event.target.result
       @cachedDocs[cursor.key] = cursor.value
@@ -240,10 +261,50 @@ class app.DB
       return
     return
 
+  checkForCorruptedDocs: =>
+    @db (db) =>
+      @corruptedDocs = []
+      docs = (key for key, value of @cachedDocs when value)
+      return if docs.length is 0
+
+      for slug in docs when not app.docs.findBy('slug', slug)
+        @corruptedDocs.push(slug)
+
+      for slug in @corruptedDocs
+        $.arrayDelete(docs, slug)
+
+      if docs.length is 0
+        setTimeout(@deleteCorruptedDocs, 0)
+        return
+
+      txn = @idbTransaction(db, stores: docs, mode: 'readonly', ignoreError: false)
+      txn.oncomplete = =>
+        setTimeout(@deleteCorruptedDocs, 0) if @corruptedDocs.length > 0
+        return
+
+      for doc in docs
+        txn.objectStore(doc).get('index').onsuccess = (event) =>
+          @corruptedDocs.push(event.target.source.name) unless event.target.result
+          return
+      return
+    return
+
+  deleteCorruptedDocs: =>
+    @db (db) =>
+      txn = @idbTransaction(db, stores: ['docs'], mode: 'readwrite', ignoreError: false)
+      store = txn.objectStore('docs')
+      while doc = @corruptedDocs.pop()
+        @cachedDocs[doc] = false
+        store.delete(doc)
+      return
+    Raven.captureMessage 'corruptedDocs', level: 'info', extra: { docs: @corruptedDocs.join(',') }
+    return
+
   shouldLoadWithIDB: (entry) ->
     @useIndexedDB and (not @cachedDocs or @cachedDocs[entry.doc.slug])
 
   idbTransaction: (db, options) ->
+    app.lastIDBTransaction = [options.stores, options.mode]
     txn = db.transaction(options.stores, options.mode)
     unless options.ignoreError is false
       txn.onerror = (event) ->

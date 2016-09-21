@@ -1,6 +1,7 @@
 require "rubygems"
 require "bundler/setup"
 require "stringex"
+require "./sitemap"
 
 ## -- Rsync Deploy config -- ##
 # Be sure your public key is listed in your server's ~/.ssh/authorized_keys file
@@ -135,18 +136,31 @@ task :copy_html, :names do |t, args|
   end
 end
 
+desc "test preview"
+task :test_preview do |t, args|
+  Rake::Task[:copy_html].invoke('backbone underscore bower node bottle~0.12')
+  Rake::Task[:preview].invoke
+end
+
+
+task "reinit git"
+task :gitinit do |t, args|
+  
+end
+
 
 desc "This task for big Collection"
 task :multi_gen_deploy do 
   names = [
-  'angularjs~1.2 angularjs~1.3 angularjs~1.4 angularjs~1.5 angular~2.0_typescript ansible ',
+  'angularjs~1.2 angularjs~1.3 angularjs~1.4 ','angularjs~1.5 angular~2.0_typescript ansible ',
   'apache_http_server apache_pig~0.13 apache_pig~0.14 apache_pig~0.15 apache_pig~0.16 backbone ',
   'bootstrap~3 bootstrap~4 bottle~0.12 bower browser_support_tables c ',
-  'cakephp~2.7 cakephp~2.8 cakephp~3.1 cakephp~3.2 cakephp~3.3 chai ',
+  'cakephp~2.7 cakephp~2.8 cakephp~3.1',' cakephp~3.2 cakephp~3.3 chai ',
   'chef~11 chef~12 clojure~1.7 clojure~1.8 cmake~3.5 codeigniter~3 ',
   'coffeescript cordova cpp crystal css d3~3 ',
   'd3~4 django~1.10 django~1.8 django~1.9 docker~1.10 docker~1.11 ',
-  'dojo dom dom_events drupal~7 drupal~8 elixir ',
+  'dojo dom dom_events ', 
+  'drupal~7', 'drupal~8', 'elixir ',
   'ember erlang~18 erlang~19 express fish~2.3 flow ',
   'gcc~4 gcc~4_cpp gcc~5 gcc~5_cpp git gnu_fortran~4 ',
   'gnu_fortran~5 gnu_fortran~6 go grunt haskell haxe ',
@@ -164,14 +178,15 @@ task :multi_gen_deploy do
   'ramda react react_native redis redux relay ',
   'requirejs rethinkdb~java rethinkdb~javascript rethinkdb~python rethinkdb~ruby ruby~2.2 ',
   'ruby~2.3 rust sass scikit_image sinon socketio ',
-  'svg symfony~2.7 symfony~2.8 symfony~3.0 symfony~3.1 tcl_tk ',
+  'svg symfony~2.7', 'symfony~2.8','symfony~3.0', 'symfony~3.1 tcl_tk ',
   'tensorflow~cpp tensorflow~python typescript underscore vagrant vue ',
   'webpack xslt_xpath yii~1.1 yii~2.0 ']
+  # names = ['node']
   queue = Queue.new
   names.each do |item|
     queue.push(item)
   end
-  (Dir["#{deploy_dir}/*"]).each { |f| rm_rf(f) }  
+  # (Dir["#{deploy_dir}/*"]).each { |f| rm_rf(f) }  
   until queue.empty?
     docs = queue.pop rescue nil
     puts docs
@@ -190,6 +205,11 @@ task :multi_gen_deploy do
   # Thread.new do
   # end
   puts "All Deploy Complete"
+end
+
+desc "generate sitemap"
+task :sitemap do |t, args|
+  Sitemap.new()
 end
 
 

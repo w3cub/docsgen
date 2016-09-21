@@ -23,9 +23,9 @@ class app.views.Document extends app.View
     @addSubview @content = new app.views.Content
     @addSubview @path    = new app.views.Path unless app.isSingleDoc() or app.isMobile()
     @addSubview @totop = new app.views.ToTopView
-    @sidebar.search
-      .on 'searching', @onSearching
-      .on 'clear', @onSearchClear
+    # @sidebar.search
+    #   .on 'searching', @onSearching
+    #   .on 'clear', @onSearchClear
 
     $.on document.body, 'click', @onClick
 

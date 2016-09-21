@@ -87,8 +87,8 @@ class app.views.Search extends app.View
   searchUrl: =>
     if app.router.isRoot()
       @scope.searchUrl()
-    else if not app.router.isDocIndex()
-      return
+    # else if not app.router.isDocIndex()
+    #   return
 
     return unless value = @extractHashValue()
     @input.value = @value = value
@@ -117,6 +117,8 @@ class app.views.Search extends app.View
     return
 
   onResults: (results) =>
+    results = results.filter (e) -> 
+      e.path != "javascript:;"
     @hasResults = true if results.length
     @trigger 'results', results, @flags
     @flags.initialResults = false

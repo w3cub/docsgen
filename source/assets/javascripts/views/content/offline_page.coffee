@@ -54,10 +54,11 @@ class app.views.OfflinePage extends app.View
       $.stopEvent(event)
       doc = @docByEl(link)
       action = 'install' if action is 'update'
-      doc[action](@onInstallSuccess.bind(@, doc), @onInstallError.bind(@, doc))
+      doc[action](@onInstallSuccess.bind(@, doc), @onInstallError.bind(@, doc), @onInstallProgress.bind(@, doc))
       link.parentNode.innerHTML = "#{link.textContent.replace(/e$/, '')}ing…"
     else if action = link.getAttribute('data-action-all')
       $.stopEvent(event)
+      app.db.migrate()
       el.click() for el in @findAll("a[data-action='#{action}']")
     return
 
@@ -78,7 +79,14 @@ class app.views.OfflinePage extends app.View
       el.lastElementChild.textContent = 'Error'
     return
 
+  onInstallProgress: (doc, event) ->
+    return unless @activated and event.lengthComputable
+    if el = @docEl(doc)
+      percentage = Math.round event.loaded * 100 / event.total
+      el.lastElementChild.textContent = el.lastElementChild.textContent.replace(/(\s.+)?$/, " (#{percentage}%)")
+    return
+
   onChange: (event) ->
     if event.target.name is 'autoUpdate'
-      app.settings.set 'autoUpdate', !!event.target.checked
+      app.settings.set 'manualUpdate', !event.target.checked
     return

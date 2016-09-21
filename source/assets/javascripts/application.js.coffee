@@ -4,7 +4,8 @@
 
 #= require ./lib/util
 #= require ./lib/events
-#= require ./lib/store
+#= require ./lib/cookie_store
+#= require ./lib/local_storage_store
 #= require ./lib/page
 
 #= require app/app

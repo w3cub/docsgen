@@ -56,6 +56,10 @@
 %icon-close-white           { background-position: -2rem -5rem; }
 %icon-back                  { background-position: -3rem -5rem; @extend %darkIconFix !optional; }
 
+._icon-codeceptjs:before    { background-position: -3rem 0; }
+._icon-codeception:before   { background-position: -4rem 0; }
+._icon-sqlite:before        { background-position: -5rem 0; @extend %darkIconFix !optional; }
+._icon-async:before         { background-position: -6rem 0; @extend %darkIconFix !optional; }
 ._icon-http:before          { background-position: -7rem 0; @extend %darkIconFix !optional; }
 ._icon-jquery:before        { background-position: -8rem 0; @extend %darkIconFix !optional; }
 ._icon-underscore:before    { background-position: -9rem 0; @extend %darkIconFix !optional; }
@@ -72,6 +76,8 @@
 ._icon-angularjs:before     { background-position: -9rem -1rem; }
 ._icon-coffeescript:before  { background-position: 0 -2rem; @extend %darkIconFix !optional; }
 ._icon-ember:before         { background-position: -1rem -2rem; }
+._icon-yarn:before          { background-position: -2rem -2rem; }
+._icon-immutable:before     { background-position: -3rem -2rem; @extend %darkIconFix !optional; }
 ._icon-jqueryui:before      { background-position: -4rem -2rem; }
 ._icon-jquerymobile:before  { background-position: -5rem -2rem; }
 ._icon-lodash:before        { background-position: -6rem -2rem; }
@@ -88,6 +94,7 @@
 ._icon-knockout:before      { background-position: -5rem -3rem; }
 ._icon-moment:before        { background-position: -6rem -3rem; @extend %darkIconFix !optional; }
 ._icon-c:before             { background-position: -7rem -3rem; }
+._icon-statsmodels:before   { background-position: -8rem -3rem; }
 ._icon-yii:before,
 ._icon-yii1:before          { background-position: -9rem -3rem; }
 ._icon-cpp:before           { background-position: 0 -4rem; }
@@ -118,6 +125,9 @@
 ._icon-bower:before         { background-position: -4rem -6rem; }
 ._icon-fish:before          { background-position: -5rem -6rem; @extend %darkIconFix !optional; }
 ._icon-scikit_image:before  { background-position: -6rem -6rem; }
+._icon-twig:before          { background-position: -7rem -6rem; }
+._icon-pandas:before        { background-position: -8rem -6rem; }
+._icon-scikit_learn:before  { background-position: -9rem -6rem; }
 ._icon-bottle:before        { background-position: 0 -7rem; }
 ._icon-docker:before        { background-position: -1rem -7rem; }
 ._icon-cakephp:before       { background-position: -2rem -7rem; }

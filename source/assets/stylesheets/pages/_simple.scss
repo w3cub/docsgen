@@ -18,12 +18,15 @@
 }
 
 ._apache_pig,
+._bower,
 ._chai,
+._codeceptjs,
 ._docker,
 ._fish,
 ._gnu,
 ._grunt,
 ._haxe,
+._immutable,
 ._influxdata,
 ._less,
 ._lodash,
@@ -34,6 +37,7 @@
 ._redux,
 ._sinon,
 ._typescript,
-._webpack {
+._webpack,
+._yarn {
   @extend %simple;
 }

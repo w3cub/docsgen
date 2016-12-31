@@ -123,6 +123,7 @@
       doc = @disabledDocs.findBy('slug', 'codeigniter~3') if slug == 'codeigniter~3.0'
       doc = @disabledDocs.findBy('slug', 'node~4_lts') if slug == 'node~4.2_lts'
       doc = @disabledDocs.findBy('slug', 'xslt_xpath') if slug == 'xpath'
+      doc = @disabledDocs.findBy('slug', 'angular~2_typescript') if slug == 'angular~2.0_typescript'
       doc = @disabledDocs.findBy('slug', "angularjs~#{match[1]}") if match = /^angular~(1\.\d)$/.exec(slug)
       doc ||= @disabledDocs.findBy('slug_without_version', slug)
       if doc
@@ -211,8 +212,17 @@
     @quotaExceeded = true
     new app.views.Notif 'QuotaExceeded', autoHide: null
     Raven.captureMessage 'QuotaExceededError', level: 'warning'
+    return
+
+  onCookieBlocked: (key, value, actual) ->
+    return if @cookieBlocked
+    @cookieBlocked = true
+    new app.views.Notif 'CookieBlocked', autoHide: null
+    Raven.captureMessage "CookieBlocked/#{key}", level: 'warning', extra: {value, actual}
+    return
 
   onWindowError: (args...) ->
+    return if @cookieBlocked
     if @isInjectionError args...
       @onInjectionError()
     else if @isAppError args...

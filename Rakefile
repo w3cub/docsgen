@@ -1,6 +1,7 @@
 require "rubygems"
 require "bundler/setup"
 require "stringex"
+require "fileutils"
 require "./sitemap"
 
 ## -- Rsync Deploy config -- ##
@@ -165,31 +166,58 @@ task :gitinit do |t, args|
 
 end
 
+task "setup generate collection"
+task :setup_gen do
+  names = []
+  content = ""
+  Dir.glob("#{docs_cache_dir}/*") { |dir|  
+    names.push dir.gsub('.docs-cache/','')
+  }
+  names.sort.each_with_index { |item, index|
+    if index%3 == 0
+      if index == 0
+        content << "[\n'"
+      else
+        content << "',\n'"
+      end
+    end
+    content << item + " "
+    if index == names.size - 1
+      content << "'\n]"
+    end
+  }
+  rakefile = IO.read(__FILE__)
+  rakefile.sub!(/queueNames([\n\s]*?)=([\s\n]*?)((\[)[^\]]*?(\]))/, "queueNames\\1=\\2#{content}")
+  File.open(__FILE__, 'w') do |f|
+    f.write rakefile
+  end
+end
+
 
 desc "This task for big Collection"
 task :multi_gen_deploy do 
   # Rake::Task[:gitinit].invoke
-  names = 
+  queueNames = 
 [
 'angularjs~1.2 angularjs~1.3 angularjs~1.4 ',
-'angularjs~1.5', 'angular~2_dart', 'angular~2_typescript ',
+'angularjs~1.5 angular~2_dart angular~2_typescript ',
 'ansible apache_http_server apache_pig~0.13 ',
 'apache_pig~0.14 apache_pig~0.15 apache_pig~0.16 ',
 'async backbone bootstrap~3 ',
 'bootstrap~4 bottle~0.11 bottle~0.12 ',
 'bower browser_support_tables c ',
-'cakephp~2.7', 'cakephp~2.8', 'cakephp~3.1 ',
-'cakephp~3.2', 'cakephp~3.3 chai ',
+'cakephp~2.7 cakephp~2.8 cakephp~3.1 ',
+'cakephp~3.2 cakephp~3.3 chai ',
 'chef~11 chef~12 clojure~1.7 ',
 'clojure~1.8 cmake~3.5 cmake~3.6 ',
 'cmake~3.7 codeception codeceptjs ',
 'codeigniter~3 coffeescript cordova~6 ',
-'cpp', 'crystal', 'css ',
+'cpp crystal css ',
 'd3~3 d3~4 django~1.10 ',
 'django~1.8 django~1.9 docker~1.10 ',
 'docker~1.11 docker~1.12 dojo ',
-'dom', 'dom_events', 'drupal~7 ',
-'drupal~8', 'elixir ember ',
+'dom dom_events drupal~7 ',
+'drupal~8 elixir ember ',
 'erlang~18 erlang~19 express ',
 'fish~2.2 fish~2.3 fish~2.4 ',
 'flow gcc~4 gcc~4_cpp ',
@@ -228,21 +256,20 @@ task :multi_gen_deploy do
 'rethinkdb~ruby ruby~2.2 ruby~2.3 ',
 'rust sass scikit_image ',
 'scikit_learn sinon socketio ',
-'sqlite', 'statsmodels', 'svg ',
-'symfony~2.7', 'symfony~2.8', 'symfony~3.0 ',
-'symfony~3.1', 'tcl_tk tensorflow~cpp ',
+'sqlite statsmodels svg ',
+'symfony~2.7 symfony~2.8 symfony~3.0 ',
+'symfony~3.1 tcl_tk tensorflow~cpp ',
 'tensorflow~guide tensorflow~python twig ',
 'typescript underscore vagrant ',
 'vue~1 vue~2 webpack ',
 'xslt_xpath yarn yii~1.1 ',
 'yii~2.0 '
 ]
-  names = []
+
   queue = Queue.new
-  names.each do |item|
+  queueNames.each do |item|
     queue.push(item)
   end
-
 
   until queue.empty?
     docs = queue.pop rescue nil

@@ -30,7 +30,7 @@ server_port     = "4000"      # port for preview server eg. localhost:4000
 docs_dir        = "_docs"
 docs_cache_dir  = ".docs-cache"
 
-repo_url = "git@github.com:icai/docshub-dist.git"
+repo_url = "git@github.com:icai/docshub-release.git"
 
 if (/cygwin|mswin|mingw|bccwin|wince|emx/ =~ RUBY_PLATFORM) != nil
   puts '## Set the codepage to 65001 for Windows machines'
@@ -145,50 +145,105 @@ end
 
 task "reinit git"
 task :gitinit do |t, args|
-  
+  rm_rf deploy_dir
+  mkdir deploy_dir
+  cd "#{deploy_dir}" do
+    system "git init"
+    system 'echo "W3cubDocs is upgrading " > index.html'
+    system "git add ."
+    system "git commit -m \"W3cubDocs init\""
+    system "git branch -m gh-pages"
+    system "git remote add origin #{repo_url}"
+  end
+  Rake::Task[:gen_deploy].invoke
+
+  Rake::Task[:gen_deploy].reenable
+  Rake::Task[:deploy].reenable
+  Rake::Task[:generate].reenable
+  Rake::Task[:copydot].reenable
+  Rake::Task["#{deploy_default}"].reenable
+
 end
 
 
 desc "This task for big Collection"
 task :multi_gen_deploy do 
-  names = [
-  'node node~4_lts vue~1 vue~2'
-  # 'angularjs~1.2 angularjs~1.3 angularjs~1.4 ','angularjs~1.5 angular~2.0_typescript ansible ',
-  # 'apache_http_server apache_pig~0.13 apache_pig~0.14 apache_pig~0.15 apache_pig~0.16 backbone ',
-  # 'bootstrap~3 bootstrap~4 bottle~0.12 bower browser_support_tables c ',
-  # 'cakephp~2.7 cakephp~2.8 cakephp~3.1',' cakephp~3.2 cakephp~3.3 chai ',
-  # 'chef~11 chef~12 clojure~1.7 clojure~1.8 cmake~3.5 codeigniter~3 ',
-  # 'coffeescript cordova cpp crystal css d3~3 ',
-  # 'd3~4 django~1.10 django~1.8 django~1.9 docker~1.10 docker~1.11 ',
-  # 'dojo dom dom_events ', 
-  # 'drupal~7', 'drupal~8', 'elixir ',
-  # 'ember erlang~18 erlang~19 express fish~2.3 flow ',
-  # 'gcc~4 gcc~4_cpp gcc~5 gcc~5_cpp git gnu_fortran~4 ',
-  # 'gnu_fortran~5 gnu_fortran~6 go grunt haskell haxe ',
-  # 'haxe~cpp haxe~cs haxe~flash haxe~java haxe~javascript haxe~neko ',
-  # 'haxe~php haxe~python html http influxdata javascript ',
-  # 'jquery jquerymobile jqueryui julia knockout kotlin ',
-  # 'laravel~5.1 laravel~5.2 laravel~5.3 less lodash~3 lodash~4 ',
-  # 'love lua~5.1 lua~5.2 lua~5.3 marionette~2 marionette~3 ',
-  # 'markdown matplotlib~1.5 meteor~1.3 meteor~1.4 minitest mocha ',
-  # 'modernizr moment mongoose nginx nginx_lua_module node ',
-  # 'node~4_lts nokogiri npm numpy~1.10 numpy~1.11 opentsdb ',
-  # 'padrino perl~5.20 perl~5.22 perl~5.24 phalcon phaser ',
-  # 'phoenix php phpunit~4 phpunit~5 postgresql~9.4 postgresql~9.5 ',
-  # 'python~2.7 python~3.5 q rails~4.1 rails~4.2 rails~5.0 ',
-  # 'ramda react react_native redis redux relay ',
-  # 'requirejs rethinkdb~java rethinkdb~javascript rethinkdb~python rethinkdb~ruby ruby~2.2 ',
-  # 'ruby~2.3 rust sass scikit_image sinon socketio ',
-  # 'svg symfony~2.7', 'symfony~2.8','symfony~3.0', 'symfony~3.1 tcl_tk ',
-  # 'tensorflow~cpp tensorflow~python typescript underscore vagrant vue ',
-  # 'webpack xslt_xpath yii~1.1 yii~2.0 '
- ]
-  # names = ['node']
+  # Rake::Task[:gitinit].invoke
+  names = 
+[
+'angularjs~1.2 angularjs~1.3 angularjs~1.4 ',
+'angularjs~1.5', 'angular~2_dart', 'angular~2_typescript ',
+'ansible apache_http_server apache_pig~0.13 ',
+'apache_pig~0.14 apache_pig~0.15 apache_pig~0.16 ',
+'async backbone bootstrap~3 ',
+'bootstrap~4 bottle~0.11 bottle~0.12 ',
+'bower browser_support_tables c ',
+'cakephp~2.7', 'cakephp~2.8', 'cakephp~3.1 ',
+'cakephp~3.2', 'cakephp~3.3 chai ',
+'chef~11 chef~12 clojure~1.7 ',
+'clojure~1.8 cmake~3.5 cmake~3.6 ',
+'cmake~3.7 codeception codeceptjs ',
+'codeigniter~3 coffeescript cordova~6 ',
+'cpp', 'crystal', 'css ',
+'d3~3 d3~4 django~1.10 ',
+'django~1.8 django~1.9 docker~1.10 ',
+'docker~1.11 docker~1.12 dojo ',
+'dom', 'dom_events', 'drupal~7 ',
+'drupal~8', 'elixir ember ',
+'erlang~18 erlang~19 express ',
+'fish~2.2 fish~2.3 fish~2.4 ',
+'flow gcc~4 gcc~4_cpp ',
+'gcc~5 gcc~5_cpp gcc~6 ',
+'gcc~6_cpp git gnu_fortran~4 ',
+'gnu_fortran~5 gnu_fortran~6 go ',
+'grunt haskell~7 haskell~8 ',
+'haxe haxe~cpp haxe~cs ',
+'haxe~flash haxe~java haxe~javascript ',
+'haxe~neko haxe~php haxe~python ',
+'html http immutable ',
+'influxdata javascript jquery ',
+'jquerymobile jqueryui julia ',
+'knockout kotlin laravel~5.1 ',
+'laravel~5.2 laravel~5.3 less ',
+'lodash~2 lodash~3 lodash~4 ',
+'love lua~5.1 lua~5.2 ',
+'lua~5.3 marionette~2 marionette~3 ',
+'markdown matplotlib~1.5 meteor~1.3 ',
+'meteor~1.4 minitest mocha ',
+'modernizr moment mongoose ',
+'nginx nginx_lua_module node ',
+'node~4_lts node~6_lts nokogiri ',
+'npm numpy~1.10 numpy~1.11 ',
+'opentsdb padrino pandas~0.18 ',
+'pandas~0.19 perl~5.20 perl~5.22 ',
+'perl~5.24 phalcon~2 phalcon~3 ',
+'phaser phoenix php ',
+'phpunit~4 phpunit~5 postgresql~9.4 ',
+'postgresql~9.5 postgresql~9.6 python~2.7 ',
+'python~3.5 q rails~4.1 ',
+'rails~4.2 rails~5.0 ramda ',
+'react react_native redis ',
+'redux relay requirejs ',
+'rethinkdb~java rethinkdb~javascript rethinkdb~python ',
+'rethinkdb~ruby ruby~2.2 ruby~2.3 ',
+'rust sass scikit_image ',
+'scikit_learn sinon socketio ',
+'sqlite', 'statsmodels', 'svg ',
+'symfony~2.7', 'symfony~2.8', 'symfony~3.0 ',
+'symfony~3.1', 'tcl_tk tensorflow~cpp ',
+'tensorflow~guide tensorflow~python twig ',
+'typescript underscore vagrant ',
+'vue~1 vue~2 webpack ',
+'xslt_xpath yarn yii~1.1 ',
+'yii~2.0 '
+]
+  names = []
   queue = Queue.new
   names.each do |item|
     queue.push(item)
   end
-  # (Dir["#{deploy_dir}/*"]).each { |f| rm_rf(f) }  
+
+
   until queue.empty?
     docs = queue.pop rescue nil
     puts docs
@@ -217,7 +272,7 @@ end
 
 desc "copy dot files for deployment"
 task :copydot, :source, :dest do |t, args|
-  FileList["#{args.source}/**/.*"].exclude("**/.", "**/..", "**/.DS_Store", "**/._*").each do |file|
+  FileList["#{args.source}/**/.*"].exclude("**/.", "**/..", "**/.jekyll-metadata", "**/.DS_Store", "**/._*").each do |file|
     cp_r file, file.gsub(/#{args.source}/, "#{args.dest}") unless File.directory?(file)
   end
 end

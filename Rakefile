@@ -293,7 +293,32 @@ end
 
 desc "generate sitemap"
 task :sitemap do |t, args|
-  Sitemap.new()
+  names = []
+  Dir.glob("#{docs_cache_dir}/*") { |dir|  
+    names.push dir.gsub('.docs-cache/','')
+  }
+  queue = Queue.new
+  names.each do |item|
+    queue.push(item)
+  end
+  until queue.empty?
+    docs = queue.pop rescue nil
+    puts "Generating #{docs} sitemap"
+    Sitemap.new({fileDir: "./_deploy/"+ docs + '/', fileBase: "./_deploy/"})
+  end
+  robotfile = "./public/robots.txt"
+  if File.exists?(robotfile)
+    File.truncate(robotfile, 0)
+  else
+    File.new(robotfile, "a").close
+  end
+  puts "Updating robots"
+  robots = File.open(robotfile, "a")
+  robots.puts "User-agent: *"
+  robots.puts "Disallow: "
+  names.each do |item|
+    robots.puts "Sitemap: http://docs.w3cub.com/#{item}/sitemap.xml"
+  end
 end
 
 

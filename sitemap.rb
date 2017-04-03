@@ -5,7 +5,7 @@ class Sitemap
   def initialize(config = {})
     @fileName = config[:fileName] || "sitemap.xml"
     @fileDir = config[:fileDir] || "./public/"
-    # @fileDir = "_deploy/"
+    @fileBase = config[:fileBase] || @fileDir
     @domain = config[:domain] || "http://docs.w3cub.com/"
     @filePath = "#{@fileDir}#{@fileName}"
 
@@ -35,7 +35,7 @@ class Sitemap
       if INCLUDED_EXTENSIONS.include? File.extname(file) 
         lastmod = File.mtime(file).xmlschema
         xmlfile << "<url>\n"
-        xmlfile <<  "<loc>#{file.sub(@fileDir,@domain).sub(/index\.html$/,"")}</loc>\n"
+        xmlfile <<  "<loc>#{file.sub(@fileBase,@domain).sub(/index\.html$/,"")}</loc>\n"
         xmlfile <<  "<lastmod>#{lastmod}</lastmod>\n"
         xmlfile << "</url>\n"
       end

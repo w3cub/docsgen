@@ -1,9 +1,9 @@
-#Docshub
+# Docshub
 A Jekyll Project
 
 
 
-##Jekyll Case
+## Jekyll Case
 
 > ... is invalid because it contains a colon https://github.com/jekyll/jekyll/issues/5261
 
@@ -22,7 +22,7 @@ You should go to path `ruby-2.*.*/gems/jekyll-3.*.*/lib/jekyll/url.rb`, comment 
 
 
 
-##Release
+## Release
 
 	rake setup_gen # setup generate queue
  	rake multi_gen_deploy # project release

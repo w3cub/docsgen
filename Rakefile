@@ -291,7 +291,7 @@ task :multi_gen_deploy do
 # 'scikit_image scikit_learn ',
 # 'sinon~1 sinon~2 ',
 # 'socketio sqlite ',
-'statsmodels svg ',
+# 'statsmodels svg ',
 # 'symfony~2.7 symfony~2.8 ',
 # 'symfony~3.0 symfony~3.1 ',
 # 'symfony~3.2 tcl_tk ',

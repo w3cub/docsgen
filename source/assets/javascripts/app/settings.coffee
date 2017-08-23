@@ -13,28 +13,23 @@ class app.Settings
     manualUpdate: false
     schema: 1
 
-  constructor: (legacyStore) ->
+  constructor: ->
     @store = new CookieStore
-    @importLegacyValues(legacyStore)
+    @cache = {}
 
-  importLegacyValues: (legacyStore) ->
-    return unless settings = legacyStore.get('settings')
-    for key, value of settings
-      if key == 'autoUpdate'
-        key = 'manualUpdate'
-        value = !value
-      else if key == 'tips'
-        value = value.join('/')
-      @store.set(key, value)
-    legacyStore.del('settings')
-    return
+  get: (key) ->
+    return @cache[key] if @cache.hasOwnProperty(key)
+    @cache[key] = @store.get(key) ? @constructor.defaults[key]
 
   set: (key, value) ->
     @store.set(key, value)
+    delete @cache[key]
     return
 
-  get: (key) ->
-    @store.get(key) ? @constructor.defaults[key]
+  del: (key) ->
+    @store.del(key)
+    delete @cache[key]
+    return
 
   hasDocs: ->
     try !!@store.get(DOCS_KEY)
@@ -43,18 +38,14 @@ class app.Settings
     @store.get(DOCS_KEY)?.split('/') or app.config.default_docs
 
   setDocs: (docs) ->
-    @store.set DOCS_KEY, docs.join('/')
+    @set DOCS_KEY, docs.join('/')
     return
 
   getTips: ->
     @store.get(TIPS_KEY)?.split('/') or []
 
   setTips: (tips) ->
-    @store.set TIPS_KEY, tips.join('/')
-    return
-
-  setDark: (value) ->
-    @store.set DARK_KEY, !!value
+    @set TIPS_KEY, tips.join('/')
     return
 
   setLayout: (name, enable) ->
@@ -67,9 +58,9 @@ class app.Settings
       $.arrayDelete(layout, name)
 
     if layout.length > 0
-      @store.set LAYOUT_KEY, layout.join(' ')
+      @set LAYOUT_KEY, layout.join(' ')
     else
-      @store.del LAYOUT_KEY
+      @del LAYOUT_KEY
     return
 
   hasLayout: (name) ->
@@ -77,7 +68,7 @@ class app.Settings
     layout.indexOf(name) isnt -1
 
   setSize: (value) ->
-    @store.set SIZE_KEY, value
+    @set SIZE_KEY, value
     return
 
   dump: ->
@@ -85,4 +76,5 @@ class app.Settings
 
   reset: ->
     @store.reset()
+    @cache = {}
     return

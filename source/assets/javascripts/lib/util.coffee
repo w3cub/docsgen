@@ -167,27 +167,32 @@ $.scrollTo = (el, parent, position = 'center', options = {}) ->
   return unless parent
 
   parentHeight = parent.clientHeight
-  return unless parent.scrollHeight > parentHeight
+  parentScrollHeight = parent.scrollHeight
+  return unless parentScrollHeight > parentHeight
 
   top = $.offset(el, parent).top
+  offsetTop = parent.firstElementChild.offsetTop
 
   switch position
     when 'top'
-      parent.scrollTop = top - (if options.margin? then options.margin else 20)
+      parent.scrollTop = top - offsetTop - (if options.margin? then options.margin else 0)
     when 'center'
       parent.scrollTop = top - Math.round(parentHeight / 2 - el.offsetHeight / 2)
     when 'continuous'
       scrollTop = parent.scrollTop
       height = el.offsetHeight
 
+      lastElementOffset = parent.lastElementChild.offsetTop + parent.lastElementChild.offsetHeight
+      offsetBottom = if lastElementOffset > 0 then parentScrollHeight - lastElementOffset else 0
+
       # If the target element is above the visible portion of its scrollable
       # ancestor, move it near the top with a gap = options.topGap * target's height.
-      if top <= scrollTop + height * (options.topGap or 1)
-        parent.scrollTop = top - height * (options.topGap or 1)
+      if top - offsetTop <= scrollTop + height * (options.topGap or 1)
+        parent.scrollTop = top - offsetTop - height * (options.topGap or 1)
       # If the target element is below the visible portion of its scrollable
       # ancestor, move it near the bottom with a gap = options.bottomGap * target's height.
-      else if top >= scrollTop + parentHeight - height * ((options.bottomGap or 1) + 1)
-        parent.scrollTop = top - parentHeight + height * ((options.bottomGap or 1) + 1)
+      else if top + offsetBottom >= scrollTop + parentHeight - height * ((options.bottomGap or 1) + 1)
+        parent.scrollTop = top + offsetBottom - parentHeight + height * ((options.bottomGap or 1) + 1)
   return
 
 $.scrollToWithImageLock = (el, parent, args...) ->
@@ -328,11 +333,11 @@ $.requestAnimationFrame = (fn) ->
 $.noop = ->
 
 $.popup = (value) ->
-  win = window.open()
-  if win
+  try
+    win = window.open()
     win.opener = null if win.opener
     win.location = value.href or value
-  else
+  catch
     window.open value.href or value, '_blank'
   return
 
@@ -342,8 +347,31 @@ $.isTouchScreen = ->
 $.isWindows = ->
   navigator.platform?.indexOf('Win') >= 0
 
+
+isMac = null
 $.isMac = ->
-  navigator.userAgent?.indexOf('Mac') >= 0
+  isMac ?= navigator.userAgent?.indexOf('Mac') >= 0
+
+isIE = null
+$.isIE = ->
+  isIE ?= navigator.userAgent?.indexOf('MSIE') >= 0 || navigator.userAgent?.indexOf('rv:11.0') >= 0
+
+isAndroid = null
+$.isAndroid = ->
+  isAndroid ?= navigator.userAgent?.indexOf('Android') >= 0
+
+isIOS = null
+$.isIOS = ->
+  isIOS ?= navigator.userAgent?.indexOf('iPhone') >= 0 || navigator.userAgent?.indexOf('iPad') >= 0
+
+$.overlayScrollbarsEnabled = ->
+  return false unless $.isMac()
+  div = document.createElement('div')
+  div.setAttribute('style', 'width: 100px; height: 100px; overflow: scroll; position: absolute')
+  document.body.appendChild(div)
+  result = div.offsetWidth is div.clientWidth
+  document.body.removeChild(div)
+  result
 
 HIGHLIGHT_DEFAULTS =
   className: 'highlight'

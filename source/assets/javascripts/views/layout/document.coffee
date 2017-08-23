@@ -98,12 +98,15 @@ class app.views.Document extends app.View
       app.doc.fullPath()
 
     app.router.show(path)
+    return
 
   onBack: ->
     history.back()
+    return
 
   onForward: ->
     history.forward()
+    return
 
   onClick: (event) ->
     return unless event.target.hasAttribute('data-behavior')

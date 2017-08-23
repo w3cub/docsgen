@@ -2,16 +2,17 @@ class app.Router
   $.extend @prototype, Events
 
   @routes: [
-    ['*',              'before'  ]
-    ['/',              'root'    ]
-    ['/offline',       'offline' ]
-    ['/about',         'about'   ]
-    ['/news',          'news'    ]
-    ['/help',          'help'    ]
-    ['/:doc-:type/',   'type'    ]
-    ['/:doc/',         'doc'     ]
-    ['/:doc/:path(*)', 'entry'   ]
-    ['*',              'notFound']
+    ['*',              'before'   ]
+    ['/',              'root'     ]
+    ['/settings',      'settings' ]
+    ['/offline',       'offline'  ]
+    ['/about',         'about'    ]
+    ['/news',          'news'     ]
+    ['/help',          'help'     ]
+    ['/:doc-:type/',   'type'     ]
+    ['/:doc/',         'doc'      ]
+    ['/:doc/:path(*)', 'entry'    ]
+    ['*',              'notFound' ]
   ]
 
   constructor: ->
@@ -33,62 +34,76 @@ class app.Router
     return
 
   before: (context, next) ->
+    previousContext = @context
     @context = context
     @trigger 'before', context
-    next()
-    return
+
+    if res = next()
+      @context = previousContext
+      return res
+    else
+      return
 
   doc: (context, next) ->
     if doc = app.docs.findBySlug(context.params.doc) or app.disabledDocs.findBySlug(context.params.doc)
       context.doc = doc
       context.entry = doc.toEntry()
       @triggerRoute 'entry'
+      return
     else
-      next()
-    return
+      return next()
 
   type: (context, next) ->
     doc = app.docs.findBySlug(context.params.doc)
+
     if type = doc?.types.findBy 'slug', context.params.type
       context.doc = doc
       context.type = type
       @triggerRoute 'type'
+      return
     else
-      next()
-    return
+      return next()
 
   entry: (context, next) ->
     doc = app.docs.findBySlug(context.params.doc)
+
     if entry = doc?.findEntryByPathAndHash(context.params.path, context.hash)
       context.doc = doc
       context.entry = entry
       @triggerRoute 'entry'
+      return
     else
-      next()
-    return
+      return next()
 
   root: ->
-    if app.isSingleDoc()
-      setTimeout (-> window.location = '/'), 0
-    else
-      @triggerRoute 'root'
+    return '/' if app.isSingleDoc()
+    @triggerRoute 'root'
     return
 
-  offline: ->
+  settings: (context) ->
+    return "/#/#{context.path}" if app.isSingleDoc()
+    @triggerRoute 'settings'
+    return
+
+  offline: (context)->
+    return "/#/#{context.path}" if app.isSingleDoc()
     @triggerRoute 'offline'
     return
 
   about: (context) ->
+    return "/#/#{context.path}" if app.isSingleDoc()
     context.page = 'about'
     @triggerRoute 'page'
     return
 
   news: (context) ->
+    return "/#/#{context.path}" if app.isSingleDoc()
     context.page = 'news'
     @triggerRoute 'page'
     return
 
   help: (context) ->
+    return "/#/#{context.path}" if app.isSingleDoc()
     context.page = 'help'
     @triggerRoute 'page'
     return
@@ -101,14 +116,17 @@ class app.Router
     location.pathname is '/'
 
   isDocIndex: ->
-    @context and @context.doc and @context.entry is @context.doc.toEntry()
+    return @isIndex()
+    
+  isIndex: ->
+    @context?.path is '/' or (app.isSingleDoc() and @context?.entry?.isIndex())
 
   setInitialPath: ->
     # Remove superfluous forward slashes at the beginning of the path
     if (path = location.pathname.replace /^\/{2,}/g, '/') isnt location.pathname
       page.replace path + location.search + location.hash, null, true
 
-    if @isRoot()
+    if location.pathname is '/'
       if path = @getInitialPathFromHash()
         page.replace path + location.search, null, true
       else if path = @getInitialPathFromCookie()

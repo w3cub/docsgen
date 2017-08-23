@@ -6,9 +6,9 @@
 {% endif %}
 <head>
   <meta charset="utf-8">
-  <title>{% if page.url == "/index.html" %}{{page.title}}{% else %}{% if page.title %}{% if site.titlecase %}{{ page.title | titlecase }}{% else %}{{ page.title }}{% endif %} - {% endif %}{{ site.title }}{% endif %}</title>
+  <title>{% if page.url == "/" %}{{page.title}}{% else %}{% if page.title %}{% if site.titlecase %}{{ page.title | titlecase }}{% else %}{{ page.title }}{% endif %} - {% endif %}{{ site.title }}{% endif %}</title>
   {% capture description %}
-    {% if page.url == "/index.html" %} {{ site.description }}
+    {% if page.url == "/" %} {{ site.description }}
     {% elsif page.description %}{{ page.description }}
     {% else %}{{ content | raw_content }}
     {% endif %}

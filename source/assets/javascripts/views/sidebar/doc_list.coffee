@@ -18,7 +18,7 @@ class app.views.DocList extends app.View
   init: ->
     @lists = {}
 
-    @addSubview @listFocus  = new app.views.ListFocus @el unless app.isMobile()
+    @addSubview @listFocus  = new app.views.ListFocus @el
     @addSubview @listFold   = new app.views.ListFold @el
     @addSubview @listSelect = new app.views.ListSelect @el
 
@@ -37,7 +37,10 @@ class app.views.DocList extends app.View
     return
 
   render: =>
-    @html @tmpl('sidebarDoc', app.docs.all())
+    html = ''
+    for doc in app.docs.all()
+      html += @tmpl('sidebarDoc', doc, fullName: app.docs.countAllBy('name', doc.name) > 1)
+    @html html
     @renderDisabled() unless app.isSingleDoc() or app.disabledDocs.size() is 0
     return
 
@@ -84,7 +87,7 @@ class app.views.DocList extends app.View
     @listSelect.deselect()
     @listFocus?.blur()
     @listFold.reset()
-    @revealCurrent() if options.revealCurrent
+    @revealCurrent() if options.revealCurrent || app.isSingleDoc()
     return
 
   onOpen: (event) =>
@@ -148,7 +151,7 @@ class app.views.DocList extends app.View
     return
 
   scrollTo: (model) ->
-    $.scrollTo @find("a[href='#{model.fullPath()}']"), null, 'top', margin: 0
+    $.scrollTo @find("a[href='#{model.fullPath()}']"), null, 'top', margin: if app.isMobile() then 48 else 0
     return
 
   toggleDisabled: ->
@@ -161,13 +164,13 @@ class app.views.DocList extends app.View
     return
 
   onClick: (event) =>
-    if @disabledTitle and $.hasChild(@disabledTitle, event.target)
+    if @disabledTitle and $.hasChild(@disabledTitle, event.target) and event.target.tagName isnt 'A'
       $.stopEvent(event)
       @toggleDisabled()
     else if slug = event.target.getAttribute('data-enable')
       $.stopEvent(event)
       doc = app.disabledDocs.findBy('slug', slug)
-      app.enableDoc(doc, @onEnabled, @onEnabled)
+      app.enableDoc(doc, @onEnabled, @onEnabled) if doc
     return
 
   onEnabled: =>

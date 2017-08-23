@@ -9,8 +9,10 @@ class app.views.RootPage extends app.View
 
   render: ->
     @empty()
-    @append @tmpl('mobileNav') if app.isMobile()
-    @append @tmpl if @isHidden() then 'splash' else if app.isMobile() then 'mobileIntro' else 'intro'
+    if app.isAndroidWebview()
+      @append @tmpl('androidWarning')
+    else
+      @append @tmpl if @isHidden() then 'splash' else if app.isMobile() then 'mobileIntro' else 'intro'
     return
 
   hideIntro: ->

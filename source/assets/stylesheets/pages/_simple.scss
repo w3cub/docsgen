@@ -12,7 +12,7 @@
     h1, h2, h3 { margin-left: 0; }
   }
 
-  p > code, li > code, td > code { @extend %label; }
+  p > code, li > code, td > code, blockquote > code, dd > code { @extend %label; }
   blockquote { @extend %note; }
   blockquote > h4, blockquote > h5 { margin-top: .25rem; }
 }
@@ -22,12 +22,16 @@
 ._chai,
 ._codeceptjs,
 ._docker,
+._electron,
 ._fish,
+._flow,
 ._gnu,
 ._grunt,
 ._haxe,
 ._immutable,
 ._influxdata,
+._jasmine,
+._jest,
 ._less,
 ._lodash,
 ._marionette,
@@ -35,9 +39,9 @@
 ._mocha,
 ._mongoose,
 ._redux,
-._sinon,
+._requirejs,
 ._typescript,
-._webpack,
+._vagrant,
 ._yarn {
   @extend %simple;
 }

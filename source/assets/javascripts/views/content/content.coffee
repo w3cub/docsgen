@@ -6,13 +6,13 @@ class app.views.Content extends app.View
     click: 'onClick'
 
   @shortcuts:
-    altUp:    'scrollStepUp'
-    altDown:  'scrollStepDown'
-    pageUp:   'scrollPageUp'
-    pageDown: 'scrollPageDown'
-    home:     'scrollToTop'
-    end:      'scrollToBottom'
-    altF:     'onAltF'
+    altUp:      'scrollStepUp'
+    altDown:    'scrollStepDown'
+    pageUp:     'scrollPageUp'
+    pageDown:   'scrollPageDown'
+    pageTop:    'scrollToTop'
+    pageBottom: 'scrollToBottom'
+    altF:       'onAltF'
 
   @routes:
     before: 'beforeRoute'
@@ -102,14 +102,12 @@ class app.views.Content extends app.View
     return
 
   scrollToTarget: ->
-    return if @isLoading()
     if @routeCtx.hash and el = @findTargetByHash @routeCtx.hash
       $.scrollToWithImageLock el, @scrollEl, 'top',
-        margin: 20 + if @scrollEl is @el then 0 else $.offset(@el).top
+        margin: if @scrollEl is @el then 0 else $.offset(@el).top
       $.highlight el, className: '_highlight'
     else
       @scrollTo @scrollMap[@routeCtx.state.id]
-    clearTimeout @scrollTimeout
     return
 
   onReady: =>
@@ -123,21 +121,28 @@ class app.views.Content extends app.View
 
   onEntryLoading: =>
     @showLoading()
+    if @scrollToTargetTimeout
+      clearTimeout @scrollToTargetTimeout
+      @scrollToTargetTimeout = null
     return
 
   onEntryLoaded: =>
     @hideLoading()
+    if @scrollToTargetTimeout
+      clearTimeout @scrollToTargetTimeout
+      @scrollToTargetTimeout = null
     @scrollToTarget()
     return
 
   beforeRoute: (context) =>
     @cacheScrollPosition()
     @routeCtx = context
-    @scrollTimeout = @delay @scrollToTarget
+    @scrollToTargetTimeout = @delay @scrollToTarget
     return
 
   cacheScrollPosition: ->
     return if not @routeCtx or @routeCtx.hash
+    return if @routeCtx.path is '/'
 
     unless @scrollMap[@routeCtx.state.id]?
       @scrollStack.push @routeCtx.state.id
@@ -155,6 +160,8 @@ class app.views.Content extends app.View
         @show @entryPage
       when 'type'
         @show @typePage
+      when 'settings'
+        @show @settingsPage
       when 'offline'
         @show @offlinePage
       else

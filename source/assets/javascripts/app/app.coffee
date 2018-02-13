@@ -12,7 +12,9 @@
     # try @initErrorTracking() catch
     # return unless @browserCheck()
     # @showLoading()
-
+    new Lazyload('._list ._list-item', {
+      wrapper: '._content'
+    })
     @el = $('._app')
     @localStorage = new LocalStorageStore
     #@appCache = new app.AppCache if app.AppCache.isEnabled()
@@ -40,8 +42,8 @@
     return
   browserCheck: ->
     return true if @isSupportedBrowser()
-    document.body.className = ''
     document.body.innerHTML = app.templates.unsupportedBrowser
+    @hideLoadingScreen()
     false
 
   initErrorTracking: ->
@@ -56,10 +58,11 @@
           release: @config.release
           whitelistUrls: [/devdocs/]
           includePaths: [/devdocs/]
-          ignoreErrors: [/NPObject/, /NS_ERROR/, /^null$/]
+          ignoreErrors: [/NPObject/, /NS_ERROR/, /^null$/, /EvalError/]
           tags:
             mode: if @isSingleDoc() then 'single' else 'full'
             iframe: (window.top isnt window).toString()
+            electron: (!!window.process?.versions?.electron).toString()
           shouldSendCallback: =>
             try
               if @isInjectionError()
@@ -73,10 +76,12 @@
               $.extend(data.user ||= {}, app.settings.dump())
               data.user.docs = data.user.docs.split('/') if data.user.docs
               data.user.lastIDBTransaction = app.lastIDBTransaction if app.lastIDBTransaction
+              data.tags.scriptCount = document.scripts.length
             data
         .install()
       @previousErrorHandler = onerror
       window.onerror = @onWindowError.bind(@)
+      CookieStore.onBlocked = @onCookieBlocked
     return
 
   bootOne: ->
@@ -120,11 +125,9 @@
   migrateDocs: ->
     for slug in @settings.getDocs() when not @docs.findBy('slug', slug)
       needsSaving = true
-      doc = @disabledDocs.findBy('slug', 'codeigniter~3') if slug == 'codeigniter~3.0'
-      doc = @disabledDocs.findBy('slug', 'node~4_lts') if slug == 'node~4.2_lts'
-      doc = @disabledDocs.findBy('slug', 'xslt_xpath') if slug == 'xpath'
-      doc = @disabledDocs.findBy('slug', 'angular~2_typescript') if slug == 'angular~2.0_typescript'
-      doc = @disabledDocs.findBy('slug', "angularjs~#{match[1]}") if match = /^angular~(1\.\d)$/.exec(slug)
+      doc = @disabledDocs.findBy('slug', 'webpack') if slug == 'webpack~2'
+      doc = @disabledDocs.findBy('slug', 'angular') if slug == 'angular~4_typescript'
+      doc = @disabledDocs.findBy('slug', 'angular~2') if slug == 'angular~2_typescript'
       doc ||= @disabledDocs.findBy('slug_without_version', slug)
       if doc
         @disabledDocs.remove(doc)
@@ -185,33 +188,25 @@
       new app.views.Tip(tip)
     return
 
-  showLoading: ->
-    document.body.classList.remove '_noscript'
-    document.body.classList.add '_loading'
-    document.body.insertAdjacentHTML 'beforeend', '<div id="fontLoader" aria-hidden="true" style="position: absolute; top: 0; height: 0; overflow: hidden; visibility: hidden;"><b>Preload</b> <em>all <b>fonts</b></em></div>' # Chrome
-    return
-
-  hideLoading: ->
-    document.body.classList.remove '_booting'
-    document.body.classList.remove '_loading'
-    try $.remove document.getElementById('fontLoader')
+  hideLoadingScreen: ->
+    document.body.classList.add '_overlay-scrollbars' if $.overlayScrollbarsEnabled()
+    document.documentElement.classList.remove '_booting'
     return
 
   indexHost: ->
     # Can't load the index files from the host/CDN when applicationCache is
     # enabled because it doesn't support caching URLs that use CORS.
-    @config[if @appCache and @settings.hasDocs() then 'index_path' else 'docs_host']
+    @config[if @appCache and @settings.hasDocs() then 'index_path' else 'docs_origin']
 
   onBootError: (args...) ->
     @trigger 'bootError'
-    @hideLoading()
+    @hideLoadingScreen()
     return
 
   onQuotaExceeded: ->
     return if @quotaExceeded
     @quotaExceeded = true
     new app.views.Notif 'QuotaExceeded', autoHide: null
-    Raven.captureMessage 'QuotaExceededError', level: 'warning'
     return
 
   onCookieBlocked: (key, value, actual) ->
@@ -227,7 +222,7 @@
       @onInjectionError()
     else if @isAppError args...
       @previousErrorHandler? args...
-      @hideLoading()
+      @hideLoadingScreen()
       @errorNotif or= new app.views.Notif 'Error'
       @errorNotif.show()
     return
@@ -256,7 +251,6 @@
         bind:               !!Function::bind
         pushState:          !!history.pushState
         matchMedia:         !!window.matchMedia
-        classList:          !!document.body.classList
         insertAdjacentHTML: !!document.body.insertAdjacentHTML
         defaultPrevented:     document.createEvent('CustomEvent').defaultPrevented is false
         cssGradients:         supportsCssGradients()

@@ -156,7 +156,7 @@ end
 
 desc "test preview"
 task :test_preview do |t, args|
-  Rake::Task[:copy_html].invoke('backbone gnu_fortran~7')
+  Rake::Task[:copy_html].invoke('backbone')
   Rake::Task[:preview].invoke
 end
 

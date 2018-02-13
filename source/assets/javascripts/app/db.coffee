@@ -1,9 +1,10 @@
 class app.DB
   NAME = 'docs'
+  VERSION = 15
 
   constructor: ->
+    @versionMultipler = if $.isIE() then 1e5 else 1e9
     @useIndexedDB = @useIndexedDB()
-    @appVersion = @appVersion()
     @callbacks = []
 
   db: (fn) ->
@@ -13,12 +14,12 @@ class app.DB
 
     try
       @open = true
-      req = indexedDB.open(NAME, @schemaVersion())
+      req = indexedDB.open(NAME, VERSION * @versionMultipler + @userVersion())
       req.onsuccess = @onOpenSuccess
       req.onerror = @onOpenError
       req.onupgradeneeded = @onUpgradeNeeded
-    catch
-      @onOpenError()
+    catch error
+      @fail 'exception', error
     return
 
   onOpenSuccess: (event) =>
@@ -26,38 +27,77 @@ class app.DB
 
     if db.objectStoreNames.length is 0
       try db.close()
-      @reason = 'empty'
-      @onOpenError()
-      return
-
-    unless @checkedBuggyIDB
-      @checkedBuggyIDB = true
-      try
-        @idbTransaction(db, stores: $.makeArray(db.objectStoreNames)[0..1], mode: 'readwrite').abort() # https://bugs.webkit.org/show_bug.cgi?id=136937
-      catch
-        try db.close()
-        @reason = 'apple'
-        @onOpenError()
-        return
-
-    @runCallbacks(db)
-    @open = false
-    db.close()
+      @open = false
+      @fail 'empty'
+    else if error = @buggyIDB(db)
+      try db.close()
+      @open = false
+      @fail 'buggy', error
+    else
+      @runCallbacks(db)
+      @open = false
+      db.close()
     return
 
   onOpenError: (event) =>
-    event?.preventDefault()
+    event.preventDefault()
     @open = false
+    error = event.target.error
 
-    if event?.target?.error?.name is 'QuotaExceededError'
-      @reset()
-      @db()
-      app.onQuotaExceeded()
-    else
-      @useIndexedDB = false
-      @reason or= 'cant_open'
-      @runCallbacks()
+    switch error.name
+      when 'QuotaExceededError'
+        @onQuotaExceededError()
+      when 'VersionError'
+        @onVersionError()
+      when 'InvalidStateError'
+        @fail 'private_mode'
+      else
+        @fail 'cant_open', error
     return
+
+  fail: (reason, error) ->
+    @cachedDocs = null
+    @useIndexedDB = false
+    @reason or= reason
+    @error or= error
+    console.error? 'IDB error', error if error
+    @runCallbacks()
+    if error and reason is 'cant_open'
+      Raven.captureMessage "#{error.name}: #{error.message}", level: 'warning', fingerprint: [error.name]
+    return
+
+  onQuotaExceededError: ->
+    @reset()
+    @db()
+    app.onQuotaExceeded()
+    Raven.captureMessage 'QuotaExceededError', level: 'warning'
+    return
+
+  onVersionError: ->
+    req = indexedDB.open(NAME)
+    req.onsuccess = (event) =>
+      @handleVersionMismatch event.target.result.version
+    req.onerror = (event) ->
+      event.preventDefault()
+      @fail 'cant_open', error
+    return
+
+  handleVersionMismatch: (actualVersion) ->
+    if Math.floor(actualVersion / @versionMultipler) isnt VERSION
+      @fail 'version'
+    else
+      @setUserVersion actualVersion - VERSION * @versionMultipler
+      @db()
+    return
+
+  buggyIDB: (db) ->
+    return if @checkedBuggyIDB
+    @checkedBuggyIDB = true
+    try
+      @idbTransaction(db, stores: $.makeArray(db.objectStoreNames)[0..1], mode: 'readwrite').abort() # https://bugs.webkit.org/show_bug.cgi?id=136937
+      return
+    catch error
+      return error
 
   runCallbacks: (db) ->
     fn(db) while fn = @callbacks.shift()
@@ -334,11 +374,9 @@ class app.DB
     app.settings.set('schema', @userVersion() + 1)
     return
 
-  schemaVersion: ->
-    @appVersion * 10 + @userVersion()
+  setUserVersion: (version) ->
+    app.settings.set('schema', version)
+    return
 
   userVersion: ->
     app.settings.get('schema')
-
-  appVersion: ->
-    if app.config.env is 'production' then app.config.version else Math.floor(Date.now() / 1000)

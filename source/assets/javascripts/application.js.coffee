@@ -1,6 +1,8 @@
 #= require ./vendor/prism
 #= require ./vendor/cookies
 #= require ./vendor/fastclick
+#= require ./vendor/classlist
+#= require ./vendor/mathml
 
 #= require ./lib/util
 #= require ./lib/events

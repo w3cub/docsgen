@@ -2,6 +2,7 @@
 // Content
 //
 
+
 ._container {
   position: relative;
   z-index: $contentZ;
@@ -12,7 +13,7 @@
 
   @media #{$mediumScreen} { margin-left: $sidebarMediumWidth; }
 
-// modify to w3cub
+  // modify to w3cub
   .static-page &{
     margin-left: 0px;
     pointer-events: auto;
@@ -65,7 +66,27 @@
     }
   }
 }
-
+@media(max-width: 480px){
+  .index-page ._container ._list{
+      display: flex;
+    flex-wrap: wrap;
+    margin-left: 0.5rem;
+      margin-right: 0.5rem;
+      width: auto;
+  }
+  .index-page ._container ._list ._list-item{
+      box-sizing: border-box;
+    width: 25%;
+      height: auto;
+  }
+  .index-page ._container ._list ._list-item .name {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      margin-left: -.5rem;
+      margin-right: -.5rem;
+  }
+}
 ._content {
   position: relative;
   height: 100%;

@@ -1,7 +1,7 @@
 # case bug for Mozilla Css document
 
 module Jekyll
-  	class URL
+  class URL
 		def to_s
 			sanitize_url(generated_permalink || generated_url)
 			# sanitized_url = sanitize_url(generated_permalink || generated_url)
@@ -12,5 +12,11 @@ module Jekyll
 			#  sanitized_url
 			# end
 		end
+	end
+	class Excerpt
+		def initialize(doc)
+      self.doc = doc
+      self.content = doc.content
+    end
 	end
 end

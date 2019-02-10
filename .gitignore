@@ -21,3 +21,4 @@ vendor
 node_modules
 Gemfile.lock
 .jekyll-metadata
+.jekyll-cache

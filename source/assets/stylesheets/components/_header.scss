@@ -12,7 +12,7 @@
   line-height: $headerHeight;
   background: $headerBackground;
   // border-bottom: 1px solid $headerBorder;
-  background: image-url('header-background.png');
+  background: asset_url('header-background.png');
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.07);
   @extend %user-select-none;
 

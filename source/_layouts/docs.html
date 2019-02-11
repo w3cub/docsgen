@@ -11,7 +11,9 @@
 	<section class="_container ">
 		<div class="_content">
 			<div class="_page _{{page.type}}">
+				{% include adtop.html %}
 				{{content | expand_urls: root_url }}
+				{% include adbottom.html %}
 			</div>
 		</div>
 	</section>

@@ -17,7 +17,6 @@ source.old
 source/_stash
 source/images/docs
 source/stylesheets/screen.css
-vendor
 node_modules
 Gemfile.lock
 .jekyll-metadata

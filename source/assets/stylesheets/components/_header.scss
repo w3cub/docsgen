@@ -4,20 +4,19 @@
 
 ._header {
   position: absolute;
-  z-index: $headerZ;
+  z-index: var(--headerZ);
   top: 0;
   left: 0;
   right: 0;
-  height: $headerHeight;
-  line-height: $headerHeight;
-  background: $headerBackground;
-  // border-bottom: 1px solid $headerBorder;
+  height: var(--headerHeight);
+  line-height: var(--headerHeight);
   background: asset_url('header-background.png');
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.07);
   @extend %user-select-none;
 
-  a:focus { outline: 0; }
+  // @include mobile { width: var(--sidebarMediumWidth); }
 }
+
 
 //
 // Navigation menu
@@ -27,7 +26,7 @@
   float: right;
   margin-right: .5rem;
   font-size: .875rem;
-  color: $textColor;
+  color: var(--textColor);
 }
 
 ._nav-link,
@@ -50,13 +49,13 @@
     height: 0;
     margin-left: -.375rem;
     border: .575rem solid transparent;
-    border-bottom-color: darken($headerBorder, 2%);
+
   }
 
   &:after {
     bottom: -0.275rem;
     border: 0.775rem solid transparent;
-    border-bottom-color: $contentBackground;
+    border-bottom-color: var(--contentBackground);
     margin-left: -9px;
   }
 }
@@ -74,7 +73,7 @@
 ._logo,._logo-sub-nav {
   position: relative;
   float: left;
-  height: $headerHeight;
+  height: var(--headerHeight);
   margin: 0;
   line-height: inherit;
   font-size: inherit;
@@ -92,49 +91,46 @@
 //
 
 ._search {
+  -ms-flex: 1 1 auto;
+      flex: 1 1 auto;
   position: relative;
   float: left;
-  width: $sidebarWidth;
+  width: var(--sidebarWidth);
   height: 100%;
   padding: .5rem 0 .5rem .5rem;
   @extend %border-box;
 
-  @media #{$mediumScreen} { width: $sidebarMediumWidth; }
+  @media #{$mediumScreen} { width: var(--sidebarMediumWidth); }
 
   &:before {
     position: absolute;
     top: 1rem;
     left: 1rem;
     opacity: .4;
-    @if $style == 'dark' {
-      @extend %icon, %icon-search-white;
-    } @else {
-      @extend %icon, %icon-search;
-    }
+    @extend %icon, %icon-search;
   }
 }
 
 ._search-input {
+  position: relative;
   display: block;
   width: 100%;
   height: 100%;
   padding: 0 .75rem 1px 1.75rem;
   font-size: .875rem;
-  background: $contentBackground;
+  background: var(--contentBackground);
   border: 1px solid;
-  border-color: darken($headerBorder, 2%);
+  border-color: var(--searchBorder);
   border-radius: 3px;
 
   &:focus {
     outline: 0;
-    @if $inputFocusBorder {
-      border-color: $inputFocusBorder;
-      box-shadow: 0 0 1px $inputFocusBorder;
-    }
+    border-color: var(--inputFocusBorder);
+    box-shadow: 0 0 1px var(--inputFocusBorder);
   }
 
   &[disabled] {
-    background: $sidebarBackground;
+    background: var(--sidebarBackground);
     cursor: not-allowed;
   }
 }
@@ -144,13 +140,12 @@
   position: absolute;
   top: .5em;
   right: 0;
-  width: 2rem;
+  width: 1.75rem;
   height: 2rem;
-  opacity: .3;
+  opacity: .42;
   @extend %hide-text;
 
-  &:hover { opacity: .5; }
-
+  &:hover { opacity: .7; }
   &:before {
     position: absolute;
     top: .5rem;
@@ -158,23 +153,23 @@
     @extend %icon;
   }
 
-  @if $style == 'dark' {
-    &:before { @extend %icon-close-white; }
-  } @else {
-    &:before { @extend %icon-clear; }
-  }
+
   ._search-active > & { display: block; }
 }
 
 ._search-tag {
   display: none;
   position: absolute;
+  z-index: 2;
   top: .875rem;
   left: .875rem;
-  padding: 0 .5rem;
+  padding: 0 .375rem;
   line-height: 1.25rem;
-  font-size: .875rem;
-  color: $textColorLight;
-  background: darken($headerBackground, 5%);
+  max-width: 50%;
+  font-size: .8125rem;
+  color: var(--textColorLight);
+  background: var(--searchTagBackground);
   border-radius: 2px;
+  cursor: pointer;
+  @extend %truncate-text;
 }

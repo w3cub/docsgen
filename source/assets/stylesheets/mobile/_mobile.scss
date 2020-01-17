@@ -1,3 +1,6 @@
+$mediumScreen: '(max-width: 800px)';
+$mobileScreen: '(max-width: 767px)';
+
 body:not(.index-page):not(.static-page){
 	._logo,._logo-sub-nav,._nav { 
 		@media #{$mobileScreen} {	

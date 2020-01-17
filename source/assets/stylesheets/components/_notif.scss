@@ -7,9 +7,9 @@
   max-width: 90%;
   padding: .625rem 1rem;
   font-size: .75rem;
-  color: $notifColor;
-  background: $notifBackground;
-  border: $notifBorder;
+  color: var(--notifColor);
+  background: var(--notifBackground);
+  border: var(--notifBorder);
   border-radius: .25rem;
   transition: opacity .2s;
   opacity: 0;
@@ -30,7 +30,7 @@
 
 ._notif-info {
   float: right;
-  color: $notifColorLight;
+  color: var(--notifColorLight);
 }
 
 ._notif-link,
@@ -49,12 +49,15 @@
   opacity: .9;
   @extend %hide-text;
 
-  &:before {
+  > svg {
     position: absolute;
     top: .625rem;
     left: .625rem;
-    @extend %icon, %icon-close-white;
+    fill: white;
+    @extend %svg-icon;
   }
+
+  &:hover { opacity: 1; }
 }
 
 ._notif-content {
@@ -63,20 +66,18 @@
   padding-right: .75rem;
   overflow-y: auto;
 
-  &::-webkit-scrollbar { -webkit-appearance: none; width: 10px; }
-  &::-webkit-scrollbar-button { display: none; }
-  &::-webkit-scrollbar-track { background: $notifBackground; }
-  &::-webkit-scrollbar-thumb {
-    min-height: 2rem;
-    background: $scrollbarColor;
-    background-clip: padding-box;
-    border: 3px solid $notifBackground;
-    border-radius: 5px;
+  &::-webkit-scrollbar { width: 10px !important; }
 
-    &:active {
-      background-color: $scrollbarColorHover;
-      border-width: 2px;
-    }
+  &::-webkit-scrollbar-track {
+    background: var(--notifBackground) !important;
+    border: 0 !important;
+    border-radius: 5px !important;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    border: 3px solid var(--notifBackground) !important;
+
+    &:hover, &:active { border-width: 2px !important; }
   }
 
   > ._notif-title {
@@ -89,7 +90,7 @@
   > ._news-row {
     line-height: 1.125rem;
     font-size: .6875rem;
-    color: $notifColorLight;
+    color: var(--notifColorLight);
     margin-bottom: .25rem;
 
     + ._news-row { margin-top: .625rem; }
@@ -106,7 +107,7 @@
   ._news-date {
     float: right;
     margin-left: 1rem;
-    font-weight: bold;
+    font-weight: var(--boldFontWeight);
   }
 
   code {
@@ -127,9 +128,13 @@
 }
 
 ._notif-tip {
-  color: $textColor;
-  background: $tipBackground;
-  border: $tipBorder;
+  color: var(--textColor);
+  background: var(--tipBackground);
+  border: var(--tipBorder);
 
-  ._notif-info { color: $textColorLight; }
+  ._notif-info { color: var(--textColorLight); }
+}
+
+._notif-right {
+  float: right;
 }

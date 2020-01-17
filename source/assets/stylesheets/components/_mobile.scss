@@ -4,7 +4,7 @@
 
 ._mobile {
   font-size: 100%;
-  background: $contentBackground;
+  background: var(--contentBackground);
 
   ._hide-on-mobile { display: none; }
 
@@ -12,11 +12,13 @@
 
   body { -ms-overflow-style: -ms-autohiding-scrollbar; }
 
-  ._app, ._content { overflow: visible; }
+  &:not(._booting) {
+    ._app, ._content { overflow: visible; }
+  }
 
   ._container {
     margin: 0;
-    padding-top: $headerHeight;
+    padding-top: var(--headerHeight);
   }
 
   ._content {
@@ -28,7 +30,7 @@
     &:before { content: none; }
   }
 
-  ._booting:before, ._content-loading:before { font-size: 3rem; }
+  ._content-loading:before, ._splash-title { font-size: 3rem; }
 
   ._header { position: fixed; }
 
@@ -52,10 +54,11 @@
     padding-right: .125rem;
     padding-left: .125rem;
 
-    &:before { left: .625rem; }
+    &:before { left: .5rem; }
   }
 
   ._search-tag { left: .5rem; }
+  ._search-clear > svg { left: .25rem; }
 
   // Sidebar
 
@@ -104,6 +107,14 @@
     float: none;
     max-width: none;
     margin-left: 0;
+  }
+
+  // Search Aliases
+
+  ._aliases {
+    display: block;
+
+    > table { width: 100%; }
   }
 }
 

@@ -1,10 +1,11 @@
 source "https://rubygems.org"
-ruby '2.6.0'
+ruby '2.6.5'
 
 group :development do
   gem 'rake', '~> 12.3', '>= 12.3.2'
   gem 'execjs', '~> 2.7'
   gem 'jekyll', '~> 3.8', '>= 3.8.5'
+  gem "sprockets", "~> 3.7"
   gem 'jekyll-assets', '~> 3.0', '>= 3.0.12'
   # gem 'jekyll-sitemap'
   gem 'octopress-minify-html'

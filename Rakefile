@@ -156,7 +156,7 @@ end
 
 desc "test preview"
 task :test_preview do |t, args|
-  Rake::Task[:copy_html].invoke('bash jsdoc graphite')
+  Rake::Task[:copy_html].invoke('vuex')
   Rake::Task[:preview].invoke
 end
 

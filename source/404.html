@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">	
+	<title>loading</title>
+</head>
+<body>
+<script>
+  var paths = location.pathname.split('/').filter(item => item != '');
+  if(paths.length > 1) {
+    location.href = `https://docs.w3cub.com/${paths[0]}/`;
+  } else {
+    location.href = `https://docs.w3cub.com/`;
+  }
+</script>
+</body>
+</html>

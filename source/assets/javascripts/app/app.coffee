@@ -21,7 +21,7 @@
     #@settings = new app.Settings @localStorage
     #@db = new app.DB()
 
-      
+    @adInit()
 
     @router = new app.Router
     @shortcuts = new app.Shortcuts
@@ -39,6 +39,16 @@
     #   @bootAll()
     # else
     #   @onBootError()
+    return
+  adInit: ->
+    if Cookies.get('tp') != '1'
+      setTimeout((->
+        window.open 'https://tools.w3cub.com/?_sp=docs', '_blank'
+        d = new Date
+        d.setDate(d.getDate() + 30)
+        Cookies.set 'tp', 1, expires: d
+        return
+      ), 3000)
     return
   browserCheck: ->
     return true if @isSupportedBrowser()

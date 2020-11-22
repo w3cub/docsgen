@@ -8,6 +8,11 @@
 <script>
   var paths = location.pathname.split('/').filter(item => item != '');
   if(paths.length > 1) {
+    var slug = paths[0]
+    if (slug == 'tensorflow~cpp') {
+      location.href = `https://docs.w3cub.com/tensorflow_cpp~1.15/` + paths.slice(1).join('/') + location.search + location.hash;
+      return
+    }
     location.href = `https://docs.w3cub.com/${paths[0]}/`;
   } else {
     location.href = `https://docs.w3cub.com/`;

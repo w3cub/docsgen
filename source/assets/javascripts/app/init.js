@@ -8,7 +8,7 @@ app.config = {
     index_filename: "index.json",
     index_path: "/docs",
     max_results: 50,
-    production_host: "devdocs.io",
+    production_host: "docs.w3cub.com",
     search_param: "q",
     sentry_dsn: "https://5df3f4c982314008b52b799b1f25ad9d@app.getsentry.com/11245",
     version: 1462140802,
@@ -123,7 +123,7 @@ function(window, undefined) {
             res = document.querySelectorAll(query);
         } else {
             var firstStyleSheet = document.styleSheets[0] || document.createStyleSheet();
-            firstStyleSheet.addRule(query, 'Barret:Lee');
+            firstStyleSheet.addRule(query, 'Terry:Cai');
             for (var i = 0, len = document.all.length; i < len; i++) {
                 var item = document.all[i];
                 item.currentStyle.Barret && res.push(item);

@@ -156,7 +156,7 @@ end
 
 desc "test preview"
 task :test_preview do |t, args|
-  Rake::Task[:copy_html].invoke('vuex')
+  Rake::Task[:copy_html].invoke('spring_boot')
   Rake::Task[:preview].invoke
 end
 

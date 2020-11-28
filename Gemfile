@@ -1,12 +1,12 @@
 source "https://rubygems.org"
-ruby '2.6.5'
+ruby '2.7.0'
 
 group :development do
-  gem 'rake', '~> 12.3', '>= 12.3.2'
+  gem 'rake', '~> 13.0', '>= 13.0.1'
   gem 'execjs', '~> 2.7'
-  gem 'jekyll', '~> 3.8', '>= 3.8.5'
-  gem "sprockets", "~> 3.7"
-  gem 'jekyll-assets', '~> 3.0', '>= 3.0.12'
+  gem 'jekyll', '~> 4.1', '>= 4.1.1'
+  gem 'sprockets', '~> 4.0', '>= 4.0.2'
+  gem 'jekyll-assets', git: 'https://github.com/envygeeks/jekyll-assets.git', ref: '056d2c8' 
   # gem 'jekyll-sitemap'
   gem 'octopress-minify-html'
   gem 'stringex', '~> 1.4.0'

@@ -1,6 +1,9 @@
 require "rubygems"
+require 'fileutils'
 require "bundler/setup"
 require "stringex"
+require 'erb'
+require 'json'
 require "fileutils"
 require "./sitemap"
 
@@ -116,6 +119,20 @@ task :clean do
 end
 
 
+desc "ERB file generate"
+task :erb do
+  
+  erb_file = './source/assets/stylesheets/global/_icons.scss.erb'
+  scss_file = File.dirname(erb_file) + '/' + File.basename(erb_file, '.erb')
+  erb_str = File.read(erb_file)
+  renderer = ERB.new(erb_str)
+  result = renderer.result()
+  File.open(scss_file, 'w') do |f|
+    f.write(result)
+  end
+end
+
+
 ##############
 # Deploying  #
 ##############
@@ -156,7 +173,7 @@ end
 
 desc "test preview"
 task :test_preview do |t, args|
-  Rake::Task[:copy_html].invoke('spring_boot sequelize html css javascript bower')
+  Rake::Task[:copy_html].invoke('spring_boot html css javascript')
   Rake::Task[:preview].invoke
 end
 

@@ -16,7 +16,7 @@ class app.views.Content extends app.View
 
   @routes:
     before: 'beforeRoute'
-    # after:  'afterRoute'
+    after:  'afterRoute'
 
   init: ->
     @scrollEl = if app.isMobile() then document.body else @el
@@ -36,9 +36,9 @@ class app.views.Content extends app.View
     # @entryPage.render()
     
 
-    # @entryPage
-    #   .on 'loading', @onEntryLoading
-    #   .on 'loaded', @onEntryLoaded
+    @entryPage
+      .on 'loading', @onEntryLoading
+      .on 'loaded', @onEntryLoaded
 
     app
       .on 'ready', @onReady
@@ -50,7 +50,7 @@ class app.views.Content extends app.View
     @hideLoading()
     unless view is @view
       @view?.deactivate()
-      @html @view = view
+      @view = view
       @view.activate()
     return
 

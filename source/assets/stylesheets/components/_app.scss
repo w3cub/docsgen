@@ -5,7 +5,7 @@ html._booting body._max-width { background: var(--documentBackground); }
 ._app {
   position: relative;
   z-index: 1;
-  height: 100%;  
+  // height: 100%;  
   padding-top: var(--headerHeight);
   overflow: hidden;
   background: var(--contentBackground);

@@ -28,7 +28,7 @@ class app.views.Sidebar extends app.View
 
     app.on 'ready', @onReady
 
-    $.on document.documentElement, 'mouseleave', (event) => @display() if event.clientX < 10
+    $.on document.documentElement, 'mouseleave', (event) => @display() unless event.clientX <= 0
     $.on document.documentElement, 'mouseenter', => @resetDisplay(forceNoHover: false)
     return
 
@@ -131,7 +131,7 @@ class app.views.Sidebar extends app.View
 
   onClick: (event) =>
     return if event.which isnt 1
-    if event.target.hasAttribute? 'data-reset-list'
+    if $.eventTarget(event).hasAttribute? 'data-reset-list'
       $.stopEvent(event)
       @onAltR()
     return

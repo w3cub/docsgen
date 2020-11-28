@@ -3,7 +3,7 @@
 //
 
 ._sidebar {
-  position: absolute;
+  position: fixed;
   z-index: var(--sidebarZ);
   top: var(--headerHeight);
   bottom: 0;

@@ -3,14 +3,15 @@
 //
 
 ._header {
-  position: absolute;
+  position: fixed;
   z-index: var(--headerZ);
   top: 0;
   left: 0;
   right: 0;
   height: var(--headerHeight);
   line-height: var(--headerHeight);
-  background: asset_url('header-background.png');
+  background-color: #fff;
+  background-image: asset_url('header-background.png');
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.07);
   @extend %user-select-none;
 

@@ -45,7 +45,7 @@ function(window, undefined) {
         }
 
         this.elements = typeof elements === "string" ? $(elements) : elements;
-        this.wrapper = $(this.wrapper)[0] || window;
+        this.wrapper = window;
         setTimeout(function() {
             self.init();
         }, 4);

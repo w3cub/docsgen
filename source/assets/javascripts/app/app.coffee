@@ -12,9 +12,7 @@
     # try @initErrorTracking() catch
     # return unless @browserCheck()
     # @showLoading()
-    new Lazyload('._list ._list-item', {
-      wrapper: '._content'
-    })
+    new Lazyload('._list ._list-item', {})
     @el = $('._app')
     @localStorage = new LocalStorageStore
     #@appCache = new app.AppCache if app.AppCache.isEnabled()

@@ -9,13 +9,22 @@ class app.views.ToTopView extends app.View
   init: ->
     @activate()
     @render()
-    setTimeout (=>
-      @bindContentScroll()
-      ), 200
+    @bindContentScroll()
   bindContentScroll: ->
-    @_content = $ '._content'
-    @_content.onscroll = (event) => 
-       @updatePosition()
+    @_content = document.documentElement
+    timer = undefined
+
+    addEventListener = (el, evt, fn) ->
+      if window.addEventListener then el.addEventListener(evt, fn, false) else if window.attachEvent then el.attachEvent('on' + evt, fn) else (el['on' + evt] = fn)
+      return
+
+    addEventListener window, "scroll", ()  =>
+      timer && clearTimeout timer
+      setTimeout =>
+        @updatePosition()
+      , 50
+    addEventListener window, "load", ()  =>
+      @updatePosition()
     @updatePosition()
   render: ->
     @el.setAttribute 'href', 'javascript:;'

@@ -101,7 +101,7 @@ task :badlink do |t, args|
   scount = 0
   Dir.glob("#{docs_cache_dir}/**/*.html") { |dir|
     arr  = dir.split("/").reverse()
-    if arr[0] && arr[0].index("_") == 0
+    if arr[0] && arr[0].index("_") == 0 || (dir.include? "...")
       scount += 1
       spath = Pathname.new(dir.sub("\.docs-cache", "#{source_dir}/#{docs_dir}"))
       pdirname = spath.dirname
@@ -173,7 +173,7 @@ end
 
 desc "test preview"
 task :test_preview do |t, args|
-  Rake::Task[:copy_html].invoke('spring_boot html css javascript')
+  Rake::Task[:copy_html].invoke('javascript')
   Rake::Task[:preview].invoke
 end
 
@@ -328,7 +328,7 @@ task :multi_gen_deploy do
 'symfony~4.1 tcl_tk ',
 'tensorflow_cpp~1.15 tensorflow_cpp~2.3 ',
 'tensorflow~1.15 tensorflow~2.3 ',
-'tensorflow~cpp tensorflow~python ',
+'tensorflow~python ',
 'terraform trio ',
 'twig~1 twig~2 ',
 'typescript underscore ',

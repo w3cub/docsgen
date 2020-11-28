@@ -2,7 +2,7 @@
 #      Main Configs       #
 # ----------------------- #
 encoding: "utf-8"
-url: http://docs.w3cub.com
+url: https://docs.w3cub.com
 title: W3cubDocs
 lang: en
 

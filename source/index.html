@@ -6,14 +6,21 @@ className: index-page
 
 <section class="_container index">
 	<div class="_content">
-		<div class="_list">
+		<ul class="_list">
 			{% for link in site.data.docs %}
-			<a href="/{{link.slug}}/" class="_list-item _icon-{{link.slug | split: '~' | first }} _list-dir" title="">
-				<img src="/images/s.gif" data-src="/images/docs/{{link.slug | split: '~' | first }}.png"
-					alt="">
-				<span class="name">{{link.name}}{%if link.version and link.version != "" %}~{{link.version}}{%endif%}</span>
-			</a>
+			<li class="_list-item _icon-{{link.slug | split: '~' | first }} _list-dir" title="">
+				<a href="/{{link.slug}}/" aria-label="{{link.name}} {{link.version}}" title="{{link.name}} {{link.version}}" >
+					<span class="img-wrap">
+						<img src="/images/s.gif" data-src="/images/docs/{{link.slug | split: '~' | first }}.png"
+						alt="">
+						{%if link.version and link.version != "" %}
+						<span class="version">{{link.version}}</span>
+						{%endif%}
+					</span>
+					<span class="name">{{link.name}}</span>
+				</a>
+			</li>
 			{% endfor %}
-		</div>
+		</ul>
 	</div>
 </section>

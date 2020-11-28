@@ -54,16 +54,47 @@
           &::before{
              display: none;
           }
-        >img{
-          margin: 0 auto;
-          border: 1px solid #ddd;
-          border-radius: 16px;
-
+        a {
+          display: inline-block;
+          vertical-align: top;
+          width: 100%;
+          cursor: pointer;
+          color: var(--textColor);
+          text-decoration: none;
+          .img-wrap {
+            position: relative;
+          }
+          img {
+            margin: 0 auto;
+            // border: 1px solid #ddd;
+            border-radius: 16px;
+          }
+          .version {
+            position: absolute;
+            bottom: 0px;
+            right: 0px;
+            left: 0;
+            background: #ececec73;
+            display: block;
+            height: 24px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+            text-align: center;
+            font-weight: bold;
+            overflow: hidden;
+            white-space: nowrap;
+            word-wrap: normal;
+            overflow-wrap: normal;
+            text-overflow: ellipsis;
+            &:empty {
+              display: none;
+            }
+          }
+          .name {
+            display: block;
+            color: var(--textColor);
+          }
         }
-        .name {
-          display: block;
-        }
-
       }
     }
   }
@@ -78,7 +109,7 @@
   }
   .index-page ._container ._list ._list-item{
       box-sizing: border-box;
-    width: 25%;
+      width: 25%;
       height: auto;
   }
   .index-page ._container ._list ._list-item .name {
@@ -469,18 +500,18 @@
   pre:hover > & { display: block; }
   &:hover { opacity: 1; }
 
-  > svg {
-    @extend %svg-icon;
-    fill: var(--absolute);
+  &:before { @extend %icon, %icon-clipboard; }
+  // copy result style
+  &._pre-clip-success:before { 
+    width: auto;
+    background-image:none; 
+    content: 'Copied'; 
   }
-
-  &._pre-clip-success > svg,
-  &._pre-clip-error > svg {
-    display: none;
+  &._pre-clip-error:before { 
+    width:auto;
+    background-image:none; 
+    content: 'Error'; 
   }
-
-  &._pre-clip-success:before { content: 'Copied'; }
-  &._pre-clip-error:before { content: 'Error'; }
 }
 
 ._btn {

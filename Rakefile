@@ -392,7 +392,7 @@ task :sitemap do |t, args|
   robots.puts "User-agent: *"
   robots.puts "Disallow: "
   names.each do |item|
-    robots.puts "Sitemap: http://docs.w3cub.com/#{item}/sitemap.xml"
+    robots.puts "Sitemap: https://docs.w3cub.com/#{item}/sitemap.xml"
   end
 end
 

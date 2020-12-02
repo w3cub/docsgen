@@ -173,7 +173,7 @@ end
 
 desc "test preview"
 task :test_preview do |t, args|
-  Rake::Task[:copy_html].invoke('javascript')
+  Rake::Task[:copy_html].invoke('vue~3')
   Rake::Task[:preview].invoke
 end
 

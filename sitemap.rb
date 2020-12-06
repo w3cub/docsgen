@@ -6,7 +6,7 @@ class Sitemap
     @fileName = config[:fileName] || "sitemap.xml"
     @fileDir = config[:fileDir] || "./public/"
     @fileBase = config[:fileBase] || @fileDir
-    @domain = config[:domain] || "http://docs.w3cub.com/"
+    @domain = config[:domain] || "https://docs.w3cub.com/"
     @filePath = "#{@fileDir}#{@fileName}"
 
     write

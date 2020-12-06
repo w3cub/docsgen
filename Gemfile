@@ -14,6 +14,9 @@ group :development do
   gem 'uglifier'
   gem 'sass'
   gem 'coffee-script'
+  gem 'google-api-client', '~> 0.50.0'
+  gem 'dotenv'
+  gem 'solargraph'
   # gem 'thin'
   # gem 'erubis'
 

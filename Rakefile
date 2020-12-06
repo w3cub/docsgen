@@ -4,8 +4,12 @@ require "bundler/setup"
 require "stringex"
 require 'erb'
 require 'json'
-require "fileutils"
 require "./sitemap"
+require "googleauth"
+require "googleauth/stores/file_token_store"
+require 'google/apis/webmasters_v3'
+require 'dotenv'
+Dotenv.load
 
 ## -- Rsync Deploy config -- ##
 # Be sure your public key is listed in your server's ~/.ssh/authorized_keys file
@@ -33,6 +37,7 @@ new_page_ext    = "markdown"  # default new page file extension when using the n
 server_port     = "4000"      # port for preview server eg. localhost:4000
 docs_dir        = "_docs"
 docs_cache_dir  = ".docs-cache"
+deploy_domain   = "https://docs.w3cub.com/"
 
 
 repo_url = "git@github.com:w3cub/w3cub-release-202011.git"
@@ -113,6 +118,72 @@ task :badlink do |t, args|
   puts "total: #{scount}"  
 end
 
+#  google sitemap
+OOB_URI             = 'urn:ietf:wg:oauth:2.0:oob'
+def well_known_path_for(file)
+  if OS.windows?
+    dir = ENV.fetch('HOME'){ ENV['APPDATA']}
+    File.join(dir, 'google', file)
+  else
+    File.join(ENV['HOME'], '.config', 'google', file)
+  end
+end
+
+def client_secrets_path
+  return ENV['GOOGLE_CLIENT_SECRETS'] if ENV.has_key?('GOOGLE_CLIENT_SECRETS')
+  return well_known_path_for('client_secrets.json')
+end
+
+def token_store_path
+  return ENV['GOOGLE_CREDENTIAL_STORE'] if ENV.has_key?('GOOGLE_CREDENTIAL_STORE')
+  return well_known_path_for('credentials.yaml')
+end
+
+def user_credentials_for(scope)
+  FileUtils.mkdir_p(File.dirname(token_store_path))
+
+  if ENV['GOOGLE_CLIENT_ID']
+    client_id = Google::Auth::ClientId.new(ENV['GOOGLE_CLIENT_ID'], ENV['GOOGLE_CLIENT_SECRET'])
+  else
+    client_id = Google::Auth::ClientId.from_file(client_secrets_path)
+  end
+  token_store = Google::Auth::Stores::FileTokenStore.new(:file => token_store_path)
+  authorizer = Google::Auth::UserAuthorizer.new(client_id, scope, token_store)
+
+  user_id = 'default'
+
+  credentials = authorizer.get_credentials(user_id)
+  if credentials.nil?
+    url = authorizer.get_authorization_url(base_url: OOB_URI)
+    puts "Open the following URL in your browser and authorize the application."
+    puts url
+    code = get_stdin "Enter the authorization code:"
+    credentials = authorizer.get_and_store_credentials_from_code(
+      user_id: user_id, code: code, base_url: OOB_URI)
+  end
+  credentials
+end
+
+#  google end
+
+desc "sitemap submit to google"
+task :googlesitemap do |t, args|
+  WebmastersV3 = Google::Apis::WebmastersV3
+  service = WebmastersV3::WebmastersService.new
+  service.authorization = user_credentials_for(WebmastersV3::AUTH_WEBMASTERS)
+  service.key = ENV['GOOGLE_API_KEY']
+  Dir.glob("#{deploy_dir}/**/sitemap.xml") { |file|
+    url =  deploy_domain +  file.sub( "#{deploy_dir}\/" , "")
+    puts url
+    begin
+      service.submit_sitemap(deploy_domain, url)
+    rescue
+      retry
+    end
+  }
+end
+
+
 desc "Clean out caches: .pygments-cache, .gist-cache, .sass-cache"
 task :clean do
   rm_rf [Dir.glob(".pygments-cache/**"), Dir.glob(".gist-cache/**"), Dir.glob(".sass-cache/**"), "source/stylesheets/screen.css"]
@@ -173,7 +244,7 @@ end
 
 desc "test preview"
 task :test_preview do |t, args|
-  Rake::Task[:copy_html].invoke('vue~3')
+  Rake::Task[:copy_html].invoke('tensorflow~guide')
   Rake::Task[:preview].invoke
 end
 
@@ -579,7 +650,7 @@ end
 
 def get_stdin(message)
   print message
-  STDIN.gets.chomp
+  STDIN.gets.chomp!
 end
 
 def ask(message, valid_options)

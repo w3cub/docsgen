@@ -8,6 +8,7 @@ html {
 
   @include print { background: none; }
   @import 'global/print';
+  scroll-padding-top: var(--headerHeight);
 }
 
 html._theme-default {

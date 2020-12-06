@@ -35,7 +35,7 @@ class Sitemap
       if INCLUDED_EXTENSIONS.include? File.extname(file) 
         lastmod = File.mtime(file).xmlschema
         xmlfile << "<url>\n"
-        xmlfile <<  "<loc>#{file.sub(@fileBase,@domain).sub(/index\.html$/,"")}</loc>\n"
+        xmlfile <<  "<loc>#{file.sub(@fileBase,@domain).sub(/\.html$/,"")}</loc>\n"
         xmlfile <<  "<lastmod>#{lastmod}</lastmod>\n"
         xmlfile << "</url>\n"
       end

@@ -650,7 +650,7 @@ end
 
 def get_stdin(message)
   print message
-  STDIN.gets.chomp!
+  STDIN.gets.chomp
 end
 
 def ask(message, valid_options)

@@ -85,20 +85,22 @@ task :preview do
   raise "### You haven't set anything up yet. First run `rake install` to set up an Octopress theme." unless File.directory?(source_dir)
   puts "Starting to watch source with Jekyll and Compass. Starting Rack on port #{server_port}"
   # system "compass compile --css-dir #{source_dir}/stylesheets" unless File.exist?("#{source_dir}/stylesheets/screen.css")
-  jekyllPid = Process.spawn({"OCTOPRESS_ENV"=>"preview"}, "jekyll build --watch")
+  jekyllPid = Process.spawn({"OCTOPRESS_ENV"=>"preview"}, "jekyll serve --host 0.0.0.0 --livereload")
   # compassPid = Process.spawn("compass watch")
-  rackupPid = Process.spawn("rackup --host 0.0.0.0  --port #{server_port}")
+  # rackupPid = Process.spawn("rackup --host 0.0.0.0  --port #{server_port} -d")
 
   trap("INT") {
     [jekyllPid, 
       # compassPid, 
-      rackupPid].each { |pid| Process.kill(9, pid) rescue Errno::ESRCH }
+      # rackupPid
+    ].each { |pid| Process.kill(9, pid) rescue Errno::ESRCH }
     exit 0
   }
 
   [jekyllPid, 
     # compassPid, 
-    rackupPid].each { |pid| Process.wait(pid) }
+    # rackupPid
+  ].each { |pid| Process.wait(pid) }
 end
 
 desc "badlink docs html"

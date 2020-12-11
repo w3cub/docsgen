@@ -22,8 +22,8 @@
   {% capture canonical %}{{ site.url }}{% if site.permalink contains '.html' %}{{ page.url }}{% else %}{{ page.url | remove:'index.html' }}{% endif %}{% endcapture %}
   <link rel="canonical" href="{{ canonical }}">
   <link href="{{root_url}}/favicon.png" rel="icon">
-  {% asset application.css %}
-  {% asset application.js %}
+  {% asset application.css !integrity %}
+  {% asset application.js !integrity %}
   {%if page.slug %}<script src="{{root_url}}/json/{{page.slug}}.js"></script>{%endif %}
   {% include google_analytics.html %}
 </head>

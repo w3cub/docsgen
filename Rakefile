@@ -401,17 +401,18 @@ task :multi_gen_deploy do
 'symfony~4.1 tcl_tk ',
 'tensorflow_cpp~1.15 tensorflow_cpp~2.3 ',
 'tensorflow~1.15 tensorflow~2.3 ',
+'tensorflow~guide',
 'tensorflow~python ',
 'terraform trio ',
 'twig~1 twig~2 ',
 'typescript underscore ',
 'vagrant vue_router ',
 'vuex vue~1 ',
-'vue~2 vulkan ',
-'webpack webpack~1 ',
-'wordpress xslt_xpath ',
-'yarn yii~1.1 ',
-'yii~2.0 '
+'vue~2 vue~3 ',
+'vulkan webpack ',
+'webpack~1 wordpress ',
+'xslt_xpath yarn ',
+'yii~1.1 yii~2.0 '
 ]
 
   queue = Queue.new

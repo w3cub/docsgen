@@ -135,9 +135,10 @@ table {
   border-collapse: separate;
   border-spacing: 0;
   border-radius: 3px;
-  @include mobile { overflow-x: auto; }
-  overflow: auto;
-  display: block;
+  @include mobile {
+    overflow: auto;
+    display: block;
+  }
 }
 
 caption {

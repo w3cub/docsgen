@@ -12,7 +12,7 @@
   @include mobile { margin-left: var(--sidebarMediumWidth); }
 
   ._sidebar-hidden & { margin-left: 0; }
-  body:not(._native-scrollbars) & { -webkit-margin-end: -1px; }
+  & { -webkit-margin-end: -1px; }
 
 
   // modify to w3cub
@@ -25,7 +25,7 @@
     }
   }
   
-  .index-page &{
+  .index-page & {
     margin-left: 0px;
     pointer-events: auto;
     ._content{
@@ -120,7 +120,7 @@
   @media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) { margin-left: 0; }
   @supports (-ms-overflow-style: none) { margin-left: 0; }
 
-  body:not(._native-scrollbars) & {
+  & {
     -webkit-padding-start: .625rem;
     -webkit-padding-end: 1.75rem;
   }
@@ -129,10 +129,6 @@
   ._content {
     margin-left: 0rem;
     padding: 1.125rem 1.5rem 0;
-    body:not(._native-scrollbars) &  {
-      -webkit-padding-start: 1.625rem;
-      -webkit-padding-end: 1.75rem;
-    }
 
   }
 

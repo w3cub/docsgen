@@ -235,7 +235,7 @@ task :copy_html, :names do |t, args|
   names = args[:names]
   (Dir["#{source_dir}/#{docs_dir}/*"]).each { |f| rm_rf(f) }
   if names.is_a?(String) && names.match(/(\w+\\s?)*?/)
-    names = names.split(" ")
+    names = names.split(%r{,|\s})
     names.each { |name|  
         target_path = "#{source_dir}/#{docs_dir}/#{name}"
         mkdir_p(target_path)
@@ -246,7 +246,7 @@ end
 
 desc "test preview"
 task :test_preview do |t, args|
-  Rake::Task[:copy_html].invoke('tensorflow~guide')
+  Rake::Task[:copy_html].invoke(ENV['TEST_DOCS'] || "tensorflow~guide")
   Rake::Task[:preview].invoke
 end
 

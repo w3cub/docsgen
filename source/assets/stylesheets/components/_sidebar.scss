@@ -25,7 +25,7 @@
     top: var(--headerHeight);
   }
 
-  body:not(._native-scrollbars) & {
+  body & {
     &::-webkit-scrollbar { width: 10px; }
     &::-webkit-scrollbar-track {
       background: var(--contentBackground);
@@ -68,6 +68,9 @@
 // List
 //
 
+._list-wrap {
+  // padding-top: var(--headerHeight);
+}
 ._list {
   margin: 0;
   padding: 0;

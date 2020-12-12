@@ -136,13 +136,13 @@
 
   }
 
-
   .index-page ._container ._list{
-      display: flex;
+    display: flex;
     flex-wrap: wrap;
-    margin-left: 0.5rem;
-      margin-right: 0.5rem;
-      width: auto;
+    // margin-left: 0.5rem;
+    // margin-right: 0.5rem;
+    padding: 0 1rem;
+    width: auto;
   }
   .index-page ._container ._list ._list-item{
       box-sizing: border-box;
@@ -494,7 +494,10 @@
 ._code { @extend %code; }
 ._highlight, ._highlight > td { background: var(--highlightBackground) !important; }
 
-._table { width: 100%; }
+._table { 
+  width: 100%; 
+  @include mobile { overflow-x: auto; }
+}
 ._mobile ._table { overflow-x: auto; }
 
 ._pre-heading { @extend %pre-heading; }

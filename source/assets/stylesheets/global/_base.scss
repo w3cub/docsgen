@@ -8,7 +8,7 @@ html {
 
   @include print { background: none; }
   @import 'global/print';
-  scroll-padding-top: var(--headerHeight);
+  scroll-padding-top: calc(var(--headerHeight) + 2rem);
 }
 
 html._theme-default {
@@ -135,6 +135,9 @@ table {
   border-collapse: separate;
   border-spacing: 0;
   border-radius: 3px;
+  @include mobile { overflow-x: auto; }
+  overflow: auto;
+  display: block;
 }
 
 caption {
@@ -248,7 +251,7 @@ input[type="search"]::-webkit-search-decoration {
 ::-moz-placeholder          { color: var(--textColorLighter); opacity: 1; }
 :-ms-input-placeholder      { color: var(--textColorLighter); }
 
-body:not(._native-scrollbars) {
+body {
   *::-webkit-scrollbar { -webkit-appearance: none; }
   *::-webkit-scrollbar:vertical { width: 16px; }
   *::-webkit-scrollbar:horizontal { height: 16px; }

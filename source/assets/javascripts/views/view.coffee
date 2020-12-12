@@ -112,6 +112,12 @@ class app.View
     @append value
     return
 
+  inserthtml: (el, value) -> 
+    $.empty el
+    @refreshElements()
+    $.append el, value.el or value
+    return
+
   tmpl: (args...) ->
     app.templates.render(args...)
 

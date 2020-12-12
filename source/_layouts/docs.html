@@ -1,12 +1,19 @@
 {% capture root_url %}{{ site.root | strip_slash }}{% endcapture %}
 {% include head.html %}
-<body>
+<body class="docs">
 	<amp-auto-ads type="adsense"
               data-ad-client="ca-pub-2572770204602497">
 	</amp-auto-ads>
 	<div class="_app">
 	{% include doc/header.html %}
 	<section class="_sidebar">
+		{% if include.disablesearch !=  true %}
+		<form class="_search">
+		  <input type="search" class="_search-input" placeholder="Search&hellip;" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="20">
+		  <a class="_search-clear"></a>
+		  <div class="_search-tag"></div>
+		</form>
+		{%endif %}
 		<div class="_list-wrap">
 			<div class="_list">
 			

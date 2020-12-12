@@ -1,23 +1,41 @@
 $mediumScreen: '(max-width: 800px)';
 $mobileScreen: '(max-width: 767px)';
 
-body:not(.index-page):not(.static-page){
+body.docs {
+
+	._open-sidebar & {
+		overflow: hidden;
+	}
+
+	._header {
+		@media #{$mobileScreen} {
+			margin-left: 0;
+			z-index: var(--mobileHeaderZ);
+      will-change: transform;
+      transform: translateX(0px) translateZ(0);
+			._open-sidebar & {
+		    	transform: translateX(250px) translateZ(0);
+          overflow: hidden;
+		    }
+		}
+	}
 	._logo,._logo-sub-nav,._nav { 
 		@media #{$mobileScreen} {	
 			display: none;
 	    }
 	}
 
-	._sidebar{
+	._sidebar {
 		display: block;
 	    @media #{$mobileScreen} {
 	    	z-index: 1;
-			// transition: transform .3s cubic-bezier(0.86,0,0.07,1);
+			  // transition: transform .3s cubic-bezier(0.86,0,0.07,1);
 		    // transform: translateX(-100%) translateZ(0);
-			// transform: translateX(0%) translateZ(0);
-			display: none;
-		    ._open-sidebar &{
-		    	display: block;
+			  // transform: translateX(0%) translateZ(0);
+			  display: none;
+		    ._open-sidebar & {
+          display: block;
+          z-index: var(--headerZ);
 		    	// transform: translateX(0%) translateZ(0);
 		    }
 	    }
@@ -25,10 +43,7 @@ body:not(.index-page):not(.static-page){
 
 	._search{
 	    @media #{$mobileScreen} {
-	    	display: none;
 		    ._open-sidebar &{
-		    	display: block;
-			    float: left;
 			    // width: auto;
 			    overflow: hidden;
 			    padding-left: 2px;
@@ -41,14 +56,15 @@ body:not(.index-page):not(.static-page){
 	    }
 	}
 
-	._container{
+	._container {
 	    @media #{$mobileScreen} {
 	    	margin-left: 0rem;
-	    	background-color: #fff;
-			// transition: transform 300ms ease;
-			transform: translateX(0px) translateZ(0);
-		    ._open-sidebar &{
-		    	overflow: hidden;
+        background-color: #fff;
+        will-change: transform;
+        // transition: transform 300ms ease;
+        transform: translateX(0px) translateZ(0);
+		    ._open-sidebar & {
+				  overflow: hidden;
 		    	transform: translateX(250px) translateZ(0);
 		    }
 	    }
@@ -60,7 +76,7 @@ body:not(.index-page):not(.static-page){
 	  display: none;
 	  position: relative;
 	  float: left;
-	  width: 2.5rem;
+	  width: 3rem;
 	  height: 100%;
 
 	  &:before {

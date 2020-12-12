@@ -1,5 +1,5 @@
 class app.views.Mobile extends app.View
-  # @className: '_mobile'
+  # @className: '_mobile' devdocs style
 
   @elements:
     body:     'body'
@@ -41,6 +41,7 @@ class app.views.Mobile extends app.View
     @panel = $ "._container"
     @panelCentent = $ "._content"
     @sidebar = $ "._sidebar"
+    @header = $ "._header"
     self = @
     msPointerSupported = window.navigator.msPointerEnabled
     touch = 
@@ -76,6 +77,9 @@ class app.views.Mobile extends app.View
 
     @_startOffsetX = 0
     @_currentOffsetX = 0
+    @_startOffsetY = 0
+    @_currentOffsetY = 0
+
     @_opening = false
     @_moved = false
     @_opened = false
@@ -84,6 +88,7 @@ class app.views.Mobile extends app.View
     @_fx = 'ease';
     @_duration = 300;
     @_tolerance = 70;
+    @_ratio = 2;
     @_padding = @_translateTo = 250;
     @_orientation = 1; # left
     @_translateTo *= @_orientation;
@@ -119,7 +124,8 @@ class app.views.Mobile extends app.View
         return
       self._moved = false
       self._opening = false
-      self._startOffsetX = eve.touches[0].pageX
+      self._startOffsetX = eve.touches[0].clientX
+      self._startOffsetY = eve.touches[0].clientY
       self._preventOpen = !self._touch or !self.isSidebarShown() and self.sidebar.clientWidth != 0
       return
 
@@ -144,7 +150,7 @@ class app.views.Mobile extends app.View
     @_onTouchEndFn = ->
       if self._moved
         # self.emit 'translateend'
-        if self._opening and Math.abs(self._currentOffsetX) > self._tolerance then self.showSidebar() else self.hideSidebar()
+        if self._opening and  Math.abs(self._currentOffsetX / self._currentOffsetY) > self._ratio and Math.abs(self._currentOffsetX) > self._tolerance then self.showSidebar() else self.hideSidebar()
       self._moved = false
       return
 
@@ -158,10 +164,12 @@ class app.views.Mobile extends app.View
       if scrolling or self._preventOpen or typeof eve.touches == 'undefined'
         return
       dif_x = eve.touches[0].clientX - (self._startOffsetX)
+      dif_y = eve.touches[0].clientY - (self._startOffsetY)
       translateX = self._currentOffsetX = dif_x
+      translateY = self._currentOffsetY = dif_y
       if Math.abs(translateX) > self._padding
         return
-      if Math.abs(dif_x) > 20
+      if Math.abs(dif_x) > 20 and Math.abs(dif_x / dif_y) > self._ratio and eve.cancelable
         self._opening = true
         oriented_dif_x = dif_x * self._orientation
         if self._opened and oriented_dif_x > 0 or !self._opened and oriented_dif_x < 0
@@ -174,6 +182,7 @@ class app.views.Mobile extends app.View
         if !self._moved and html.className.search('_open-sidebar') == -1
           html.className += ' _open-sidebar'
         self.panel.style[self._prefix + 'transform'] = self.panel.style.transform = 'translateX(' + translateX + 'px)'
+        self.header.style[self._prefix + 'transform'] = self.header.style.transform = 'translateX(' + translateX + 'px)'
         # self.emit 'translate', translateX
         self._moved = true
       return
@@ -189,10 +198,13 @@ class app.views.Mobile extends app.View
     return
   _setTransition: ->
     @panel.style[@_prefix + 'transition'] = @panel.style.transition = @_prefix + 'transform ' + @_duration + 'ms ' + @_fx
+    @header.style[@_prefix + 'transition'] = @header.style.transition = @_prefix + 'transform ' + @_duration + 'ms ' + @_fx
     return
   _translateXTo: (translateX) -> 
     @_currentOffsetX = translateX;
+    @_currentOffsetY = 0;
     @panel.style[@_prefix + 'transform'] = @panel.style.transform = 'translateX(' + translateX + 'px)'
+    @header.style[@_prefix + 'transform'] = @header.style.transform = 'translateX(' + translateX + 'px)'
     return
   showSidebar: =>
     return if @isSidebarShown()
@@ -213,6 +225,7 @@ class app.views.Mobile extends app.View
 
     setTimeout (=>
       @panel.style.transition = @panel.style['-webkit-transition'] = @panel.style[@_prefix + 'transform'] = @panel.style.transform = ''
+      @header.style.transition = @header.style['-webkit-transition'] = @header.style[@_prefix + 'transform'] = @header.style.transform = ''
       return
     ), @_duration + 50
     return
@@ -231,6 +244,7 @@ class app.views.Mobile extends app.View
     setTimeout (=>
       @removeClass '_open-sidebar'
       @panel.style.transition = @panel.style['-webkit-transition'] = @panel.style[@_prefix + 'transform'] = @panel.style.transform = ''
+      @header.style.transition = @header.style['-webkit-transition'] = @header.style[@_prefix + 'transform'] = @header.style.transform = ''
       return
     ), @_duration + 50
     return

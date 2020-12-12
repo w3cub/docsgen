@@ -35,4 +35,11 @@ html {
   --headerZ: 3;
   --noticeZ: 4;
   --hoverZ: 5;
+  --mobileHeaderZ: 5;
+  @media #{$mobileScreen} {
+  & body.docs { 
+      --contentZ: 4;
+      --mobileHeaderZ: 5;
+    }
+  }
 }

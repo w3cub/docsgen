@@ -1,6 +1,8 @@
 class app.views.Sidebar extends app.View
   @el: '._sidebar'
 
+  @elements:
+    siderlist: '._list-wrap'
   @events:
     focus: 'onFocus'
     select: 'onSelect'
@@ -64,7 +66,7 @@ class app.views.Sidebar extends app.View
     return
 
   render: ->
-    @html @view
+    @inserthtml @siderlist, @view
     return
 
   showDocList: ->

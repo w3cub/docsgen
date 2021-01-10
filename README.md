@@ -10,6 +10,7 @@ A Jekyll Project
  	rake multi_gen_deploy # project release
 	rake badlink
 	rake sitemap
+	rake push
 	rake googlesitemap
 
  

@@ -10,6 +10,8 @@
   > h4 { @extend %block-label; }
   > h2 + h2, > h3 + h3 { margin-top: 0; }
 
+  h3 { @extend %block-label, %label-blue}
+  h4 { @extend %block-label }
   p > code, li > code, .type {
     white-space: normal;
     @extend %label;

@@ -144,6 +144,10 @@ end
 def user_credentials_for(scope)
   FileUtils.mkdir_p(File.dirname(token_store_path))
 
+  puts "## Catch error try to delete token_store_path"
+
+  puts token_store_path
+
   if ENV['GOOGLE_CLIENT_ID']
     client_id = Google::Auth::ClientId.new(ENV['GOOGLE_CLIENT_ID'], ENV['GOOGLE_CLIENT_SECRET'])
   else
@@ -174,15 +178,16 @@ task :googlesitemap do |t, args|
   service = WebmastersV3::WebmastersService.new
   service.authorization = user_credentials_for(WebmastersV3::AUTH_WEBMASTERS)
   service.key = ENV['GOOGLE_API_KEY']
-  Dir.glob("#{deploy_dir}/**/sitemap.xml") { |file|
+  Dir.glob("#{deploy_dir}/**/sitemap.xml") do |file|
     url =  deploy_domain +  file.sub( "#{deploy_dir}\/" , "")
     puts url
     begin
       service.submit_sitemap(deploy_domain, url)
-    rescue
+    rescue StandardError => e
+      puts e.backtrace.join("\n")
       retry
     end
-  }
+  end
 end
 
 
@@ -307,9 +312,17 @@ task :multi_gen_deploy do
   queueNames = 
 [
 
+
+  # 'gcc~11', 
+  # 'gcc~11_cpp', 
+  # 'tensorflow_cpp~2.4', 
+  # 'tensorflow~2.4', 
+  # 'haproxy~2.4'
+  # 'ansible',
+  # 'ansible~2.11'
   # 'django~3.2',
   # 'css',
-  'prettier',
+  # 'prettier'
 # 'latex',
 # 'angularjs~1.8',
 # 'typescript',

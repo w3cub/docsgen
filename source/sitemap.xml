@@ -1,0 +1,14 @@
+---
+layout: null
+search: exclude
+---
+
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+{% for link in site.data.docs %}
+  <sitemap>
+    <loc>{{ site.url }}/{{link.slug}}/sitemap.xml</loc>
+  </sitemap>
+{% endfor %}
+</sitemapindex>
+

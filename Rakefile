@@ -326,8 +326,9 @@ task :multi_gen_deploy do
   # 'nokogiri', 
   # 'gnu_make',     
   # 'npm',          
-  # 'rails~7.0',    
-  'flow',
+  # 'rails~7.0', 
+  'zig'   
+  # 'flow',
   # 'gcc~11', 
   # 'gcc~11_cpp', 
   # 'tensorflow_cpp~2.4', 

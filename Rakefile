@@ -312,7 +312,22 @@ task :multi_gen_deploy do
   queueNames = 
 [
 
-
+  # 'kubernetes',
+  # 'point_cloud_library', 
+  # 'deno',     
+  # 'bootstrap~5',  
+  # 'react_router', 
+  # 'qt',
+  # 'react_native', 
+  # 'webpack~5',    
+  # 'browser_support_tables', 
+  # 'matplotlib~3.5', 
+  # 'javascript',   
+  # 'nokogiri', 
+  # 'gnu_make',     
+  # 'npm',          
+  # 'rails~7.0',    
+  'flow',
   # 'gcc~11', 
   # 'gcc~11_cpp', 
   # 'tensorflow_cpp~2.4', 

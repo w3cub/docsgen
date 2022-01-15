@@ -12,6 +12,7 @@
 
   h3 { @extend %block-label, %label-blue}
   h4 { @extend %block-label }
+
   p > code, li > code, .type {
     white-space: normal;
     @extend %label;
@@ -26,4 +27,3 @@
   .srclink { float: right; }
   details > table { margin: 0; }
 }
-

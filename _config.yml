@@ -941,6 +941,8 @@ include:
   - perl~5.26/functions/__file__.html
   - perl~5.26/functions/__line__.html
   - perl~5.26/functions/__sub__.html
+  - matplotlib~3.5/_enums_api.html
+  - matplotlib~3.5/_api_api.html
   - python~2.7/library/__builtin__.html
   - python~2.7/library/__main__.html
   - python~2.7/library/_winreg.html
@@ -971,6 +973,7 @@ include:
   - c/keyword/_imaginary.html
   - c/keyword/_thread_local.html
   - c/keyword/_alignas.html
+  - gnu_make/_002dw-option.html
   - gcc~10/_005f_005fsync-builtins.html
   - gcc~10/_0040encode.html
   - gcc~10/_005f_005fatomic-builtins.html

@@ -1,0 +1,28 @@
+._kubernetes {
+  @extend %simple;
+
+  .alert {
+    @extend %note;
+    &.alert-success { @extend %note-green; }
+    &.alert-info { @extend %note-blue; }
+    &.alert-warning { @extend %note-orange; }
+    &.alert-danger { @extend %note-red; }
+    &.alert-primary { @extend %note-blue; }
+    &.alert-secondary { @extend %note-blue; }
+  }
+
+  blockquote.code-block.example {
+    background: #bacfeb;
+    padding: 10px;
+    border-radius: 5px 5px 0 0;
+    margin-bottom: 0;
+    font-weight: bold;
+    border: var(--boxBorder);
+    display: block;
+  }
+
+  pre.code-block.example {
+    border-radius: 0 0 5px 5px;
+    margin-top: 0;
+  }
+}

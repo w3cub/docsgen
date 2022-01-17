@@ -327,7 +327,7 @@ task :multi_gen_deploy do
   # 'gnu_make',     
   # 'npm',          
   # 'rails~7.0', 
-  'zig'   
+  # 'zig'   
   # 'flow',
   # 'gcc~11', 
   # 'gcc~11_cpp', 

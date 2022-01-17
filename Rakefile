@@ -251,7 +251,7 @@ end
 
 desc "test preview"
 task :test_preview do |t, args|
-  Rake::Task[:copy_html].invoke(ENV['TEST_DOCS'] || "tensorflow~guide")
+  Rake::Task[:copy_html].invoke(ENV['TEST_DOCS'] || 'zig')
   Rake::Task[:preview].invoke
 end
 

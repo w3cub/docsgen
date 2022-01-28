@@ -438,6 +438,27 @@ task :copydot, :source, :dest do |t, args|
   end
 end
 
+desc "patch old source files"
+task :patch do |t, args|
+  # This task for patch update the old assets file, in order to update the new efect for old build assets
+  reg = /application-([a-zA-Z0-9]+?)\./
+  ['js', 'css'].each do |type|
+    jsFils =  Dir.glob("#{deploy_dir}/assets/*.#{type}")
+    .select { |f| Regexp.new("#{reg.source}#{type}").match(f.to_s) }
+    .sort_by{ |f| File.mtime(f) }
+    filesFirst = jsFils.first
+    filesNeedtoModify = jsFils.[1..-1]
+    # update files content use the first file
+    fileFirstContent = File.read(filesFirst)
+    filesNeedtoModify.each do |file|
+      File.open(file, "w") do |f|
+        f.puts "//#{File.basename(jsFilsFirst)}"
+        f.puts fileFirstContent
+      end
+    end
+  end
+end
+
 
 desc "deploy public directory to github pages"
 multitask :push do

@@ -12,6 +12,7 @@
 
 #= require app/app
 #= require ./app/init
+#= require ./app/adblock
 #= require ./app/router
 #= require ./app/searcher
 #= require ./app/shortcuts

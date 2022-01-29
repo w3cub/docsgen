@@ -43,7 +43,7 @@ var makeElement = () => {
   blockElement.className = "el-container"
   document.body.classList.add("el-dialog_active")
   blockElement.innerHTML = `
-  <style>
+  <style type="text/css">
   body.el-dialog_active {
     overflow: hidden !important;
   }
@@ -136,13 +136,13 @@ var makeElement = () => {
     padding-bottom: 0;
   }
 
-  .el-dialog .el-dialog_body .el-dialog_content p.title {
+  .el-dialog .el-dialog_body .el-dialog_content .title {
     font-size: 25px;
     font-weight: 400;
     margin: 1rem;
   }
 
-  .el-dialog .el-dialog_body .el-dialog_content p.subtitle {
+  .el-dialog .el-dialog_body .el-dialog_content .subtitle {
     padding: 0 1rem;
   }
 
@@ -164,15 +164,14 @@ var makeElement = () => {
     padding: 1rem;
   }
 
-  .el-dialog_buttons_row p {
+  .el-dialog_buttons_row div {
     margin: 0;
     font-size: 16px;
     font-weight: 400;
     margin-bottom: 0.3rem;
   }
 
-  .el-dialog_buttons_row button,
-  .el-dialog_buttons_row a {
+  .el-dialog_buttons_row button {
     background: #ED1E45;
     border: 1px solid #ED1E45;
     width: 90%;
@@ -254,7 +253,7 @@ var makeElement = () => {
   document.body.appendChild(blockElement);
 }
 
-app.creaBlocktElement = () => {
+creaBlocktElement = () => {
   setTimeout(() => {
     // exist adblock or had been detected
     if (getCookie('vda') != '1') {
@@ -266,17 +265,25 @@ app.creaBlocktElement = () => {
   }, 1000)
 }
 
-app.vdaInit = () => {
+buildPromotion = () => {
+  if (getCookie('tp') != '1'){
+    setTimeout(() => {
+      window.open('https://tools.w3cub.com/?_sp=docs', '_blank')
+      setCookie('tp', 1, 30)
+    }, 3000)
+  }
+}
+
+app.on('ready', () => {
+  buildPromotion();
   fetch('/conf/conf.json').then(res => res.json()).then(res => {
     if (res.vda.action) {
-      app.creaBlocktElement()
+      creaBlocktElement()
     }
   }).catch(err => {
-    app.creaBlocktElement()
+    creaBlocktElement()
   })
-};
-
-
+})
 
 
 

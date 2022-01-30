@@ -20,9 +20,9 @@ const detectAdBlocker = () => {
 }
 var app = app || {};
 window.reload2022 = () => {
-  location.reload()
   // 25s
   setCookie('vda', 1, 0.0003)
+  location.reload()
 }
 window.redirect2022 = (url) => {
   location.href = url

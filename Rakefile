@@ -447,7 +447,7 @@ task :patch do |t, args|
     .select { |f| Regexp.new("#{reg.source}#{type}").match(f.to_s) }
     .sort_by{ |f| File.mtime(f) }
     filesFirst = jsFils.first
-    filesNeedtoModify = jsFils.[1..-1]
+    filesNeedtoModify = jsFils[1..-1]
     # update files content use the first file
     fileFirstContent = File.read(filesFirst)
     filesNeedtoModify.each do |file|

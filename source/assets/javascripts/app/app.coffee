@@ -31,6 +31,8 @@
       @mobile = new app.views.Mobile
       # if @isMobile()
       @bootOne()
+    else 
+      @bootNDoc()
     # else if @DOCS
     #   @bootAll()
     # else
@@ -88,6 +90,10 @@
     # @doc.load @start.bind(@), @onBootError.bind(@), readCache: true
     # new app.views.Notice 'singleDoc', @doc
     # delete @DOC
+    return
+  bootNDoc: ->
+    @trigger 'ready'
+    @router.start()
     return
 
   bootAll: ->

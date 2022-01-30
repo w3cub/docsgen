@@ -13,11 +13,11 @@ className: static-page
                 <ul class="_toc-list">
                     <li><a href="#credits">Credits</a>
                     </li>
-                    <li><a href="#copyright">Copyright</a>
-                    </li>
                     <li><a href="#whitelist">How to Whitelist a Website?</a>
                     </li>
                     <li><a href="#privacy-policy">Privacy Policy</a>
+                    </li>
+                    <li><a href="#copyright">Copyright</a>
                     </li>
                 </ul>
             </div>
@@ -56,10 +56,7 @@ className: static-page
                     {%endfor %}
                 </tbody>
             </table>
-            <h2 class="_lined-heading" id="copyright">Copyright and License</h2>
-            <p class="_note">
-                This software is licensed under the terms of the Mozilla Public License v2.0.
-            </p>
+
 
             <h2 class="_lined-heading" id="whitelist">How to Whitelist a Website?</h2>
             <div>
@@ -67,11 +64,9 @@ className: static-page
                     the AdBlock(Plus) menu. Under <strong>Pause on this site</strong>, select <strong>Once</strong> to
                     temporarily pause AdBlock(Plus) on that site or <strong>Always</strong> to add the site to your
                     allowlist.&nbsp;</p>
-                <p><br></p>
                 <p>When paused once, AdBlock(Plus) will automatically start blocking ads again when you leave the site. If
                     paused always, the site will be added to your allowlist ensuring that ads will continue to show
                     every time you visit the site.</p>
-                <p><br></p>
                 <p>To start blocking ads on a site again, click the AdBlock(Plus) toolbar icon and select <strong>Unpause
                         AdBlock(Plus)</strong>. You can also manually remove the site from your allowlist:</p>
                 <ol>
@@ -84,7 +79,7 @@ className: static-page
             </div>
             <p>
                 Or if you want to whitelist a website, you can use the following button:
-                Click the button, you will <button onclick="setCookie('vda','1', 1)">One day No Advertisement</button>.
+                Click the button, you will <button  class="_btn" style="vertical-align: baseline;" onclick="setCookie('vda','1', 1); location.reload();">One day No Ads Blocker Detector</button>.
             </p>
 
             <h2 class="_lined-heading" id="privacy-policy">Privacy Policy</h2>
@@ -102,6 +97,12 @@ className: static-page
                 <li>Please review <a href="/privacy-policy">Privacy Policy</a> for more details on how we handle
                     personal information.</li>
             </ul>
+
+
+            <h2 class="_lined-heading" id="copyright">Copyright and License</h2>
+            <p class="_note">
+                This software is licensed under the terms of the Mozilla Public License v2.0.
+            </p>
         </div>
     </div>
 </section>

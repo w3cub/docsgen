@@ -253,7 +253,7 @@ var makeElement = () => {
   document.body.appendChild(blockElement);
 }
 
-creaBlocktElement = () => {
+const creaBlocktElement = () => {
   setTimeout(() => {
     // exist adblock or had been detected
     if (getCookie('vda') != '1') {
@@ -265,7 +265,7 @@ creaBlocktElement = () => {
   }, 1000)
 }
 
-buildPromotion = () => {
+const buildPromotion = () => {
   if (getCookie('tp') != '1'){
     setTimeout(() => {
       window.open('https://tools.w3cub.com/?_sp=docs', '_blank')

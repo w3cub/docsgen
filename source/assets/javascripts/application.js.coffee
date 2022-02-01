@@ -12,7 +12,7 @@
 
 #= require app/app
 #= require ./app/init
-#= require ./app/adblock
+#= require ./app/plugin
 #= require ./app/router
 #= require ./app/searcher
 #= require ./app/shortcuts
@@ -29,7 +29,6 @@
 #= require_tree ./views/list
 #= require_tree ./views/search
 #= require_tree ./views/sidebar
-#= require_tree ./views/widget
 
 #= require ./views/content/content
 #= require ./views/content/entry_page

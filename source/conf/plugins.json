@@ -1,0 +1,19 @@
+{
+    "plugins": {
+        "share": {
+            "name": "Share",
+            "import": "share.js",
+            "action": 1 
+        },
+        "adblock": {
+            "name": "adblock",
+            "import": "adblock.js",
+            "action": 1
+        },
+        "toTop": {
+            "name": "toTop",
+            "import": "toTop.js",
+            "action": 1
+        }
+    }
+}

@@ -22,7 +22,6 @@ class app.views.Document extends app.View
     # @addSubview @resizer = new app.views.Resizer if app.views.Resizer.isSupported()
     @addSubview @content = new app.views.Content
     @addSubview @path    = new app.views.Path unless app.isSingleDoc() or app.isMobile()
-    @addSubview @totop = new app.views.ToTopView
     # @sidebar.search
     #   .on 'searching', @onSearching
     #   .on 'clear', @onSearchClear

@@ -93,7 +93,6 @@
     return
   bootNDoc: ->
     @trigger 'ready'
-    @router.start()
     return
 
   bootAll: ->

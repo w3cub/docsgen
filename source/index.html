@@ -41,7 +41,9 @@ spriteImg.onload = function () {
   [].map.call(list, function(element) {
     element.classList.add('loaded');
   });
-  ga && ga('send', 'event', 'spl', 't', Date.now() - n);
+  gtag && gtag("event", "spl", {
+    t: Date.now() - n
+  });
 }
 spriteImg.src = '{% asset logo/sprite.png @path %}';
 })();

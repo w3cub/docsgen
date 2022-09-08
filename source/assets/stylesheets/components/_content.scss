@@ -110,6 +110,10 @@
   -webkit-overflow-scrolling: touch;
   @extend %border-box;
 
+  .adsbygoogle {
+    min-height: 280px;
+  }
+
   ._sidebar-hidden &:before {
     content: '';
     display: block;
@@ -130,6 +134,9 @@
     margin-left: 0rem;
     padding: 1.125rem 1.5rem 0;
 
+  }
+  ._content .adsbygoogle {
+    min-height: 320px;
   }
 
   .index-page ._container ._list{

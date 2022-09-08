@@ -46,6 +46,8 @@ titlecase: true       # Converts page and post titles to titlecase
 # Google Analytics
 google_analytics_tracking_id: UA-71174418-1
 
+google_analytics4_tracking_id: G-R3WC07G3GB
+
 # Facebook Like
 # facebook_like: false
 

@@ -28,6 +28,11 @@
     @extend %border-box;
   }
 }
+@media(max-width: 480px){
+  ._page {
+    font-size: 16px;
+  }
+}
 
 //
 // Links
@@ -80,6 +85,7 @@
   padding: .25rem .75rem;
   background: var(--labelBackground);
   border-radius: 3px;
+  word-break: break-word;
 }
 
 ._attribution-link { @extend %internal-link; }

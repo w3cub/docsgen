@@ -28,9 +28,12 @@
     @extend %border-box;
   }
 }
-@media(max-width: 480px){
+@media (any-pointer: coarse) {
   ._page {
     font-size: 16px;
+  }
+  ._page a {
+    padding: .8em;
   }
 }
 

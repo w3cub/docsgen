@@ -112,6 +112,9 @@
 
   .adsbygoogle {
     min-height: 280px;
+    background:#f5f5f5;
+    margin:5px 5px 20px;
+    border:1px dashed #f5f5f5;
   }
 
   ._sidebar-hidden &:before {
@@ -137,6 +140,7 @@
   }
   ._content .adsbygoogle {
     min-height: 320px;
+    margin:auto;
   }
 
   .index-page ._container ._list{

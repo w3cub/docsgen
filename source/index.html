@@ -35,17 +35,19 @@ className: index-page
 </section>
 <script>
 ;(function(){
-  var spriteImg = new Image();
-var n = Date.now();
-spriteImg.onload = function () {
-  var list = document.querySelectorAll('._icon');
-  [].map.call(list, function(element) {
-    element.classList.add('loaded');
-  });
-  gtag && gtag("event", "spl", {
-    t: Date.now() - n
-  });
-}
-spriteImg.src = '{% asset logo/sprite.png @path %}';
+  setTimeout(function(){
+    var spriteImg = new Image();
+    var n = Date.now();
+    spriteImg.onload = function () {
+      var list = document.querySelectorAll('._icon');
+      [].map.call(list, function(element) {
+        element.classList.add('loaded');
+      });
+      gtag && gtag("event", "spl", {
+        t: Date.now() - n
+      });
+    }
+    spriteImg.src = '{% asset logo/sprite.png @path %}';
+  }, 0)
 })();
 </script>

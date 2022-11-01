@@ -412,6 +412,23 @@ task :copy_public do |t, args|
 end
 
 
+desc "deploy _deploy directory to github pages"
+multitask :pushonly do
+  puts "## Deploying branch to Github Pages "
+  cd "#{deploy_dir}" do
+    system "git add -A"
+    message = "Site updated at #{Time.now.utc}"
+    puts "\n## Committing: #{message}"
+    system "git commit -m \"#{message}\""
+    puts "\n## Pushing generated #{deploy_dir} website"
+    Bundler.with_unbundled_env { system "git push origin #{deploy_branch}" }
+    puts "\n## Github Pages deploy complete"
+  end
+
+  puts "Complete"
+
+end
+
 desc "deploy public directory to github pages"
 multitask :push do
   puts "## Deploying branch to Github Pages "

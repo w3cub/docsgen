@@ -309,8 +309,16 @@ task :multi_gen_deploy do
   # Rake::Task[:gitinit].invoke
   queueNames = 
 [
-  'astro',
-  'fastapi'
+  'http',
+  # 'cakephp~4.4',
+  # 'date_fns',
+  # 'docker',
+  # 'eigen3',
+  # 'gcc~12',
+  # 'gcc~12_cpp',
+  # 'git',
+  # 'kubectl',
+  # 'kubernetes','nix','npm','requests','sanctuary','sequelize~6','browser_support_tables','svelte','tailwindcss','tensorflow_cpp~2.9','tensorflow~2.9','terraform','vitest','vuex~4','xslt_xpath'
 ]
 
   queue = Queue.new

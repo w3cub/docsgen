@@ -39,6 +39,8 @@ docs_dir        = "_docs"
 docs_cache_dir  = ".docs-cache"
 deploy_domain   = "https://docs.w3cub.com/"
 
+docs_genonly_path = "../.genonly"
+
 
 repo_url = "git@github.com:w3cub/w3cub-release-202011.git"
 
@@ -251,7 +253,7 @@ end
 
 desc "test preview"
 task :test_preview do |t, args|
-  Rake::Task[:copy_html].invoke(ENV['TEST_DOCS'] || 'zig')
+  Rake::Task[:copy_html].invoke(ENV['TEST_DOCS'] || 'wagtail')
   Rake::Task[:preview].invoke
 end
 
@@ -304,21 +306,47 @@ task :setup_gen do
 end
 
 
+task "setup generate only collection"
+task :setup_genonly do
+  names = []
+  content = ""
+
+  # read gen only file
+  if File.exist?(docs_genonly_path)
+    genonly = IO.read(docs_genonly_path)
+    genonly = genonly.split("\n")
+    genonly.each do |item|
+      if item && item != ""
+        names.push item
+      end
+    end
+  end
+  names.sort.each_with_index { |item, index|
+    if index == 0
+      content << "[\n"
+      content << "'" + item + "'"
+    else
+      content << ",\n'" + item + "'"
+    end
+    if index == names.size - 1
+      content << "\n]"
+    end
+  }
+  # genonly 
+
+  rakefile = IO.read(__FILE__)
+  rakefile.sub!(/queueNames([\n\s]*?)=([\s\n]*?)((\[)[^\]]*?(\]))/, "queueNames\\1=\\2#{content}")
+  File.open(__FILE__, 'w') do |f|
+    f.write rakefile
+  end
+end
+
 desc "This task for big Collection"
 task :multi_gen_deploy do 
   # Rake::Task[:gitinit].invoke
   queueNames = 
 [
-  'http',
-  # 'cakephp~4.4',
-  # 'date_fns',
-  # 'docker',
-  # 'eigen3',
-  # 'gcc~12',
-  # 'gcc~12_cpp',
-  # 'git',
-  # 'kubectl',
-  # 'kubernetes','nix','npm','requests','sanctuary','sequelize~6','browser_support_tables','svelte','tailwindcss','tensorflow_cpp~2.9','tensorflow~2.9','terraform','vitest','vuex~4','xslt_xpath'
+'fluture qunit vueuse wagtail',
 ]
 
   queue = Queue.new
@@ -352,6 +380,16 @@ task :sitemap do |t, args|
   Dir.glob("#{docs_cache_dir}/*") { |dir|  
     names.push dir.gsub('.docs-cache/','')
   }
+
+  # if File.exist?(docs_genonly_path)
+  #   genonly = IO.read(docs_genonly_path)
+  #   genonly = genonly.split("\n")
+  #   genonly.each do |item|
+  #     if item && item != ""
+  #       names.push item
+  #     end
+  #   end
+  # end
   queue = Queue.new
   names.each do |item|
     queue.push(item)

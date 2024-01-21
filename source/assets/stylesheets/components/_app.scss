@@ -22,3 +22,20 @@ html._booting body._max-width { background: var(--documentBackground); }
     box-shadow: 1px 0 var(--headerBorder), -1px 0 var(--headerBorder);
   }
 }
+
+
+ins.adsbygoogle {
+  position: relative;
+}
+ins.adsbygoogle:empty::before {
+  content: 'Loading ...';
+  font-weight: bold;
+  position: absolute;
+  left: 0px;
+  text-align: center;
+  top: 47%;
+  width: 100%;
+}
+ins.adsbygoogle[data-adsbygoogle-status="done"]::before {
+  content: '';
+}

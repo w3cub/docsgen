@@ -87,7 +87,7 @@ task :preview do
   raise "### You haven't set anything up yet. First run `rake install` to set up an Octopress theme." unless File.directory?(source_dir)
   puts "Starting to watch source with Jekyll and Compass. Starting Rack on port #{server_port}"
   # system "compass compile --css-dir #{source_dir}/stylesheets" unless File.exist?("#{source_dir}/stylesheets/screen.css")
-  jekyllPid = Process.spawn({"OCTOPRESS_ENV"=>"preview"}, "jekyll serve --host 0.0.0.0 --livereload")
+  jekyllPid = Process.spawn({"OCTOPRESS_ENV"=>"preview"}, "jekyll serve --trace --host 0.0.0.0 --livereload")
   # compassPid = Process.spawn("compass watch")
   # rackupPid = Process.spawn("rackup --host 0.0.0.0  --port #{server_port} -d")
 
@@ -220,7 +220,7 @@ end
 desc "Default deploy task"
 task :deploy do
   # Check if preview posts exist, which should not be published
-  if File.exists?(".preview-mode")
+  if File.exist?(".preview-mode")
     puts "## Found posts in preview mode, regenerating files ..."
     File.delete(".preview-mode")
     Rake::Task[:generate].execute
@@ -243,17 +243,28 @@ task :copy_html, :names do |t, args|
   (Dir["#{source_dir}/#{docs_dir}/*"]).each { |f| rm_rf(f) }
   if names.is_a?(String) && names.match(/(\w+\\s?)*?/)
     names = names.split(%r{,|\s})
-    names.each { |name|  
-        target_path = "#{source_dir}/#{docs_dir}/#{name}"
-        mkdir_p(target_path)
-        cp_r("#{docs_cache_dir}/#{name}/.", target_path)
+    names.each { |name|
+        # if name include glob logic
+        if name.include? "*.html"
+          target_path = "#{source_dir}/#{docs_dir}"
+          pname = name.gsub('*.html','')
+          target_path = "#{source_dir}/#{docs_dir}/#{pname}"
+          mkdir_p(target_path)
+          Dir.glob("#{docs_cache_dir}/#{name}").each do |file|
+            cp_r(file, target_path)
+          end
+        else
+          target_path = "#{source_dir}/#{docs_dir}/#{name}"
+          mkdir_p(target_path)
+          cp_r("#{docs_cache_dir}/#{name}/.", target_path)
+        end
     }
   end
 end
 
 desc "test preview"
 task :test_preview do |t, args|
-  Rake::Task[:copy_html].invoke(ENV['TEST_DOCS'] || 'wagtail')
+  Rake::Task[:copy_html].invoke('openjdk~21/*.html')
   Rake::Task[:preview].invoke
 end
 
@@ -346,12 +357,29 @@ task :multi_gen_deploy do
   # Rake::Task[:gitinit].invoke
   queueNames = 
 [
-'fluture qunit vueuse wagtail',
+  
+#   'bazel~7.0',   'hammerspoon',   'hapi',   'joi',   'nushell',   'sanctuary_def',   'sanctuary_type_classes',
+#   'dom', 'html',   'javascript',   'vue~3',   'react',   'node',   'webpack~5',   'vite',   'axios',
+'openjdk~21/*.html',
+# 'openjdk~21*',
 ]
 
   queue = Queue.new
   queueNames.each do |item|
-    queue.push(item)
+    # if item end with * loop dir for bigger collection
+    if item.end_with?('*')
+      item = item.gsub('*','')
+      # push dir root files *.html
+      queue.push("#{item}/*.html")
+      Dir.glob("#{docs_cache_dir}/#{item}/*") { |dir|
+        # check if dir is directory
+        if File.directory?(dir)
+          queue.push(dir.gsub('.docs-cache/',''))
+        end
+      }
+    else 
+      queue.push(item)
+    end 
   end
 
   until queue.empty?
@@ -400,7 +428,7 @@ task :sitemap do |t, args|
     Sitemap.new({fileDir: "./_deploy/"+ docs + '/', fileBase: "./_deploy/"})
   end
   # robotfile = "./public/robots.txt"
-  # if File.exists?(robotfile)
+  # if File.exist?(robotfile)
   #   File.truncate(robotfile, 0)
   # else
   #   File.new(robotfile, "a").close
@@ -468,7 +496,10 @@ multitask :pushonly do
 end
 
 desc "deploy public directory to github pages"
-multitask :push do
+multitask :push, :name do |t, args|
+  # if has name param update message ,else set name as empty
+  args.with_defaults(:name=> '')
+  name = args[:name]
   puts "## Deploying branch to Github Pages "
   # puts "## Pulling any updates from Github Pages "
   # cd "#{deploy_dir}" do 
@@ -513,7 +544,7 @@ multitask :push do
   # 
   cd "#{deploy_dir}" do
     system "git add -A"
-    message = "Site updated at #{Time.now.utc}"
+    message = "Site updated dir #{name} at #{Time.now.utc}"
     puts "\n## Committing: #{message}"
     system "git commit -m \"#{message}\""
     puts "\n## Pushing generated #{deploy_dir} website"
@@ -528,7 +559,7 @@ end
 desc "Deploy website via rsync"
 task :rsync do
   exclude = ""
-  if File.exists?('./rsync-exclude')
+  if File.exist?('./rsync-exclude')
     exclude = "--exclude-from '#{File.expand_path('./rsync-exclude')}'"
   end
   puts "## Deploying website via Rsync"
@@ -657,7 +688,7 @@ end
 
 def blog_url(user, project, source_dir)
   cname = "#{source_dir}/CNAME"
-  url = if File.exists?(cname)
+  url = if File.exist?(cname)
     "http://#{IO.read(cname).strip}"
   else
     "http://#{user.downcase}.github.io"

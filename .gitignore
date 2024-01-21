@@ -18,7 +18,6 @@ source/_stash
 source/images/docs
 source/stylesheets/screen.css
 node_modules
-Gemfile.lock
 .jekyll-metadata
 .jekyll-cache
 .env

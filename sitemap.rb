@@ -12,10 +12,13 @@ class Sitemap
     write
   end
   def initfile
-    if File.exists?(@filePath)
+    if File.exist?(@filePath)
       File.truncate(@filePath, 0)
     else
-      File.new(@filePath, "a").close
+      dir = File.dirname(@filePath)
+      if File.directory?(dir)
+        File.new(@filePath, "a").close
+      end
     end
 
   end
@@ -27,21 +30,25 @@ class Sitemap
     .pdf
   ).freeze
   def generate
-    xmlfile = File.open(@filePath, "a")
-    xmlfile.puts '<?xml version="1.0" encoding="UTF-8"?>'
-    xmlfile.puts '<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
-    Dir.glob("#{@fileDir}**/*") do |file|
-      next if File.directory? file
-      if INCLUDED_EXTENSIONS.include? File.extname(file) 
-        lastmod = File.mtime(file).xmlschema
-        xmlfile << "<url>\n"
-        xmlfile <<  "<loc>#{file.sub(@fileBase,@domain).sub(/\.html$/,"")}</loc>\n"
-        xmlfile <<  "<lastmod>#{lastmod}</lastmod>\n"
-        xmlfile << "</url>\n"
+    # check if filePath exists
+    if File.exist?(@filePath)
+      # open file
+      xmlfile = File.open(@filePath, "a")
+      xmlfile.puts '<?xml version="1.0" encoding="UTF-8"?>'
+      xmlfile.puts '<urlset xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd" xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+      Dir.glob("#{@fileDir}**/*") do |file|
+        next if File.directory? file
+        if INCLUDED_EXTENSIONS.include? File.extname(file) 
+          lastmod = File.mtime(file).xmlschema
+          xmlfile << "<url>\n"
+          xmlfile <<  "<loc>#{file.sub(@fileBase,@domain).sub(/\.html$/,"")}</loc>\n"
+          xmlfile <<  "<lastmod>#{lastmod}</lastmod>\n"
+          xmlfile << "</url>\n"
+        end
       end
+      xmlfile << "</urlset>"
+      xmlfile.close
     end
-    xmlfile << "</urlset>"
-    xmlfile.close
   end
   def write
     initfile

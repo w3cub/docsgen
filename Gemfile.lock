@@ -90,6 +90,8 @@ GEM
       rexml
       signet (~> 0.12)
     google-protobuf (3.25.2)
+    google-protobuf (3.25.2-x86_64-darwin)
+    google-protobuf (3.25.2-x86_64-linux)
     googleauth (0.17.1)
       faraday (>= 0.17.3, < 2.0)
       jwt (>= 1.4, < 3.0)
@@ -156,9 +158,11 @@ GEM
     multipart-post (2.3.0)
     mustermann (3.0.0)
       ruby2_keywords (~> 0.0.1)
-    nokogiri (1.16.0-arm-linux)
+    nokogiri (1.16.3-arm-linux)
       racc (~> 1.4)
-    nokogiri (1.16.0-x86_64-darwin)
+    nokogiri (1.16.3-x86_64-darwin)
+      racc (~> 1.4)
+    nokogiri (1.16.3-x86_64-linux)
       racc (~> 1.4)
     octopress-hooks (2.6.2)
       jekyll (>= 2.0)
@@ -221,6 +225,8 @@ GEM
       google-protobuf (~> 3.25)
     sass-embedded (1.70.0-x86_64-darwin)
       google-protobuf (~> 3.25)
+    sass-embedded (1.70.0-x86_64-linux-gnu)
+      google-protobuf (~> 3.25)
     sass-listen (4.0.0)
       rb-fsevent (~> 0.9, >= 0.9.4)
       rb-inotify (~> 0.9, >= 0.9.7)
@@ -277,6 +283,7 @@ PLATFORMS
   arm-linux-gnueabihf
   arm-linux-musleabihf
   x86_64-darwin-22
+  x86_64-linux
 
 DEPENDENCIES
   autoprefixer-rails

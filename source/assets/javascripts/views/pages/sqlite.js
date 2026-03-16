@@ -1,34 +1,24 @@
-/*
- * decaffeinate suggestions:
- * DS002: Fix invalid constructor
- * DS206: Consider reworking classes to avoid initClass
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
 //= require views/pages/base
 
-const Cls = (app.views.SqlitePage = class SqlitePage extends app.views.BasePage {
-  constructor(...args) {
-    this.onClick = this.onClick.bind(this);
-    super(...args);
-  }
-
-  static initClass() {
-    this.events =
-      {click: 'onClick'};
-  }
+app.views.SqlitePage = class SqlitePage extends app.views.BasePage {
+  static events = { click: "onClick" };
 
   onClick(event) {
-    let el, id;
-    if (!(id = event.target.getAttribute('data-toggle'))) { return; }
-    if (!(el = this.find(`#${id}`))) { return; }
+    const id = event.target.getAttribute("data-toggle");
+    if (!id) {
+      return;
+    }
+    const el = this.find(`#${id}`);
+    if (!el) {
+      return;
+    }
     $.stopEvent(event);
-    if (el.style.display === 'none') {
-      el.style.display = 'block';
-      event.target.textContent = 'hide';
+    if (el.style.display === "none") {
+      el.style.display = "block";
+      event.target.textContent = "hide";
     } else {
-      el.style.display = 'none';
-      event.target.textContent = 'show';
+      el.style.display = "none";
+      event.target.textContent = "show";
     }
   }
-});
-Cls.initClass();
+};

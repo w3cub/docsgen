@@ -1,39 +1,37 @@
-/*
- * decaffeinate suggestions:
- * DS002: Fix invalid constructor
- * DS101: Remove unnecessary use of Array.from
- * DS206: Consider reworking classes to avoid initClass
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-const Cls = (app.views.Notice = class Notice extends app.View {
-  static initClass() {
-    this.className = '_notice';
-    this.attributes =
-      {role: 'alert'};
+app.views.Notice = class Notice extends app.View {
+  static className = "_notice";
+  static attributes = { role: "alert" };
+
+  constructor(type, ...args) {
+    super();
+    this.type = type;
+    this.args = args || [];
+    this.init0(); // needs this.args
+    this.refreshElements();
   }
 
-  constructor(type, ...rest) { this.type = type; [...this.args] = Array.from(rest); super(...arguments); }
-
-  init() {
+  init0() {
     this.activate();
   }
 
   activate() {
-    if (super.activate(...arguments)) { this.show(); }
+    if (super.activate(...arguments)) {
+      this.show();
+    }
   }
 
   deactivate() {
-    if (super.deactivate(...arguments)) { this.hide(); }
+    if (super.deactivate(...arguments)) {
+      this.hide();
+    }
   }
 
   show() {
-    if (this.type === 'disabledDoc') { this.addClass('_top'); }
-    this.html(this.tmpl(`${this.type}Notice`, ...Array.from(this.args)));
-    this.prependTo($('._app'));
+    this.html(this.tmpl(`${this.type}Notice`, ...this.args));
+    this.prependTo(app.el);
   }
 
   hide() {
     $.remove(this.el);
   }
-});
-Cls.initClass();
+};

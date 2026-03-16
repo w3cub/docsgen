@@ -1,160 +1,125 @@
-/*
- * decaffeinate suggestions:
- * DS002: Fix invalid constructor
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-(function() {
-  let MAX_WIDTH_CLASS = undefined;
-  let HIDE_SIDEBAR_CLASS = undefined;
-  const Cls = (app.views.Document = class Document extends app.View {
-    constructor(...args) {
-      this.onSearching = this.onSearching.bind(this);
-      this.onSearchClear = this.onSearchClear.bind(this);
-      this.onVisibilityChange = this.onVisibilityChange.bind(this);
-      super(...args);
+app.views.Document = class Document extends app.View {
+  static el = document;
+
+  static events = { visibilitychange: "onVisibilityChange" };
+
+  static shortcuts = {
+    help: "onHelp",
+    preferences: "onPreferences",
+    escape: "onEscape",
+    superLeft: "onBack",
+    superRight: "onForward",
+  };
+
+  static routes = { after: "afterRoute" };
+
+  init() {
+    this.menu = new app.views.Menu();
+    this.sidebar = new app.views.Sidebar();
+    this.addSubview(this.menu, this.addSubview(this.sidebar));
+    if (app.views.Resizer.isSupported()) {
+      this.resizer = new app.views.Resizer();
+      this.addSubview(this.resizer);
+    }
+    this.content = new app.views.Content();
+    this.addSubview(this.content);
+    if (!app.isSingleDoc() && !app.isMobile()) {
+      this.path = new app.views.Path();
+      this.addSubview(this.path);
+    }
+    if (!app.isSingleDoc()) {
+      this.settings = new app.views.Settings();
     }
 
-    static initClass() {
-      MAX_WIDTH_CLASS = '_max-width';
-      HIDE_SIDEBAR_CLASS = '_sidebar-hidden';
-  
-      this.el = document;
-  
-      this.events =
-        {visibilitychange: 'onVisibilityChange'};
-  
-      this.shortcuts = {
-        help:       'onHelp',
-        escape:     'onEscape',
-        superLeft:  'onBack',
-        superRight: 'onForward'
-      };
-    }
+    $.on(document.body, "click", this.onClick);
 
-    init() {
+    this.activate();
+  }
 
-    
+  setTitle(title) {
+    return (this.el.title = title
+      ? `${title} — DevDocs`
+      : "DevDocs API Documentation");
+  }
 
-      this.addSubview((this.nav     = new app.views.Nav),
-      this.addSubview(this.sidebar = new app.views.Sidebar));
-      // @addSubview @resizer = new app.views.Resizer if app.views.Resizer.isSupported()
-      this.addSubview(this.content = new app.views.Content);
-      if (!app.isSingleDoc() && !app.isMobile()) { this.addSubview(this.path    = new app.views.Path); }
-      this.addSubview(this.totop = new app.views.ToTopView);
-      // @sidebar.search
-      //   .on 'searching', @onSearching
-      //   .on 'clear', @onSearchClear
-
-      $.on(document.body, 'click', this.onClick);
-
-      this.activate();
-    }
-
-    toggleLight() {
-      const css = $('link[rel="stylesheet"][data-alt]');
-      const alt = css.getAttribute('data-alt');
-      css.setAttribute('data-alt', css.getAttribute('href'));
-      css.setAttribute('href', alt);
-      app.settings.setDark(alt.indexOf('dark') > 0);
-      if (app.appCache != null) {
-        app.appCache.updateInBackground();
+  afterRoute(route) {
+    if (route === "settings") {
+      if (this.settings != null) {
+        this.settings.activate();
+      }
+    } else {
+      if (this.settings != null) {
+        this.settings.deactivate();
       }
     }
+  }
 
-    toggleLayout() {
-      const wantsMaxWidth = !app.el.classList.contains(MAX_WIDTH_CLASS);
-      app.el.classList[wantsMaxWidth ? 'add' : 'remove'](MAX_WIDTH_CLASS);
-      app.settings.setLayout(MAX_WIDTH_CLASS, wantsMaxWidth);
-      if (app.appCache != null) {
-        app.appCache.updateInBackground();
+  onVisibilityChange() {
+    if (this.el.visibilityState !== "visible") {
+      return;
+    }
+    this.delay(() => {
+      if (app.isMobile() !== app.views.Mobile.detect()) {
+        location.reload();
       }
-    }
+    }, 300);
+  }
 
-    showSidebar(options) {
-      if (options == null) { options = {}; }
-      this.toggleSidebar(options, true);
-    }
+  onHelp() {
+    app.router.show("/help#shortcuts");
+  }
 
-    hideSidebar(options) {
-      if (options == null) { options = {}; }
-      this.toggleSidebar(options, false);
-    }
+  onPreferences() {
+    app.router.show("/settings");
+  }
 
-    toggleSidebar(options, shouldShow) {
-      if (options == null) { options = {}; }
-      if (shouldShow == null) { shouldShow = options.save ? !this.hasSidebar() : app.el.classList.contains(HIDE_SIDEBAR_CLASS); }
-      app.el.classList[shouldShow ? 'remove' : 'add'](HIDE_SIDEBAR_CLASS);
-      if (options.save) {
-        app.settings.setLayout(HIDE_SIDEBAR_CLASS, !shouldShow);
-        if (app.appCache != null) {
-          app.appCache.updateInBackground();
+  onEscape() {
+    const path =
+      !app.isSingleDoc() || location.pathname === app.doc.fullPath()
+        ? "/"
+        : app.doc.fullPath();
+
+    app.router.show(path);
+  }
+
+  onBack() {
+    history.back();
+  }
+
+  onForward() {
+    history.forward();
+  }
+
+  onClick(event) {
+    const target = $.eventTarget(event);
+    if (!target.hasAttribute("data-behavior")) {
+      return;
+    }
+    $.stopEvent(event);
+    switch (target.getAttribute("data-behavior")) {
+      case "back":
+        history.back();
+        break;
+      case "reload":
+        window.location.reload();
+        break;
+      case "reboot":
+        app.reboot();
+        break;
+      case "hard-reload":
+        app.reload();
+        break;
+      case "reset":
+        if (confirm("Are you sure you want to reset DevDocs?")) {
+          app.reset();
         }
-      }
+        break;
+      case "accept-analytics":
+        Cookies.set("analyticsConsent", "1", { expires: 1e8 }) && app.reboot();
+        break;
+      case "decline-analytics":
+        Cookies.set("analyticsConsent", "0", { expires: 1e8 }) && app.reboot();
+        break;
     }
-
-    hasSidebar() {
-      return !app.settings.hasLayout(HIDE_SIDEBAR_CLASS);
-    }
-
-    onSearching() {
-      if (!this.hasSidebar()) {
-        this.showSidebar();
-      }
-    }
-
-    onSearchClear() {
-      if (!this.hasSidebar()) {
-        this.hideSidebar();
-      }
-    }
-
-    setTitle(title) {}
-      // @el.title = if title then "DevDocs - #{title}" else 'DevDocs API Documentation'
-
-    onVisibilityChange() {
-      if (this.el.visibilityState !== 'visible') { return; }
-      this.delay(function() {
-        if (app.isMobile() !== app.views.Mobile.detect()) { location.reload(); }
-      }
-      , 300);
-    }
-
-    onHelp() {
-      return app.router.show('/help#shortcuts');
-    }
-
-    onEscape() {
-      const path = !app.isSingleDoc() || (location.pathname === app.doc.fullPath()) ?
-        '/'
-      :
-        app.doc.fullPath();
-
-      app.router.show(path);
-    }
-
-    onBack() {
-      history.back();
-    }
-
-    onForward() {
-      history.forward();
-    }
-
-    onClick(event) {
-      if (!event.target.hasAttribute('data-behavior')) { return; }
-      $.stopEvent(event);
-      switch (event.target.getAttribute('data-behavior')) {
-        case 'back':         history.back(); break;
-        case 'reload':       window.location.reload(); break;
-        case 'reboot':       window.location = '/'; break;
-        case 'hard-reload':  app.reload(); break;
-        case 'reset':        if (confirm('Are you sure you want to reset DevDocs?')) { app.reset(); } break;
-      }
-    }
-  });
-  Cls.initClass();
-  return Cls;
-})();
+  }
+};

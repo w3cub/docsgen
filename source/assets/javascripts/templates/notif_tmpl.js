@@ -4,7 +4,7 @@
  * DS102: Remove unnecessary code created because of implicit returns
  * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
  */
-const notif = function(title, html) {
+const notif = function (title, html) {
   html = html.replace(/<a /g, '<a class="_notif-link" ');
   return ` <h5 class="_notif-title">${title}</h5>
 ${html}
@@ -12,32 +12,54 @@ ${html}
 `;
 };
 
-const textNotif = (title, message) => notif(title, `<p class="_notif-text">${message}`);
+const textNotif = (title, message) =>
+  notif(title, `<p class="_notif-text">${message}`);
 
-app.templates.notifUpdateReady = () => textNotif("<span data-behavior=\"reboot\">DevDocs has been updated.</span>",
-          "<span data-behavior=\"reboot\"><a href=\"#\" data-behavior=\"reboot\">Reload the page</a> to use the new version.</span>");
+app.templates.notifUpdateReady = () =>
+  textNotif(
+    '<span data-behavior="reboot">DevDocs has been updated.</span>',
+    '<span data-behavior="reboot"><a href="#" data-behavior="reboot">Reload the page</a> to use the new version.</span>',
+  );
 
-app.templates.notifError = () => textNotif(" Oops, an error occurred. ",
-          ` Try <a href="#" data-behavior="hard-reload">reloading</a>, and if the problem persists,
+app.templates.notifError = () =>
+  textNotif(
+    " Oops, an error occurred. ",
+    ` Try <a href="#" data-behavior="hard-reload">reloading</a>, and if the problem persists,
 <a href="#" data-behavior="reset">resetting the app</a>.<br>
-You can also report this issue on <a href="https://github.com/Thibaut/devdocs/issues/new" target="_blank" rel="noopener">GitHub</a>. `
-);
+You can also report this issue on <a href="https://github.com/Thibaut/devdocs/issues/new" target="_blank" rel="noopener">GitHub</a>. `,
+  );
 
-app.templates.notifQuotaExceeded = () => textNotif(" The offline database has exceeded its size limitation. ",
-          " Unfortunately this quota can't be detected programmatically, and the database can't be opened while over the quota, so it had to be reset. ");
+app.templates.notifQuotaExceeded = () =>
+  textNotif(
+    " The offline database has exceeded its size limitation. ",
+    " Unfortunately this quota can't be detected programmatically, and the database can't be opened while over the quota, so it had to be reset. ",
+  );
 
-app.templates.notifCookieBlocked = () => textNotif(" Please enable cookies. ",
-          " DevDocs will not work properly if cookies are disabled. ");
+app.templates.notifCookieBlocked = () =>
+  textNotif(
+    " Please enable cookies. ",
+    " DevDocs will not work properly if cookies are disabled. ",
+  );
 
-app.templates.notifInvalidLocation = () => textNotif(` DevDocs must be loaded from ${app.config.production_host} `,
-          " Otherwise things are likely to break. ");
+app.templates.notifInvalidLocation = () =>
+  textNotif(
+    ` DevDocs must be loaded from ${app.config.production_host} `,
+    " Otherwise things are likely to break. ",
+  );
 
-app.templates.notifImportInvalid = () => textNotif(" Oops, an error occurred. ",
-          " The file you selected is invalid. ");
+app.templates.notifImportInvalid = () =>
+  textNotif(
+    " Oops, an error occurred. ",
+    " The file you selected is invalid. ",
+  );
 
-app.templates.notifNews = news => notif('Changelog', `<div class="_notif-content _notif-news">${app.templates.newsList(news, {years: false})}</div>`);
+app.templates.notifNews = (news) =>
+  notif(
+    "Changelog",
+    `<div class="_notif-content _notif-news">${app.templates.newsList(news, { years: false })}</div>`,
+  );
 
-app.templates.notifUpdates = function(docs, disabledDocs) {
+app.templates.notifUpdates = function (docs, disabledDocs) {
   let doc;
   let html = '<div class="_notif-content _notif-news">';
 
@@ -46,9 +68,11 @@ app.templates.notifUpdates = function(docs, disabledDocs) {
     html += '<ul class="_notif-list">';
     for (doc of Array.from(docs)) {
       html += `<li>${doc.name}`;
-      if (doc.release) { html += ` <code>&rarr;</code> ${doc.release}`; }
+      if (doc.release) {
+        html += ` <code>&rarr;</code> ${doc.release}`;
+      }
     }
-    html += '</ul></div>';
+    html += "</ul></div>";
   }
 
   if (disabledDocs.length > 0) {
@@ -56,20 +80,27 @@ app.templates.notifUpdates = function(docs, disabledDocs) {
     html += '<ul class="_notif-list">';
     for (doc of Array.from(disabledDocs)) {
       html += `<li>${doc.name}`;
-      if (doc.release) { html += ` <code>&rarr;</code> ${doc.release}`; }
-      html += "<span class=\"_notif-info\"><a href=\"/settings\">Enable</a></span>";
+      if (doc.release) {
+        html += ` <code>&rarr;</code> ${doc.release}`;
+      }
+      html += '<span class="_notif-info"><a href="/settings">Enable</a></span>';
     }
-    html += '</ul></div>';
+    html += "</ul></div>";
   }
 
-  return notif('Updates', `${html}</div>`);
+  return notif("Updates", `${html}</div>`);
 };
 
-app.templates.notifShare = () => textNotif(" Hi there! ",
-          ` Like DevDocs? Help us reach more developers by sharing the link with your friends on
+app.templates.notifShare = () =>
+  textNotif(
+    " Hi there! ",
+    ` Like DevDocs? Help us reach more developers by sharing the link with your friends on
 <a href="https://out.devdocs.io/s/tw" target="_blank" rel="noopener">Twitter</a>, <a href="https://out.devdocs.io/s/fb" target="_blank" rel="noopener">Facebook</a>,
-<a href="https://out.devdocs.io/s/re" target="_blank" rel="noopener">Reddit</a>, etc.<br>Thanks :) `
-);
+<a href="https://out.devdocs.io/s/re" target="_blank" rel="noopener">Reddit</a>, etc.<br>Thanks :) `,
+  );
 
-app.templates.notifUpdateDocs = () => textNotif(" Documentation updates available. ",
-          " <a href=\"/offline\">Install them</a> as soon as possible to avoid broken pages. ");
+app.templates.notifUpdateDocs = () =>
+  textNotif(
+    " Documentation updates available. ",
+    ' <a href="/offline">Install them</a> as soon as possible to avoid broken pages. ',
+  );

@@ -17,29 +17,29 @@ const detectAdBlocker = () => {
     blockedElement.clientHeight === 0 ||
     blockedElement.clientWidth === 0
   );
-}
+};
 var app = app || {};
 window.reload2022 = () => {
-  location.reload()
-}
+  location.reload();
+};
 window.redirect2022 = (url) => {
-  location.href = url
-}
+  location.href = url;
+};
 
 function getCookie(name) {
-  var v = document.cookie.match('(^|;) ?' + name + '=([^;]*)(;|$)');
+  var v = document.cookie.match("(^|;) ?" + name + "=([^;]*)(;|$)");
   return v ? v[2] : null;
 }
 function setCookie(name, value, days) {
-  var d = new Date;
+  var d = new Date();
   d.setTime(d.getTime() + 24 * 60 * 60 * 1000 * days);
   document.cookie = name + "=" + value + ";path=/;expires=" + d.toGMTString();
 }
 
 var makeElement = () => {
   var blockElement = document.createElement("div");
-  blockElement.className = "el-container"
-  document.body.classList.add("el-dialog_active")
+  blockElement.className = "el-container";
+  document.body.classList.add("el-dialog_active");
   blockElement.innerHTML = `
   <style type="text/css">
   body.el-dialog_active {
@@ -245,42 +245,41 @@ var makeElement = () => {
     </div>
   </div>
 </div>
-`
+`;
   document.body.appendChild(blockElement);
-}
+};
 
 const creaBlocktElement = () => {
   setTimeout(() => {
     // exist adblock or had been detected
-    if (getCookie('vda') != '1') {
+    if (getCookie("vda") != "1") {
       if (detectAdBlocker()) {
         // body append the anti adblocker element
-        makeElement()
+        makeElement();
       }
     }
-  }, 1000)
-}
+  }, 1000);
+};
 
 const buildPromotion = () => {
-  if (getCookie('tp') != '1'){
+  if (getCookie("tp") != "1") {
     setTimeout(() => {
-      window.open('https://tools.w3cub.com/?_sp=docs', '_blank')
-      setCookie('tp', 1, 30)
-    }, 3000)
+      window.open("https://tools.w3cub.com/?_sp=docs", "_blank");
+      setCookie("tp", 1, 30);
+    }, 3000);
   }
-}
+};
 
-app.on('ready', () => {
+app.on("ready", () => {
   buildPromotion();
-  fetch('/conf/conf.json').then(res => res.json()).then(res => {
-    if (res.vda.action) {
-      creaBlocktElement()
-    }
-  }).catch(err => {
-    creaBlocktElement()
-  })
-})
-
-
-
-
+  fetch("/conf/conf.json")
+    .then((res) => res.json())
+    .then((res) => {
+      if (res.vda.action) {
+        creaBlocktElement();
+      }
+    })
+    .catch((err) => {
+      creaBlocktElement();
+    });
+});

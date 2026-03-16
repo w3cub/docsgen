@@ -1,66 +1,61 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS103: Rewrite code to no longer use __guard__, or convert again using --optional-chaining
- * DS207: Consider shorter variations of null checks
- * DS208: Avoid top-level this
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-
-this.app = {
-  _$: $,
-  _$$: $$,
-  _page: page,
-  collections: {},
-  models:      {},
-  templates:   {},
-  views:       {},
-
+class App extends Events {
+  _$ = $;
+  _$$ = $$;
+  _page = page;
+  collections = {};
+  models = {};
+  templates = {};
+  views = {};
   init() {
     // try @initErrorTracking() catch
     // return unless @browserCheck()
     // @showLoading()
-    new Lazyload('._list ._list-item', {});
-    this.el = $('._app');
-    this.localStorage = new LocalStorageStore;
+    new Lazyload("._list ._list-item", {});
+    this.el = $("._app");
+    this.localStorage = new LocalStorageStore();
     //@appCache = new app.AppCache if app.AppCache.isEnabled()
-    //@settings = new app.Settings @localStorage
-    //@db = new app.DB()
+    // if (app.ServiceWorker.isEnabled()) {
+    //   this.serviceWorker = new app.ServiceWorker();
+    // }
+    // this.settings = new app.Settings();
+    // this.db = new app.DB();
 
-    this.router = new app.Router;
-    this.shortcuts = new app.Shortcuts;
+
+    this.router = new app.Router();
+    this.shortcuts = new app.Shortcuts();
     if (this.DOC) {
-      this.docs = new app.collections.Docs;
-      this.disabledDocs = new app.collections.Docs;
-      this.entries = new app.collections.Entries;
+      this.docs = new app.collections.Docs();
+      this.disabledDocs = new app.collections.Docs();
+      this.entries = new app.collections.Entries();
 
-      this.document = new app.views.Document;
-      
-      this.mobile = new app.views.Mobile;
+      this.document = new app.views.Document();
+
+      this.mobile = new app.views.Mobile();
       // if @isMobile()
       this.bootOne();
-    } else { 
+    } else {
       this.bootNDoc();
     }
     // else if @DOCS
     //   @bootAll()
     // else
     //   @onBootError()
-  },
+  }
   browserCheck() {
-    if (this.isSupportedBrowser()) { return true; }
+    if (this.isSupportedBrowser()) {
+      return true;
+    }
     document.body.innerHTML = app.templates.unsupportedBrowser;
     this.hideLoadingScreen();
     return false;
-  },
+  }
 
   initErrorTracking() {
     // Show a warning message and don't track errors when the app is loaded
     // from a domain other than our own, because things are likely to break.
     // (e.g. cross-domain requests)
     if (this.isInvalidLocation()) {
-      new app.views.Notif('InvalidLocation');
+      new app.views.Notif("InvalidLocation");
     } else {
       if (this.config.sentry_dsn) {
         Raven.config(this.config.sentry_dsn, {
@@ -69,9 +64,9 @@ this.app = {
           includePaths: [/devdocs/],
           ignoreErrors: [/NPObject/, /NS_ERROR/, /^null$/, /EvalError/],
           tags: {
-            mode: this.isSingleDoc() ? 'single' : 'full',
+            mode: this.isSingleDoc() ? "single" : "full",
             iframe: (window.top !== window).toString(),
-            electron: (!!__guard__(window.process != null ? window.process.versions : undefined, x => x.electron)).toString()
+            electron: (!!window.process?.versions?.electron).toString(),
           },
           shouldSendCallback: () => {
             try {
@@ -87,20 +82,25 @@ this.app = {
           },
           dataCallback(data) {
             try {
-              $.extend(data.user || (data.user = {}), app.settings.dump());
-              if (data.user.docs) { data.user.docs = data.user.docs.split('/'); }
-              if (app.lastIDBTransaction) { data.user.lastIDBTransaction = app.lastIDBTransaction; }
+              data.user ||= {};
+              Object.assign(data.user, app.settings.dump());
+              if (data.user.docs) {
+                data.user.docs = data.user.docs.split("/");
+              }
+              if (app.lastIDBTransaction) {
+                data.user.lastIDBTransaction = app.lastIDBTransaction;
+              }
               data.tags.scriptCount = document.scripts.length;
             } catch (error) {}
             return data;
-          }
+          },
         }).install();
       }
       this.previousErrorHandler = onerror;
       window.onerror = this.onWindowError.bind(this);
       CookieStore.onBlocked = this.onCookieBlocked;
     }
-  },
+  }
 
   bootOne() {
     this.doc = new app.models.Doc(this.DOC);
@@ -110,10 +110,10 @@ this.app = {
     // @doc.load @start.bind(@), @onBootError.bind(@), readCache: true
     // new app.views.Notice 'singleDoc', @doc
     // delete @DOC
-  },
+  }
   bootNDoc() {
-    this.trigger('ready');
-  },
+    this.trigger("ready");
+  }
 
   bootAll() {
     const docs = this.settings.getDocs();
@@ -123,38 +123,58 @@ this.app = {
     this.migrateDocs();
     this.docs.sort();
     this.disabledDocs.sort();
-    this.docs.load(this.start.bind(this), this.onBootError.bind(this), {readCache: true, writeCache: true});
+    this.docs.load(this.start.bind(this), this.onBootError.bind(this), {
+      readCache: true,
+      writeCache: true,
+    });
     delete this.DOCS;
-  },
+  }
 
   start() {
     let doc;
-    for (doc of Array.from(this.docs.all())) { this.entries.add(doc.toEntry()); }
-    for (doc of Array.from(this.disabledDocs.all())) { this.entries.add(doc.toEntry()); }
-    for (doc of Array.from(this.docs.all())) { this.initDoc(doc); }
-    this.trigger('ready');
+    for (doc of this.docs.all()) {
+      this.entries.add(doc.toEntry());
+    }
+    for (doc of this.disabledDocs.all()) {
+      this.entries.add(doc.toEntry());
+    }
+    for (doc of this.docs.all()) {
+      this.initDoc(doc);
+    }
+    this.trigger("ready");
     this.router.start();
     // @hideLoading()
     // @welcomeBack() unless @doc
-    this.removeEvent('ready bootError');
+    this.removeEvent("ready bootError");
     // try navigator.mozApps?.getSelf().onsuccess = -> app.mozApp = true catch
-  },
+  }
 
   initDoc(doc) {
-    for (var type of Array.from(doc.types.all())) { this.entries.add(type.toEntry()); }
+    for (var type of doc.types.all()) {
+      doc.entries.add(type.toEntry());
+    }
     this.entries.add(doc.entries.all());
-  },
+  }
 
   migrateDocs() {
     let needsSaving;
-    for (var slug of Array.from(this.settings.getDocs())) {
-      if (!this.docs.findBy('slug', slug)) {var doc;
-      
+    for (var slug of this.settings.getDocs()) {
+      if (!this.docs.findBy("slug", slug)) {
+        var doc;
+
         needsSaving = true;
-        if (slug === 'webpack~2') { doc = this.disabledDocs.findBy('slug', 'webpack'); }
-        if (slug === 'angular~4_typescript') { doc = this.disabledDocs.findBy('slug', 'angular'); }
-        if (slug === 'angular~2_typescript') { doc = this.disabledDocs.findBy('slug', 'angular~2'); }
-        if (!doc) { doc = this.disabledDocs.findBy('slug_without_version', slug); }
+        if (slug === "webpack~2") {
+          doc = this.disabledDocs.findBy("slug", "webpack");
+        }
+        if (slug === "angular~4_typescript") {
+          doc = this.disabledDocs.findBy("slug", "angular");
+        }
+        if (slug === "angular~2_typescript") {
+          doc = this.disabledDocs.findBy("slug", "angular~2");
+        }
+        if (!doc) {
+          doc = this.disabledDocs.findBy("slug_without_version", slug);
+        }
         if (doc) {
           this.disabledDocs.remove(doc);
           this.docs.add(doc);
@@ -162,45 +182,71 @@ this.app = {
       }
     }
 
-    if (needsSaving) { this.saveDocs(); }
-  },
+    if (needsSaving) {
+      this.saveDocs();
+    }
+  }
 
   enableDoc(doc, _onSuccess, onError) {
-    if (this.docs.contains(doc)) { return; }
+    if (this.docs.contains(doc)) {
+      return;
+    }
 
     const onSuccess = () => {
-      if (this.docs.contains(doc)) { return; }
+      if (this.docs.contains(doc)) {
+        return;
+      }
       this.disabledDocs.remove(doc);
       this.docs.add(doc);
       this.docs.sort();
       this.initDoc(doc);
       this.saveDocs();
-      _onSuccess();
+      if (app.settings.get("autoInstall")) {
+        doc.install(_onSuccess, onError);
+      } else {
+        _onSuccess();
+      }
     };
 
-    doc.load(onSuccess, onError, {writeCache: true});
-  },
+    doc.load(onSuccess, onError, { writeCache: true });
+  }
 
   saveDocs() {
-    this.settings.setDocs(Array.from(this.docs.all()).map((doc) => doc.slug));
+    this.settings.setDocs(this.docs.all().map((doc) => doc.slug));
     this.db.migrate();
-    return (this.appCache != null ? this.appCache.updateInBackground() : undefined);
-  },
+    return this.serviceWorker != null
+      ? this.serviceWorker.updateInBackground()
+      : undefined;
+  }
 
   welcomeBack() {
-    let visitCount = this.settings.get('count');
-    this.settings.set('count', ++visitCount);
-    if (visitCount === 5) { new app.views.Notif('Share', {autoHide: null}); }
+    let visitCount = this.settings.get("count");
+    this.settings.set("count", ++visitCount);
+    if (visitCount === 5) {
+      new app.views.Notif("Share", { autoHide: null });
+    }
     new app.views.News();
     new app.views.Updates();
-    return this.updateChecker = new app.UpdateChecker();
-  },
+    return (this.updateChecker = new app.UpdateChecker());
+  }
+
+  reboot() {
+    if (location.pathname !== "/" && location.pathname !== "/settings") {
+      window.location = `/#${location.pathname}`;
+    } else {
+      window.location = "/";
+    }
+  }
 
   reload() {
     this.docs.clearCache();
     this.disabledDocs.clearCache();
-    if (this.appCache) { this.appCache.reload(); } else { window.location = '/'; }
-  },
+    if (this.serviceWorker) {
+      this.serviceWorker.reload();
+    } else {
+      this.reboot();
+    }
+  }
 
   reset() {
     this.localStorage.reset();
@@ -208,138 +254,163 @@ this.app = {
     if (this.db != null) {
       this.db.reset();
     }
-    if (this.appCache != null) {
-      this.appCache.update();
+    if (this.serviceWorker != null) {
+      this.serviceWorker.update();
     }
-    window.location = '/';
-  },
+    window.location = "/";
+  }
 
   showTip(tip) {
-    if (this.isSingleDoc()) { return; }
+    if (this.isSingleDoc()) {
+      return;
+    }
     const tips = this.settings.getTips();
-    if (tips.indexOf(tip) === -1) {
+    if (!tips.includes(tip)) {
       tips.push(tip);
       this.settings.setTips(tips);
       new app.views.Tip(tip);
     }
-  },
+  }
 
   hideLoadingScreen() {
-    if ($.overlayScrollbarsEnabled()) { document.body.classList.add('_overlay-scrollbars'); }
-    document.documentElement.classList.remove('_booting');
-  },
+    if ($.overlayScrollbarsEnabled()) {
+      document.body.classList.add("_overlay-scrollbars");
+    }
+    document.documentElement.classList.remove("_booting");
+  }
 
   indexHost() {
-    // Can't load the index files from the host/CDN when applicationCache is
+    // Can't load the index files from the host/CDN when service worker is
     // enabled because it doesn't support caching URLs that use CORS.
-    return this.config[this.appCache && this.settings.hasDocs() ? 'index_path' : 'docs_origin'];
-  },
+    return this.config[
+      this.serviceWorker && this.settings.hasDocs()
+        ? "index_path"
+        : "docs_origin"
+    ];
+  }
 
   onBootError(...args) {
-    this.trigger('bootError');
+    this.trigger("bootError");
     this.hideLoadingScreen();
-  },
+  }
 
   onQuotaExceeded() {
-    if (this.quotaExceeded) { return; }
+    if (this.quotaExceeded) {
+      return;
+    }
     this.quotaExceeded = true;
-    new app.views.Notif('QuotaExceeded', {autoHide: null});
-  },
+    new app.views.Notif("QuotaExceeded", { autoHide: null });
+  }
 
   onCookieBlocked(key, value, actual) {
-    if (this.cookieBlocked) { return; }
+    if (this.cookieBlocked) {
+      return;
+    }
     this.cookieBlocked = true;
-    new app.views.Notif('CookieBlocked', {autoHide: null});
-    Raven.captureMessage(`CookieBlocked/${key}`, {level: 'warning', extra: {value, actual}});
-  },
+    new app.views.Notif("CookieBlocked", { autoHide: null });
+    Raven.captureMessage(`CookieBlocked/${key}`, {
+      level: "warning",
+      extra: { value, actual },
+    });
+  }
 
   onWindowError(...args) {
-    if (this.cookieBlocked) { return; }
-    if (this.isInjectionError(...Array.from(args || []))) {
+    if (this.cookieBlocked) {
+      return;
+    }
+    if (this.isInjectionError(...args)) {
       this.onInjectionError();
-    } else if (this.isAppError(...Array.from(args || []))) {
-      if (typeof this.previousErrorHandler === 'function') {
-        this.previousErrorHandler(...Array.from(args || []));
+    } else if (this.isAppError(...args)) {
+      if (typeof this.previousErrorHandler === "function") {
+        this.previousErrorHandler(...args);
       }
       this.hideLoadingScreen();
-      if (!this.errorNotif) { this.errorNotif = new app.views.Notif('Error'); }
+      if (!this.errorNotif) {
+        this.errorNotif = new app.views.Notif("Error");
+      }
       this.errorNotif.show();
     }
-  },
+  }
 
   onInjectionError() {
     if (!this.injectionError) {
       this.injectionError = true;
       alert(`\
 JavaScript code has been injected in the page which prevents DevDocs from running correctly.
-Please check your browser extensions/addons. `
-      );
-      Raven.captureMessage('injection error', {level: 'info'});
+Please check your browser extensions/addons. `);
+      Raven.captureMessage("injection error", { level: "info" });
     }
-  },
+  }
 
   isInjectionError() {
     // Some browser extensions expect the entire web to use jQuery.
     // I gave up trying to fight back.
-    return (window.$ !== app._$) || (window.$$ !== app._$$) || (window.page !== app._page) || (typeof $.empty !== 'function') || (typeof page.show !== 'function');
-  },
+    return (
+      window.$ !== app._$ ||
+      window.$$ !== app._$$ ||
+      window.page !== app._page ||
+      typeof $.empty !== "function" ||
+      typeof page.show !== "function"
+    );
+  }
 
   isAppError(error, file) {
     // Ignore errors from external scripts.
-    return file && (file.indexOf('devdocs') !== -1) && (file.indexOf('.js') === (file.length - 3));
-  },
+    return file && file.includes("devdocs") && file.endsWith(".js");
+  }
 
   isSupportedBrowser() {
     try {
       const features = {
-        bind:               !!Function.prototype.bind,
-        pushState:          !!history.pushState,
-        matchMedia:         !!window.matchMedia,
+        bind: !!Function.prototype.bind,
+        pushState: !!history.pushState,
+        matchMedia: !!window.matchMedia,
         insertAdjacentHTML: !!document.body.insertAdjacentHTML,
-        defaultPrevented:     document.createEvent('CustomEvent').defaultPrevented === false,
-        cssGradients:         supportsCssGradients()
+        defaultPrevented:
+          document.createEvent("CustomEvent").defaultPrevented === false,
+        cssVariables: !!CSS.supports?.("(--t: 0)"),
       };
 
       for (var key in features) {
         var value = features[key];
         if (!value) {
-          Raven.captureMessage(`unsupported/${key}`, {level: 'info'});
+          Raven.captureMessage(`unsupported/${key}`, { level: "info" });
           return false;
         }
       }
 
       return true;
     } catch (error) {
-      Raven.captureMessage('unsupported/exception', {level: 'info', extra: { error }});
+      Raven.captureMessage("unsupported/exception", {
+        level: "info",
+        extra: { error },
+      });
       return false;
     }
-  },
+  }
 
   isSingleDoc() {
-    return !!(this.DOC || this.doc);
-  },
+    return document.body.hasAttribute("data-doc");
+  }
 
   isMobile() {
-    return this._isMobile != null ? this._isMobile : (this._isMobile = app.views.Mobile.detect());
-  },
+    return this._isMobile != null
+      ? this._isMobile
+      : (this._isMobile = app.views.Mobile.detect());
+  }
 
   isAndroidWebview() {
-    return this._isAndroidWebview != null ? this._isAndroidWebview : (this._isAndroidWebview = app.views.Mobile.detectAndroidWebview());
-  },
+    return this._isAndroidWebview != null
+      ? this._isAndroidWebview
+      : (this._isAndroidWebview = app.views.Mobile.detectAndroidWebview());
+  }
 
   isInvalidLocation() {
-    return (this.config.env === 'production') && (location.host.indexOf(app.config.production_host) !== 0);
+    return (
+      this.config.env === "production" &&
+      !location.host.startsWith(app.config.production_host)
+    );
   }
-};
-
-var supportsCssGradients = function() {
-  const el = document.createElement('div');
-  el.style.cssText = "background-image: -webkit-linear-gradient(top, #000, #fff); background-image: linear-gradient(to top, #000, #fff);";
-  return el.style.backgroundImage.indexOf('gradient') >= 0;
-};
-
-$.extend(app, Events);
-
-function __guard__(value, transform) {
-  return (typeof value !== 'undefined' && value !== null) ? transform(value) : undefined;
 }
+
+this.app = new App();

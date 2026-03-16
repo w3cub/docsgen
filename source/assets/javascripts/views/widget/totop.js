@@ -1,11 +1,4 @@
-/*
- * decaffeinate suggestions:
- * DS002: Fix invalid constructor
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-const Cls = (app.views.ToTopView = class ToTopView extends app.View {
+app.views.ToTopView = class ToTopView extends app.View {
   constructor(...args) {
     this.onTouchEnd = this.onTouchEnd.bind(this);
     this.onClick = this.onClick.bind(this);
@@ -13,15 +6,13 @@ const Cls = (app.views.ToTopView = class ToTopView extends app.View {
     super(...args);
   }
 
-  static initClass() {
-    this.tagName = 'a';
-    this.className = '_totop';
-  
-    this.events = {
-      click: 'onClick',
-      touchend: 'onTouchEnd'
-    };
-  }
+  tagName = 'a';
+  className = '_totop';
+
+  events = {
+    click: 'onClick',
+    touchend: 'onTouchEnd'
+  };
 
   init() {
     this.activate();
@@ -79,6 +70,5 @@ const Cls = (app.views.ToTopView = class ToTopView extends app.View {
       return this.hide();
     }
   }
-});
-Cls.initClass();
+};
 

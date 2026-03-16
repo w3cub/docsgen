@@ -1,34 +1,21 @@
-/*
- * decaffeinate suggestions:
- * DS002: Fix invalid constructor
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-const Cls = (app.views.Notif = class Notif extends app.View {
-  static initClass() {
-    this.className = '_notif';
-    this.activeClass = '_in';
-    this.attributes =
-      {role: 'alert'};
-  
-    this.defautOptions =
-      {autoHide: 15000};
-  
-    this.events =
-      {click: 'onClick'};
-  }
+app.views.Notif = class Notif extends app.View {
+  static className = "_notif";
+  static activeClass = "_in";
+  static attributes = { role: "alert" };
+
+  static defaultOptions = { autoHide: 15000 };
+
+  static events = { click: "onClick" };
 
   constructor(type, options) {
-    this.onClick = this.onClick.bind(this);
+    super();
     this.type = type;
-    if (options == null) { options = {}; }
-    this.options = options;
-    this.options = $.extend({}, this.constructor.defautOptions, this.options);
-    super(...arguments);
+    this.options = { ...this.constructor.defaultOptions, ...(options || {}) };
+    this.init0(); // needs this.options
+    this.refreshElements();
   }
 
-  init() {
+  init0() {
     this.show();
   }
 
@@ -43,7 +30,9 @@ const Cls = (app.views.Notif = class Notif extends app.View {
       this.appendTo(document.body);
       this.el.offsetWidth; // force reflow
       this.addClass(this.constructor.activeClass);
-      if (this.options.autoHide) { this.timeout = this.delay(this.hide, this.options.autoHide); }
+      if (this.options.autoHide) {
+        this.timeout = this.delay(this.hide, this.options.autoHide);
+      }
     }
   }
 
@@ -58,19 +47,25 @@ const Cls = (app.views.Notif = class Notif extends app.View {
   }
 
   position() {
-    const notifications = $$(`.${app.views.Notif.className}`);
+    const notifications = $$(`.${Notif.className}`);
     if (notifications.length) {
       const lastNotif = notifications[notifications.length - 1];
-      this.el.style.top = lastNotif.offsetTop + lastNotif.offsetHeight + 16 + 'px';
+      this.el.style.top =
+        lastNotif.offsetTop + lastNotif.offsetHeight + 16 + "px";
     }
   }
 
   onClick(event) {
-    if (event.which !== 1) { return; }
-    if ((event.target.tagName !== 'A') || event.target.classList.contains('_notif-close')) {
+    if (event.which !== 1) {
+      return;
+    }
+    const target = $.eventTarget(event);
+    if (target.hasAttribute("data-behavior")) {
+      return;
+    }
+    if (target.tagName !== "A" || target.classList.contains("_notif-close")) {
       $.stopEvent(event);
       this.hide();
     }
   }
-});
-Cls.initClass();
+};

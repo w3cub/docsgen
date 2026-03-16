@@ -1,13 +1,5 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-const Cls = (app.views.TypePage = class TypePage extends app.View {
-  static initClass() {
-    this.className = '_page';
-  }
+app.views.TypePage = class TypePage extends app.View {
+  static className = "_page";
 
   deactivate() {
     if (super.deactivate(...arguments)) {
@@ -18,7 +10,8 @@ const Cls = (app.views.TypePage = class TypePage extends app.View {
 
   render(type) {
     this.type = type;
-    this.html(this.tmpl('typePage', this.type));
+    this.html(this.tmpl("typePage", this.type));
+    setFaviconForDoc(this.type.doc);
   }
 
   getTitle() {
@@ -28,5 +21,4 @@ const Cls = (app.views.TypePage = class TypePage extends app.View {
   onRoute(context) {
     this.render(context.type);
   }
-});
-Cls.initClass();
+};

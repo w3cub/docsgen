@@ -1,23 +1,12 @@
-/*
- * decaffeinate suggestions:
- * DS002: Fix invalid constructor
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-const Cls = (app.views.Nav = class Nav extends app.View {
+(app.views.Nav = class Nav extends app.View {
   constructor(...args) {
     this.afterRoute = this.afterRoute.bind(this);
     super(...args);
   }
 
-  static initClass() {
-    this.el = '._nav';
-    this.activeClass = '_nav-current';
-  
-    this.routes =
-      {after: 'afterRoute'};
-  }
+  el = '._nav';
+  activeClass = '_nav-current';
+  routes = {after: 'afterRoute'};
 
   select(href) {
     this.deselect();
@@ -43,4 +32,3 @@ const Cls = (app.views.Nav = class Nav extends app.View {
     }
   }
 });
-Cls.initClass();

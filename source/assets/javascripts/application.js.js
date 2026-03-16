@@ -11,7 +11,7 @@
 
 //= require ./lib/util
 //= require ./lib/events
-//= require ./lib/cookie_store
+//= require ./lib/cookies_store
 //= require ./lib/local_storage_store
 //= require ./lib/page
 

@@ -1,23 +1,17 @@
-/*
- * decaffeinate suggestions:
- * DS002: Fix invalid constructor
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * DS207: Consider shorter variations of null checks
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-const Cls = (app.views.Results = class Results extends app.View {
-  static initClass() {
-    this.className = '_list';
-  
-    this.events =
-      {click: 'onClick'};
-  
-    this.routes =
-      {after: 'afterRoute'};
-  }
+app.views.Results = class Results extends app.View {
+  static className = "_list";
 
-  constructor(sidebar, search) { this.onResults = this.onResults.bind(this);   this.onNoResults = this.onNoResults.bind(this);   this.onClear = this.onClear.bind(this);   this.afterRoute = this.afterRoute.bind(this);   this.onClick = this.onClick.bind(this);   this.sidebar = sidebar; this.search = search; super(...arguments); }
+  static events = { click: "onClick" };
+
+  static routes = { after: "afterRoute" };
+
+  constructor(sidebar, search) {
+    super();
+    this.sidebar = sidebar;
+    this.search = search;
+    this.init0(); // needs this.search
+    this.refreshElements();
+  }
 
   deactivate() {
     if (super.deactivate(...arguments)) {
@@ -25,30 +19,36 @@ const Cls = (app.views.Results = class Results extends app.View {
     }
   }
 
-  init() {
-    this.addSubview(this.listFocus  = new app.views.ListFocus(this.el));
-    this.addSubview(this.listSelect = new app.views.ListSelect(this.el));
+  init0() {
+    this.addSubview((this.listFocus = new app.views.ListFocus(this.el)));
+    this.addSubview((this.listSelect = new app.views.ListSelect(this.el)));
 
     this.search
-      .on('results', this.onResults)
-      .on('noresults', this.onNoResults)
-      .on('clear', this.onClear);
+      .on("results", (entries, flags) => this.onResults(entries, flags))
+      .on("noresults", () => this.onNoResults())
+      .on("clear", () => this.onClear());
   }
 
   onResults(entries, flags) {
-    if (flags.initialResults) { if (this.listFocus != null) {
-      this.listFocus.blur();
-    } }
-    if (flags.initialResults) { this.empty(); }
-    this.append(this.tmpl('sidebarResult', entries));
+    if (flags.initialResults) {
+      this.listFocus?.blur();
+    }
+    if (flags.initialResults) {
+      this.empty();
+    }
+    this.append(this.tmpl("sidebarResult", entries));
 
     if (flags.initialResults) {
-      if (flags.urlSearch) { this.openFirst(); } else { this.focusFirst(); }
+      if (flags.urlSearch) {
+        this.openFirst();
+      } else {
+        this.focusFirst();
+      }
     }
   }
 
   onNoResults() {
-    this.html(this.tmpl('sidebarNoResults'));
+    this.html(this.tmpl("sidebarNoResults"));
   }
 
   onClear() {
@@ -56,15 +56,13 @@ const Cls = (app.views.Results = class Results extends app.View {
   }
 
   focusFirst() {
-    if (!app.isMobile()) { if (this.listFocus != null) {
-      this.listFocus.focusOnNextFrame(this.el.firstElementChild);
-    } }
+    if (!app.isMobile()) {
+      this.listFocus?.focusOnNextFrame(this.el.firstElementChild);
+    }
   }
 
   openFirst() {
-    if (this.el.firstElementChild != null) {
-      this.el.firstElementChild.click();
-    }
+    this.el.firstElementChild?.click();
   }
 
   onDocEnabled(doc) {
@@ -73,7 +71,7 @@ const Cls = (app.views.Results = class Results extends app.View {
   }
 
   afterRoute(route, context) {
-    if (route === 'entry') {
+    if (route === "entry") {
       this.listSelect.selectByHref(context.entry.fullPath());
     } else {
       this.listSelect.deselect();
@@ -81,13 +79,16 @@ const Cls = (app.views.Results = class Results extends app.View {
   }
 
   onClick(event) {
-    let slug;
-    if (event.which !== 1) { return; }
-    if (slug = $.eventTarget(event).getAttribute('data-enable')) {
+    if (event.which !== 1) {
+      return;
+    }
+    const slug = $.eventTarget(event).getAttribute("data-enable");
+    if (slug) {
       $.stopEvent(event);
-      const doc = app.disabledDocs.findBy('slug', slug);
-      if (doc) { return app.enableDoc(doc, this.onDocEnabled.bind(this, doc), $.noop); }
+      const doc = app.disabledDocs.findBy("slug", slug);
+      if (doc) {
+        return app.enableDoc(doc, this.onDocEnabled.bind(this, doc), $.noop);
+      }
     }
   }
-});
-Cls.initClass();
+};

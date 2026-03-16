@@ -1,20 +1,12 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * DS206: Consider reworking classes to avoid initClass
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-const Cls = (app.views.StaticPage = class StaticPage extends app.View {
-  static initClass() {
-    this.className = '_static';
-  
-    this.titles = {
-      about:    'About',
-      news:     'News',
-      help:     'Help',
-      notFound: '404'
-    };
-  }
+app.views.StaticPage = class StaticPage extends app.View {
+  static className = "_static";
+
+  static titles = {
+    about: "About",
+    news: "News",
+    help: "User Guide",
+    notFound: "404",
+  };
 
   deactivate() {
     if (super.deactivate(...arguments)) {
@@ -33,7 +25,6 @@ const Cls = (app.views.StaticPage = class StaticPage extends app.View {
   }
 
   onRoute(context) {
-    this.render(context.page || 'notFound');
+    this.render(context.page || "notFound");
   }
-});
-Cls.initClass();
+};

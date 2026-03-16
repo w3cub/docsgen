@@ -1,24 +1,15 @@
-/*
- * decaffeinate suggestions:
- * DS101: Remove unnecessary use of Array.from
- * DS102: Remove unnecessary code created because of implicit returns
- * DS205: Consider reworking code to avoid use of IIFEs
- * DS206: Consider reworking classes to avoid initClass
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
 //= require views/misc/notif
 
-const Cls = (app.views.News = class News extends app.views.Notif {
-  static initClass() {
-    this.className += ' _notif-news';
-  
-    this.defautOptions =
-      {autoHide: 30000};
-  }
+app.views.News = class News extends app.views.Notif {
+  static className = "_notif _notif-news";
 
-  init() {
+  static defaultOptions = { autoHide: 30000 };
+
+  init0() {
     this.unreadNews = this.getUnreadNews();
-    if (this.unreadNews.length) { this.show(); }
+    if (this.unreadNews.length) {
+      this.show();
+    }
     this.markAllAsRead();
   }
 
@@ -27,17 +18,19 @@ const Cls = (app.views.News = class News extends app.views.Notif {
   }
 
   getUnreadNews() {
-    let time;
-    if (!(time = this.getLastReadTime())) { return []; }
+    const time = this.getLastReadTime();
+    if (!time) {
+      return [];
+    }
 
-    return (() => {
-      const result = [];
-      for (var news of Array.from(app.news)) {
-        if (new Date(news[0]).getTime() <= time) { break; }
-        result.push(news);
+    const result = [];
+    for (var news of app.news) {
+      if (new Date(news[0]).getTime() <= time) {
+        break;
       }
-      return result;
-    })();
+      result.push(news);
+    }
+    return result;
   }
 
   getLastNewsTime() {
@@ -45,11 +38,10 @@ const Cls = (app.views.News = class News extends app.views.Notif {
   }
 
   getLastReadTime() {
-    return app.settings.get('news');
+    return app.settings.get("news");
   }
 
   markAllAsRead() {
-    app.settings.set('news', this.getLastNewsTime());
+    app.settings.set("news", this.getLastNewsTime());
   }
-});
-Cls.initClass();
+};

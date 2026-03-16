@@ -1,45 +1,33 @@
-/*
- * decaffeinate suggestions:
- * DS002: Fix invalid constructor
- * DS101: Remove unnecessary use of Array.from
- * DS206: Consider reworking classes to avoid initClass
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
-const Cls = (app.views.Path = class Path extends app.View {
-  constructor(...args) {
-    this.onClick = this.onClick.bind(this);
-    this.afterRoute = this.afterRoute.bind(this);
-    super(...args);
-  }
+app.views.Path = class Path extends app.View {
+  static className = "_path";
+  static attributes = { role: "complementary" };
 
-  static initClass() {
-    this.className = '_path';
-    this.attributes =
-      {role: 'complementary'};
-  
-    this.events =
-      {click: 'onClick'};
-  
-    this.routes =
-      {after: 'afterRoute'};
-  }
+  static events = { click: "onClick" };
+
+  static routes = { after: "afterRoute" };
 
   render(...args) {
-    this.html(this.tmpl('path', ...Array.from(args)));
+    this.html(this.tmpl("path", ...args));
     this.show();
   }
 
   show() {
-    if (!this.el.parentNode) { this.prependTo(app.el); }
+    if (!this.el.parentNode) {
+      this.prependTo(app.el);
+    }
   }
 
   hide() {
-    if (this.el.parentNode) { $.remove(this.el); }
+    if (this.el.parentNode) {
+      $.remove(this.el);
+    }
   }
 
   onClick(event) {
-    let link;
-    if (link = $.closestLink(event.target, this.el)) { this.clicked = true; }
+    const link = $.closestLink(event.target, this.el);
+    if (link) {
+      this.clicked = true;
+    }
   }
 
   afterRoute(route, context) {
@@ -60,5 +48,4 @@ const Cls = (app.views.Path = class Path extends app.View {
       app.document.sidebar.reset();
     }
   }
-});
-Cls.initClass();
+};

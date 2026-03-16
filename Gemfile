@@ -2,9 +2,9 @@ source "https://rubygems.org"
 ruby '4.0.0'
 
 group :development do
-  gem 'rake', '~> 13.0', '>= 13.0.1'
-  gem 'execjs', '~> 2.7'
-  gem 'jekyll', '~> 4.1', '>= 4.1.1'
+  gem 'rake', '~> 13.3', '>= 13.3.1'
+  gem 'execjs', '~> 2.10'
+  gem 'jekyll', '~> 4.4', '>= 4.4.1'
   gem 'sprockets', '~> 4.2', '>= 4.2.1'
   gem 'jekyll-assets', git: 'https://github.com/beekeeper-studio/jekyll-assets.git', ref: '5d80552281b7810ecf930a18fbfe01c95035cbec' 
   # gem 'jekyll-sitemap'
@@ -17,6 +17,9 @@ group :development do
   gem 'google-api-client', '~> 0.50.0'
   gem 'dotenv'
   gem 'solargraph'
+  gem "mutex_m"
+  gem "pstore"
+  gem "ostruct"
   # gem 'thin'
   # gem 'erubis'
 

@@ -264,7 +264,7 @@ end
 
 desc "test preview"
 task :test_preview do |t, args|
-  Rake::Task[:copy_html].invoke('openjdk~21/*.html')
+  Rake::Task[:copy_html].invoke('zsh/*.html')
   Rake::Task[:preview].invoke
 end
 

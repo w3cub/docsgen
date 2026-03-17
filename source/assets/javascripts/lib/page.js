@@ -284,7 +284,8 @@ var onclick = function (event) {
     : link.target;
 
   if (!target && isSameOrigin(href)) {
-    event.preventDefault();
+    // @w3cub
+    // event.preventDefault();
     let parsedHref = new URL(href);
     let path = parsedHref.pathname + parsedHref.search + parsedHref.hash;
     path = path.replace(/^\/\/+/, "/"); // IE11 bug

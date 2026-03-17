@@ -10,23 +10,23 @@ class App extends Events {
     // try @initErrorTracking() catch
     // return unless @browserCheck()
     // @showLoading()
-    new Lazyload("._list ._list-item", {});
+    
     this.el = $("._app");
     this.localStorage = new LocalStorageStore();
     //@appCache = new app.AppCache if app.AppCache.isEnabled()
     // if (app.ServiceWorker.isEnabled()) {
     //   this.serviceWorker = new app.ServiceWorker();
     // }
-    // this.settings = new app.Settings();
-    // this.db = new app.DB();
-
+    this.settings = new app.Settings();
+    this.db = new app.DB();
+    this.lzload = new app.views.Lazyload();
+    this.docs = new app.collections.Docs();
+    this.disabledDocs = new app.collections.Docs();
+    this.entries = new app.collections.Entries();
 
     this.router = new app.Router();
     this.shortcuts = new app.Shortcuts();
     if (this.DOC) {
-      this.docs = new app.collections.Docs();
-      this.disabledDocs = new app.collections.Docs();
-      this.entries = new app.collections.Entries();
 
       this.document = new app.views.Document();
 
@@ -98,7 +98,7 @@ class App extends Events {
       }
       this.previousErrorHandler = onerror;
       window.onerror = this.onWindowError.bind(this);
-      CookieStore.onBlocked = this.onCookieBlocked;
+      CookiesStore.onBlocked = this.onCookieBlocked;
     }
   }
 
@@ -117,8 +117,8 @@ class App extends Events {
 
   bootAll() {
     const docs = this.settings.getDocs();
-    for (var doc of Array.from(this.DOCS)) {
-      (docs.indexOf(doc.slug) >= 0 ? this.docs : this.disabledDocs).add(doc);
+    for (var doc of this.DOCS) {
+      (docs.includes(doc.slug) ? this.docs : this.disabledDocs).add(doc);
     }
     this.migrateDocs();
     this.docs.sort();

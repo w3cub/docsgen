@@ -26,12 +26,13 @@ app.views.Content = class Content extends app.View {
     this.scrollMap = {};
     this.scrollStack = [];
 
-    this.rootPage = new app.views.RootPage();
-    this.staticPage = new app.views.StaticPage();
-    this.settingsPage = new app.views.SettingsPage();
-    this.offlinePage = new app.views.OfflinePage();
-    this.typePage = new app.views.TypePage();
+    // this.rootPage = new app.views.RootPage();
+    // this.staticPage = new app.views.StaticPage();
+    // this.settingsPage = new app.views.SettingsPage();
+    // this.offlinePage = new app.views.OfflinePage();
+    // this.typePage = new app.views.TypePage();
     this.entryPage = new app.views.EntryPage();
+    
 
     this.entryPage
       .on("loading", () => this.onEntryLoading())
@@ -48,7 +49,9 @@ app.views.Content = class Content extends app.View {
       if (this.view != null) {
         this.view.deactivate();
       }
-      this.html((this.view = view));
+      // this.html((this.view = view));
+      // @w3cub
+      this.view = view;
       this.view.activate();
     }
   }

@@ -14,22 +14,29 @@ app.views.Document = class Document extends app.View {
   static routes = { after: "afterRoute" };
 
   init() {
-    this.menu = new app.views.Menu();
+
+    // this.menu = new app.views.Menu();
     this.sidebar = new app.views.Sidebar();
-    this.addSubview(this.menu, this.addSubview(this.sidebar));
-    if (app.views.Resizer.isSupported()) {
-      this.resizer = new app.views.Resizer();
-      this.addSubview(this.resizer);
-    }
+    this.addSubview(this.sidebar);
+    // this.addSubview(this.menu, this.addSubview(this.sidebar));
+    // if (app.views.Resizer.isSupported()) {
+    //   this.resizer = new app.views.Resizer();
+    //   this.addSubview(this.resizer);
+    // }
     this.content = new app.views.Content();
     this.addSubview(this.content);
+
     if (!app.isSingleDoc() && !app.isMobile()) {
       this.path = new app.views.Path();
       this.addSubview(this.path);
     }
-    if (!app.isSingleDoc()) {
-      this.settings = new app.views.Settings();
-    }
+    // if (!app.isSingleDoc()) {
+    //   this.settings = new app.views.Settings();
+    // }
+    this.totop = new app.views.ToTopView();
+    
+    this.addSubview(this.totop);
+      
 
     $.on(document.body, "click", this.onClick);
 

@@ -1,5 +1,9 @@
-(app.View = class View {
-  constructor() {
+app.View = class View extends Events {
+  constructor(el) {
+    super();
+    if (el instanceof HTMLElement) {
+      this.el = el;
+    }
     this.setupElement();
     if (this.el.className) {
       this.originalClassName = this.el.className;
@@ -10,8 +14,8 @@
     this.refreshElements();
     if (typeof this.init === "function") {
       this.init();
+      this.refreshElements();
     }
-    this.refreshElements();
   }
 
   setupElement() {
@@ -137,7 +141,7 @@
     this.empty();
     this.append(value);
   }
-
+  // @w3cub
   inserthtml(el, value) {
     $.empty(el);
     this.refreshElements();
@@ -145,12 +149,12 @@
   }
 
   tmpl(...args) {
-    return app.templates.render(...Array.from(args || []));
+    return app.templates.render(...args);
   }
 
   delay(fn, ...args) {
     const delay = typeof args[args.length - 1] === "number" ? args.pop() : 0;
-    return setTimeout(fn.bind(this, ...Array.from(args)), delay);
+    return setTimeout(fn.bind(this, ...args), delay);
   }
 
   onDOM(event, callback) {
@@ -166,6 +170,7 @@
     if (this.constructor.events) {
       for (name in this.constructor.events) {
         method = this.constructor.events[name];
+        this[method] = this[method].bind(this);
         this.onDOM(name, this[method]);
       }
     }
@@ -173,6 +178,7 @@
     if (this.constructor.routes) {
       for (name in this.constructor.routes) {
         method = this.constructor.routes[name];
+        this[method] = this[method].bind(this);
         app.router.on(name, this[method]);
       }
     }
@@ -180,6 +186,7 @@
     if (this.constructor.shortcuts) {
       for (name in this.constructor.shortcuts) {
         method = this.constructor.shortcuts[name];
+        this[method] = this[method].bind(this);
         app.shortcuts.on(name, this[method]);
       }
     }
@@ -245,4 +252,4 @@
     this.deactivate();
     $.remove(this.el);
   }
-});
+};

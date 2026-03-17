@@ -1,12 +1,13 @@
-(app.views.Nav = class Nav extends app.View {
+app.views.Nav = class Nav extends app.View {
   constructor(...args) {
-    this.afterRoute = this.afterRoute.bind(this);
     super(...args);
   }
+  static el = '._nav';
+  static activeClass = '_nav-current';
 
-  el = '._nav';
-  activeClass = '_nav-current';
-  routes = {after: 'afterRoute'};
+  static routes = {
+    after: 'afterRoute'
+  };
 
   select(href) {
     this.deselect();
@@ -31,4 +32,4 @@
       return this.deselect();
     }
   }
-});
+};

@@ -1,11 +1,5 @@
-/*
- * decaffeinate suggestions:
- * DS102: Remove unnecessary code created because of implicit returns
- * Full docs: https://github.com/decaffeinate/decaffeinate/blob/main/docs/suggestions.md
- */
 //= require ./vendor/prism
 //= require ./vendor/cookies
-//= require ./vendor/fastclick
 //= require ./vendor/classlist
 //= require ./vendor/mathml
 
@@ -13,9 +7,14 @@
 //= require ./lib/events
 //= require ./lib/cookies_store
 //= require ./lib/local_storage_store
+//= require ./lib/ajax
 //= require ./lib/page
+//= require ./lib/favicon
+
 
 //= require app/app
+//= require app/settings
+//= require app/db
 //= require ./app/init
 //= require ./app/adblock
 //= require ./app/router
@@ -29,6 +28,7 @@
 //= require_tree ./models
 
 //= require ./views/view
+//= require ./views/lazyload
 //= require_tree ./views/layout
 //= require_tree ./views/pages
 //= require_tree ./views/list
@@ -41,6 +41,8 @@
 
 //= require ./templates/base
 //= require ./templates/sidebar_tmpl
+//= require ./templates/path_tmpl
+
 
 
 

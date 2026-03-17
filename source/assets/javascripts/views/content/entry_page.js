@@ -32,7 +32,6 @@ app.views.EntryPage = class EntryPage extends app.View {
     this.empty();
     this.trigger("loading");
   }
-
   render(content, fromCache) {
     if (content == null) {
       content = "";
@@ -43,21 +42,25 @@ app.views.EntryPage = class EntryPage extends app.View {
     if (!this.activated) {
       return;
     }
-    this.empty();
+    // this.empty();
     this.subview = new (this.subViewClass())(this.el, this.entry);
+    this.subview.render(this.el, fromCache);
 
-    $.batchUpdate(this.el, () => {
-      this.subview.render(content, fromCache);
-      if (!fromCache) {
-        this.addCopyButtons();
-      }
-    });
-
-    if (app.disabledDocs.findBy("slug", this.entry.doc.slug)) {
-      this.hiddenView = new app.views.HiddenPage(this.el, this.entry);
+    if (!fromCache) {
+      this.addCopyButtons();
     }
+    // $.batchUpdate(this.el, () => {
+    //   this.subview.render(content, fromCache);
+    //   if (!fromCache) {
+    //     this.addCopyButtons();
+    //   }
+    // });
 
-    setFaviconForDoc(this.entry.doc);
+    // if (app.disabledDocs.findBy("slug", this.entry.doc.slug)) {
+    //   this.hiddenView = new app.views.HiddenPage(this.el, this.entry);
+    // }
+
+    // setFaviconForDoc(this.entry.doc);
     this.delay(this.polyfillMathML);
     this.trigger("loaded");
   }
@@ -137,11 +140,12 @@ app.views.EntryPage = class EntryPage extends app.View {
   }
 
   onRoute(context) {
-    const isSameFile = context.entry.filePath() === this.entry?.filePath?.();
+    // const isSameFile = context.entry.filePath() === this.entry?.filePath?.();
     this.entry = context.entry;
-    if (!isSameFile) {
-      this.restore() || this.load();
-    }
+    this.render();
+    // if (!isSameFile) {
+    //   this.restore() || this.load();
+    // }
   }
 
   load() {

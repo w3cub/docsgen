@@ -1,15 +1,13 @@
 app.views.ToTopView = class ToTopView extends app.View {
+
   constructor(...args) {
-    this.onTouchEnd = this.onTouchEnd.bind(this);
-    this.onClick = this.onClick.bind(this);
-    this.updatePosition = this.updatePosition.bind(this);
     super(...args);
   }
 
-  tagName = 'a';
-  className = '_totop';
+  static tagName = 'a';
+  static className = '_totop';
 
-  events = {
+  static events = {
     click: 'onClick',
     touchend: 'onTouchEnd'
   };

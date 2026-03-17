@@ -13,6 +13,9 @@ app.views.Sidebar = class Sidebar extends app.View {
     altR: "onAltR",
     escape: "onEscape",
   };
+  static elements = {
+    siderlist: '._list-wrap'
+  }
 
   init() {
     if (!app.isMobile()) {
@@ -32,10 +35,13 @@ app.views.Sidebar = class Sidebar extends app.View {
 
     app.on("ready", () => this.onReady());
 
-    $.on(document.documentElement, "mouseleave", () => this.hide());
-    $.on(document.documentElement, "mouseenter", () =>
-      this.resetDisplay({ forceNoHover: false }),
-    );
+    // $.on(document.documentElement, "mouseleave", () => this.display());
+    // $.on(document.documentElement, "mouseenter", () =>
+    //   this.resetDisplay({ forceNoHover: false }),
+    // );
+
+    $.on(document.documentElement, 'mouseleave', event => { if (!(event.clientX <= 0)) { return this.display(); } });
+    $.on(document.documentElement, 'mouseenter', () => this.resetDisplay({forceNoHover: false}));
   }
 
   hide() {
@@ -88,7 +94,9 @@ app.views.Sidebar = class Sidebar extends app.View {
   }
 
   render() {
-    this.html(this.view);
+    // this.html(this.view);
+    // @w3cub
+    this.inserthtml(this.siderlist, this.view);
   }
 
   showDocList() {

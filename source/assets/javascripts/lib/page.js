@@ -143,9 +143,9 @@ class Context {
     }
     this.state.path = this.path;
   }
-
   pushState() {
-    history.pushState(this.state, "", this.path);
+    location.href = this.path;
+    // history.pushState(this.state, "", this.path);
   }
 
   replaceState() {

@@ -19,7 +19,8 @@ app.views.BasePage = class BasePage extends app.View {
     if (!this.constructor.className) {
       this.addClass(`_${this.entry.doc.type}`);
     }
-    this.html(content);
+    // this.html(content);
+    // @w3cub
     if (!fromCache) {
       this.highlightCode();
     }

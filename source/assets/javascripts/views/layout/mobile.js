@@ -13,7 +13,6 @@ app.views.Mobile = class Mobile extends app.View {
   static routes = { after: "afterRoute" };
 
   static detect() {
-    debugger
     if (Cookies.get("override-mobile-detect") != null) {
       return JSON.parse(Cookies.get("override-mobile-detect"));
     }

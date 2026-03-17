@@ -1,5 +1,5 @@
 app.views.Mobile = class Mobile extends app.View {
-  // static className = "_mobile";
+  static el = document.documentElement;
 
   static elements = {
     body: "body",
@@ -41,8 +41,24 @@ app.views.Mobile = class Mobile extends app.View {
     }
   }
 
-  constructor() {
-    super(document.documentElement);
+  _getVendorPrefix() {
+    const regex = /^(Webkit|Khtml|Moz|ms|O)(?=[A-Z])/;
+    const styleDeclaration = document.getElementsByTagName('script')[0].style;
+    for (const prop in styleDeclaration) {
+      if (regex.test(prop)) {
+        return '-' + prop.match(regex)[0].toLowerCase() + '-';
+      }
+    }
+    // Nothing found so far? Webkit does not enumerate over the CSS properties of the style object.
+    // However (prop in style) returns the correct value, so we'll have to test for
+    // the precence of a specific property
+    if ('WebkitOpacity' in styleDeclaration) {
+      return '-webkit-';
+    }
+    if ('KhtmlOpacity' in styleDeclaration) {
+      return '-khtml-';
+    }
+    return '';
   }
 
   init() {
@@ -51,76 +67,40 @@ app.views.Mobile = class Mobile extends app.View {
       app.shortcuts.stop();
     }
 
-    const doc = window.document;
-    const html = this.el;
     this.panel = $("._container");
-    this.panelCentent = $("._content");
+    this.panelContent = $("._content");
     this.sidebar = $("._sidebar");
     this.header = $("._header");
-    const self = this;
+
+    this._initTouchEvents();
+    this._initEventListeners();
+
+    this.activate();
+  }
+
+  _initTouchEvents() {
+    const doc = window.document;
+    const html = this.el;
     const msPointerSupported = window.navigator.msPointerEnabled;
-    const touch = { 
-      'start': msPointerSupported ? 'MSPointerDown' : 'touchstart',
-      'move': msPointerSupported ? 'MSPointerMove' : 'touchmove',
-      'end': msPointerSupported ? 'MSPointerUp' : 'touchend'
+    const touch = {
+      start: msPointerSupported ? 'MSPointerDown' : 'touchstart',
+      move: msPointerSupported ? 'MSPointerMove' : 'touchmove',
+      end: msPointerSupported ? 'MSPointerUp' : 'touchend'
     };
-    
-    this._prefix = (function() {
-      const regex = /^(Webkit|Khtml|Moz|ms|O)(?=[A-Z])/;
-      const styleDeclaration = doc.getElementsByTagName('script')[0].style;
-      for (var prop in styleDeclaration) {
-        if (regex.test(prop)) {
-          return '-' + prop.match(regex)[0].toLowerCase() + '-';
-        }
-      }
-      // Nothing found so far? Webkit does not enumerate over the CSS properties of the style object.
-      // However (prop in style) returns the correct value, so we'll have to test for
-      // the precence of a specific property
-      if ('WebkitOpacity' in styleDeclaration) {
-        return '-webkit-';
-      }
-      if ('KhtmlOpacity' in styleDeclaration) {
-        return '-khtml-';
-      }
-      return '';
-    })();
 
+    this._prefix = this._getVendorPrefix();
 
-    $.on(this.body, 'click', this.onClick);
-    // $.on $('._home-link'), 'click', @onClickHome
-    $.on($('._menu-link'), 'click', this.onClickMenu);
-    $.on($('._search'), 'touchend', this.onTapSearch);
-
-
-    let scrollTimeout = undefined;
+    let scrollTimeout;
     let scrolling = false;
 
-    this._startOffsetX = 0;
-    this._currentOffsetX = 0;
-    this._startOffsetY = 0;
-    this._currentOffsetY = 0;
 
-    this._opening = false;
-    this._moved = false;
-    this._opened = false;
-    this._preventOpen = false;
-    this._touch = true;
-    this._fx = 'ease';
-    this._duration = 300;
-    this._tolerance = 70;
-    this._ratio = 2;
-    this._padding = (this._translateTo = 250);
-    this._orientation = 1; // left
-    this._translateTo *= this._orientation;
-
-
-    this._onScrollFn = $.decouple(this.panelCentent, 'scroll', function() {
-      if (!self._moved) {
+    this._onScrollFn = $.decouple(this.panelContent, 'scroll', () => {
+      if (!this._moved) {
         clearTimeout(scrollTimeout);
         scrolling = true;
-        scrollTimeout = setTimeout((function() {
+        scrollTimeout = setTimeout(() => {
           scrolling = false;
-        }), 250);
+        }, 250);
       }
     });
 
@@ -128,8 +108,8 @@ app.views.Mobile = class Mobile extends app.View {
      * Prevents touchmove event if slideout is moving
      */
 
-    this._preventMove = function(eve) {
-      if (self._moved) {
+    this._preventMove = (eve) => {
+      if (this._moved) {
         eve.preventDefault();
       }
     };
@@ -139,15 +119,15 @@ app.views.Mobile = class Mobile extends app.View {
      * Resets values on touchstart
      */
 
-    this._resetTouchFn = function(eve) {
+    this._resetTouchFn = (eve) => {
       if (typeof eve.touches === 'undefined') {
         return;
       }
-      self._moved = false;
-      self._opening = false;
-      self._startOffsetX = eve.touches[0].clientX;
-      self._startOffsetY = eve.touches[0].clientY;
-      self._preventOpen = !self._touch || (!self.isSidebarShown() && (self.sidebar.clientWidth !== 0));
+      this._moved = false;
+      this._opening = false;
+      this._startOffsetX = eve.touches[0].clientX;
+      this._startOffsetY = eve.touches[0].clientY;
+      this._preventOpen = !this._touch || (!this.isSidebarShown() && (this.sidebar.clientWidth !== 0));
     };
 
     this.panel.addEventListener(touch.start, this._resetTouchFn);
@@ -157,9 +137,9 @@ app.views.Mobile = class Mobile extends app.View {
      * Resets values on touchcancel
      */
 
-    this._onTouchCancelFn = function() {
-      self._moved = false;
-      self._opening = false;
+    this._onTouchCancelFn = () => {
+      this._moved = false;
+      this._opening = false;
     };
 
     this.panel.addEventListener('touchcancel', this._onTouchCancelFn);
@@ -168,12 +148,15 @@ app.views.Mobile = class Mobile extends app.View {
      * Toggles slideout on touchend
      */
 
-    this._onTouchEndFn = function() {
-      if (self._moved) {
-        // self.emit 'translateend'
-        if (self._opening &&  (Math.abs(self._currentOffsetX / self._currentOffsetY) > self._ratio) && (Math.abs(self._currentOffsetX) > self._tolerance)) { self.showSidebar(); } else { self.hideSidebar(); }
+    this._onTouchEndFn = () => {
+      if (this._moved) {
+        if (this._opening && (Math.abs(this._currentOffsetX / this._currentOffsetY) > this._ratio) && (Math.abs(this._currentOffsetX) > this._tolerance)) {
+          this.showSidebar();
+        } else {
+          this.hideSidebar();
+        }
       }
-      self._moved = false;
+      this._moved = false;
     };
 
     this.panel.addEventListener(touch.end, this._onTouchEndFn);
@@ -182,47 +165,43 @@ app.views.Mobile = class Mobile extends app.View {
      * Translates panel on touchmove
      */
 
-    this._onTouchMoveFn = function(eve) {
-      if (scrolling || self._preventOpen || (typeof eve.touches === 'undefined')) {
+    this._onTouchMoveFn = (eve) => {
+      if (scrolling || this._preventOpen || (typeof eve.touches === 'undefined')) {
         return;
       }
-      const dif_x = eve.touches[0].clientX - (self._startOffsetX);
-      const dif_y = eve.touches[0].clientY - (self._startOffsetY);
-      let translateX = (self._currentOffsetX = dif_x);
-      const translateY = (self._currentOffsetY = dif_y);
-      if (Math.abs(translateX) > self._padding) {
+      const dif_x = eve.touches[0].clientX - this._startOffsetX;
+      const dif_y = eve.touches[0].clientY - this._startOffsetY;
+      let translateX = (this._currentOffsetX = dif_x);
+      const translateY = (this._currentOffsetY = dif_y);
+      if (Math.abs(translateX) > this._padding) {
         return;
       }
-      if ((Math.abs(dif_x) > 20) && (Math.abs(dif_x / dif_y) > self._ratio) && eve.cancelable) {
-        self._opening = true;
-        const oriented_dif_x = dif_x * self._orientation;
-        if ((self._opened && (oriented_dif_x > 0)) || (!self._opened && (oriented_dif_x < 0))) {
+      if ((Math.abs(dif_x) > 20) && (Math.abs(dif_x / dif_y) > this._ratio) && eve.cancelable) {
+        this._opening = true;
+        const oriented_dif_x = dif_x * this._orientation;
+        if ((this._opened && (oriented_dif_x > 0)) || (!this._opened && (oriented_dif_x < 0))) {
           return;
         }
-        // if !self._moved
-        //   self.emit 'translatestart'
         if (oriented_dif_x <= 0) {
-          translateX = dif_x + (self._padding * self._orientation);
-          self._opening = false;
+          translateX = dif_x + (this._padding * this._orientation);
+          this._opening = false;
         }
-        if (!self._moved && (html.className.search('_open-sidebar') === -1)) {
+        if (!this._moved && (html.className.search('_open-sidebar') === -1)) {
           html.className += ' _open-sidebar';
         }
-        self.panel.style[self._prefix + 'transform'] = (self.panel.style.transform = 'translateX(' + translateX + 'px)');
-        self.header.style[self._prefix + 'transform'] = (self.header.style.transform = 'translateX(' + translateX + 'px)');
-        // self.emit 'translate', translateX
-        self._moved = true;
+        this.panel.style[this._prefix + 'transform'] = (this.panel.style.transform = 'translateX(' + translateX + 'px)');
+        this.header.style[this._prefix + 'transform'] = (this.header.style.transform = 'translateX(' + translateX + 'px)');
+        this._moved = true;
       }
     };
 
     this.panel.addEventListener(touch.move, this._onTouchMoveFn);
+  }
 
-
-    // app.document.sidebar.search
-    //   .on 'searching', @showSidebar
-    //   .on 'clear', @hideSidebar
-
-    this.activate();
+  _initEventListeners() {
+    $.on(this.body, 'click', this.onClick);
+    $.on($('._menu-link'), 'click', this.onClickMenu);
+    $.on($('._search'), 'touchend', this.onTapSearch);
   }
   _setTransition() {
     this.panel.style[this._prefix + 'transition'] = (this.panel.style.transition = this._prefix + 'transform ' + this._duration + 'ms ' + this._fx);
@@ -253,11 +232,10 @@ app.views.Mobile = class Mobile extends app.View {
       this.body.scrollTop = (this.findByClass(app.views.ListFold.activeClass) && this.sidebarTop) || 0;
     }
 
-    setTimeout((() => {
+    setTimeout(() => {
       this.panel.style.transition = (this.panel.style['-webkit-transition'] = (this.panel.style[this._prefix + 'transform'] = (this.panel.style.transform = '')));
       this.header.style.transition = (this.header.style['-webkit-transition'] = (this.header.style[this._prefix + 'transform'] = (this.header.style.transform = '')));
-    }
-    ), this._duration + 50);
+    }, this._duration + 50);
   }
   hideSidebar() {
     if (!this.isSidebarShown() && !this._opening) { return; }
@@ -271,12 +249,11 @@ app.views.Mobile = class Mobile extends app.View {
     // @sidebar.style.display = 'none'
     // @content.style.display = 'block'
     this.body.scrollTop = this.contentTop || 0;
-    setTimeout((() => {
+    setTimeout(() => {
       this.removeClass('_open-sidebar');
       this.panel.style.transition = (this.panel.style['-webkit-transition'] = (this.panel.style[this._prefix + 'transform'] = (this.panel.style.transform = '')));
       this.header.style.transition = (this.header.style['-webkit-transition'] = (this.header.style[this._prefix + 'transform'] = (this.header.style.transform = '')));
-    }
-    ), this._duration + 50);
+    }, this._duration + 50);
   }
 
   isSidebarShown() {
@@ -291,10 +268,7 @@ app.views.Mobile = class Mobile extends app.View {
     }
   }
 
-  onClickHome() {
-    app.shortcuts.trigger('escape');
-    this.hideSidebar();
-  }
+
 
   onClickMenu() {
     if (this.isSidebarShown()) { this.hideSidebar(); } else { this.showSidebar(); }

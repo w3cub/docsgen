@@ -148,7 +148,6 @@ app.views.DocList = class DocList extends app.View {
   }
 
   reveal(model) {
-    debugger
     this.openDoc(model.doc);
     if (model.type) {
       this.openType(model.getType());

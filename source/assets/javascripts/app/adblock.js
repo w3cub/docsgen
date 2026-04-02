@@ -261,17 +261,9 @@ const creaBlocktElement = () => {
   }, 1000);
 };
 
-const buildPromotion = () => {
-  if (getCookie("tp") != "1") {
-    setTimeout(() => {
-      window.open("https://tools.w3cub.com/?_sp=docs", "_blank");
-      setCookie("tp", 1, 30);
-    }, 3000);
-  }
-};
+
 
 app.on("ready", () => {
-  buildPromotion();
   fetch("/conf/conf.json")
     .then((res) => res.json())
     .then((res) => {

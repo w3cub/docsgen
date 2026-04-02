@@ -78,11 +78,11 @@ app.views.SearchScope = class SearchScope extends app.View {
     this.doc = doc;
 
     this.tag.textContent = doc.fullName;
-    this.tag.style.display = "block";
+    // this.tag.style.display = "block";
 
     this.input.removeAttribute("placeholder");
     this.input.value = this.input.value.slice(this.input.selectionStart);
-    this.input.style.paddingLeft = this.tag.offsetWidth + 10 + "px";
+    // this.input.style.paddingLeft = this.tag.offsetWidth + 10 + "px";
 
     $.trigger(this.input, "input");
     this.trigger("change", this.doc, previousDoc);

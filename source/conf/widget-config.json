@@ -1,0 +1,47 @@
+{
+  "version": "1.0.0",
+  "_comment": "Widget 配置文件 · 修改后刷新页面即生效，无需重新编译",
+  "widgets": [
+    {
+      "_comment": "=== 文章顶部广告图片 ===",
+      "id": "adtop-image",
+      "enabled": true,
+      "priority": 60,
+      "type": "html",
+      "content": "<div style='text-align:center;margin:1rem 0;'><a href='https://apps.apple.com/us/app/nicasa-image-viewer/id6756032669?mt=12' target='_blank'><img src='/conf/nicasa.png' alt='广告' style='max-width:100%;height:auto;' /></a></div>",
+      "inject": {
+        "selector": "#adtop",
+        "position": "beforeend"
+      },
+      "match": {
+        "path": ["*"],
+        "device": ["mobile", "desktop"]
+      },
+      "trigger": {
+        "type": "onload",
+        "delay": 0
+      }
+    },
+
+    {
+      "_comment": "=== 文章底部广告图片 ===",
+      "id": "adbottom-image",
+      "enabled": true,
+      "priority": 55,
+      "type": "html",
+      "content": "<div style='text-align:center;margin:1rem 0;'><a href='https://apps.apple.com/us/app/nicasa-image-viewer/id6756032669?mt=12' target='_blank'><img src='/conf/nicasa.png' alt='广告' style='max-width:100%;height:auto;' /></a></div>",
+      "inject": {
+        "selector": "#adbottom",
+        "position": "beforeend"
+      },
+      "match": {
+        "path": ["*"],
+        "device": ["mobile", "desktop"]
+      },
+      "trigger": {
+        "type": "onload",
+        "delay": 0
+      }
+    }
+  ]
+}

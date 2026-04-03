@@ -9,8 +9,8 @@
       items: "._list-item",
     };
 
-    constructor(opts) {
-      super();
+    constructor(el, opts) {
+      super(el);
       this.tag = "data-src";
       this.distance = 0;
       this.callback = $.noop;

@@ -19,7 +19,11 @@ class App extends Events {
     // }
     this.settings = new app.Settings();
     this.db = new app.DB();
-    this.lzload = new app.views.Lazyload();
+    // if is index home page
+    
+    if (this.isHomePage()) {
+      this.lzload = new app.views.Lazyload();
+    }
     this.docs = new app.collections.Docs();
     this.disabledDocs = new app.collections.Docs();
     this.entries = new app.collections.Entries();
@@ -391,6 +395,10 @@ Please check your browser extensions/addons. `);
 
   isSingleDoc() {
     return document.body.hasAttribute("data-doc");
+  }
+  isHomePage() {
+    // class index-page 
+    return document.body.classList.contains("index-page");
   }
 
   isMobile() {

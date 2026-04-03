@@ -6,7 +6,7 @@ group :development do
   gem 'execjs', '~> 2.10'
   gem 'jekyll', '~> 4.4', '>= 4.4.1'
   gem 'sprockets', '~> 4.2', '>= 4.2.1'
-  gem 'jekyll-assets', git: 'https://github.com/beekeeper-studio/jekyll-assets.git', ref: '5d80552281b7810ecf930a18fbfe01c95035cbec' 
+  gem 'jekyll-assets', git: 'https://github.com/icai/jekyll-assets', branch: 'master' 
   # gem 'jekyll-sitemap'
   gem 'octopress-minify-html'
   gem 'stringex', '~> 1.4.0'
@@ -20,6 +20,7 @@ group :development do
   gem "mutex_m"
   gem "pstore"
   gem "ostruct"
+  gem 'terser'
   # gem 'thin'
   # gem 'erubis'
 

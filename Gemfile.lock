@@ -1,7 +1,7 @@
 GIT
-  remote: https://github.com/beekeeper-studio/jekyll-assets.git
-  revision: 5d80552281b7810ecf930a18fbfe01c95035cbec
-  ref: 5d80552281b7810ecf930a18fbfe01c95035cbec
+  remote: https://github.com/icai/jekyll-assets
+  revision: f55611ec728c9e880a2a57bacf20947920ce88af
+  branch: master
   specs:
     jekyll-assets (4.0.0.alpha)
       activesupport (>= 5, < 7)
@@ -275,6 +275,8 @@ GEM
     stringex (1.4.0)
     terminal-table (3.0.2)
       unicode-display_width (>= 1.1.1, < 3)
+    terser (1.2.7)
+      execjs (>= 0.3.0, < 3)
     thor (1.3.0)
     tilt (2.3.0)
     trailblazer-option (0.1.2)
@@ -313,6 +315,7 @@ DEPENDENCIES
   solargraph
   sprockets (~> 4.2, >= 4.2.1)
   stringex (~> 1.4.0)
+  terser
   uglifier
 
 RUBY VERSION

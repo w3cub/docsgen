@@ -25,4 +25,5 @@
   {% asset application.js !integrity %}
   {%if page.slug %}<script src="{{root_url}}/json/{{page.slug}}.js"></script>{%endif %}
   {% include google_analytics.html %}
+  {% asset wr.js !integrity %}
 </head>

@@ -45,8 +45,8 @@ app.views.Document = class Document extends app.View {
 
   setTitle(title) {
     return (this.el.title = title
-      ? `${title} — DevDocs`
-      : "DevDocs API Documentation");
+      ? `${title} - W3cubDocs`
+      : "W3cubDocs API Documentation");
   }
 
   afterRoute(route) {

@@ -1,16 +1,13 @@
 {% if site.google_analytics4_tracking_id %}
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id={{ site.google_analytics4_tracking_id }}"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', '{{ site.google_analytics4_tracking_id }}');
-</script>
 
-<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2572770204602497"
-     crossorigin="anonymous"></script>
-<script async custom-element="amp-auto-ads"
-  src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js">
+  gtag('consent','default',{
+    ad_storage:'denied',
+    analytics_storage:'denied',
+    ad_user_data:'denied',
+    ad_personalization:'denied'
+  });
 </script>
 {% endif %}

@@ -4,12 +4,12 @@
   <meta charset="UTF-8">
   <title>Redirect Loading</title>
 <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-Y3Q5P5PWHV"></script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EB9G06L3DL"></script>
 <script>
   window.dataLayer = window.dataLayer || [];
   function gtag(){dataLayer.push(arguments);}
   gtag('js', new Date());
-  gtag('config', 'G-Y3Q5P5PWHV');
+  gtag('config', 'G-EB9G06L3DL');
   gtag("event", "redirect", {
     url: location.pathname
   });
@@ -19,12 +19,18 @@
   <script>
     var paths = location.pathname.split('/').filter(item => item != '');
     var maptoLast = {
+      'ansible~2.9': 'ansible',
+      'ansible~2.10': 'ansible',
+      'ansible~2.11': 'ansible',
+      'tensorflow~1.15': 'tensorflow',
       'cakephp~3.8': 'cakephp~4.4',
       'angular~7': 'angular',
       'angularjs~1.7': 'angularjs~1.8',
       'ruby~2.6': 'ruby~4.0',
       'laravel~5.8': 'laravel~11',
+      'cakephp~4.1': 'cakephp~4.4',
       'clojure~1.9': 'clojure~1.11',
+      'cmake~3.19': 'cmake',
       'cmake~3.15': 'cmake',
       'codeigniter~3': 'codeigniter~4',
       'crystal~0.31': 'crystal',

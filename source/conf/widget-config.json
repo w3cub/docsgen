@@ -83,7 +83,14 @@
       "type": "inline-script",
       "stage": "load",
       "priority": 75,
-      "content": "(function(){function pushAll(){var ins=document.querySelectorAll('ins.adsbygoogle');ins.forEach(function(el){try{(adsbygoogle=window.adsbygoogle||[]).push({});el.dataset.adsPushed='1';}catch(e){}});}if(window.__ads_loaded){if(window.adsbygoogle&&typeof window.adsbygoogle.push==='function'){pushAll();}else{window.addEventListener('adsense:ready',pushAll,{once:true});}}else{window.addEventListener('adsense:ready',pushAll,{once:true});}})();"
+      "content": "(function(){function pushAll(){var ins=document.querySelectorAll('ins.adsbygoogle:not([data-ad-status]):not([data-ads-pushed])');if(!ins||ins.length===0)return;ins.forEach(function(el){try{(adsbygoogle=window.adsbygoogle||[]).push({});el.setAttribute('data-ads-pushed','1');}catch(e){}});}if(window.__ads_loaded){if(window.adsbygoogle&&typeof window.adsbygoogle.push==='function'){pushAll();}else{window.addEventListener('adsense:ready',pushAll,{once:true});}}else{window.addEventListener('adsense:ready',pushAll,{once:true});}})();"
+    },
+    {
+      "_comment": "10. Lazy Load",
+      "id": "ads-lazy-trigger",
+      "type": "inline-script",
+      "priority": 70,
+      "content": "(function(){if(window.__ads_lazy_init)return;window.__ads_lazy_init=true;function trigger(){if(window.__ads_lazy)return;window.__ads_lazy=true;var ins=document.querySelectorAll('ins.adsbygoogle:not([data-ad-status]):not([data-ads-pushed])');if(!ins||ins.length===0)return;var pushFn=function(){ins.forEach(function(el){try{(adsbygoogle=window.adsbygoogle||[]).push({});el.setAttribute('data-ads-pushed','1');}catch(e){}});};if(window.__ads_loaded&&window.adsbygoogle&&typeof window.adsbygoogle.push==='function'){pushFn();}else{window.addEventListener('adsense:ready',pushFn,{once:true});}}window.addEventListener('scroll',trigger,{once:true});})();"
     },
     {
       "_comment": "11. 顶部自推广",

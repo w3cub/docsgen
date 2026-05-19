@@ -2,88 +2,58 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Redirect Loading</title>
-<!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-EB9G06L3DL"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-EB9G06L3DL');
-  gtag("event", "redirect", {
-    url: location.pathname
-  });
-</script>
-</head>
-<body>
-  <script>
-    var paths = location.pathname.split('/').filter(item => item != '');
-    var maptoLast = {
-      'ansible~2.9': 'ansible',
-      'ansible~2.10': 'ansible',
-      'ansible~2.11': 'ansible',
-      'tensorflow~1.15': 'tensorflow',
-      'cakephp~3.8': 'cakephp~4.4',
-      'angular~7': 'angular',
-      'angularjs~1.7': 'angularjs~1.8',
-      'ruby~2.6': 'ruby~4.0',
-      'laravel~5.8': 'laravel~11',
-      'cakephp~4.1': 'cakephp~4.4',
-      'clojure~1.9': 'clojure~1.11',
-      'cmake~3.19': 'cmake',
-      'cmake~3.15': 'cmake',
-      'codeigniter~3': 'codeigniter~4',
-      'crystal~0.31': 'crystal',
-      'elixir~1.9': 'elixir~1.18',
-      'falcon~1.4': 'falcon~2.0',
-      'fish~3.1': 'fish~4.5',
-      'gcc~10': 'gcc~14',
-      'gcc~9_cpp': 'gcc~14_cpp',
-      'gnu_fortran~7': 'gnu_fortran~14',
-      'godot~3.2': 'godot~4.2',
-      'leaflet~1.6': 'leaflet~2.0',
-      'openjdk~11': 'openjdk~25',
-      'postgresql~13': 'postgresql~18',
-      'python~3.9': 'python~3.14',
-      'qt~5.15': 'qt~6.9',
-      'rails~5.0': 'rails~8.0',
-      'jekyll': 'jekyll~4'
-    }
-    var origin = location.origin;
-    var pathname = location.pathname;
-    if (paths && paths.length) {
-      var slug = paths[0]
-      var href = '';
-      if (paths.length > 1) {
-        // detail url
-        // fix url
-        if (location.href.lastIndexOf('/') == location.href.length - 1) {
-          if (maptoLast[slug]) {
-            // get map
-            href = `${origin}/${maptoLast[slug]}/` + paths.slice(1).join('/') + location.search + location.hash;
-          } else {
-            href =  `${origin}` + pathname.slice(0, -1) + location.search + location.hash;
-          }
-        } else {
-          if (maptoLast[slug]) {
-            // get map
-            href = `${origin}/${maptoLast[slug]}/` + paths.slice(1).join('/') + location.search + location.hash;
-          } else {
-            href = `${origin}/${paths[0]}/`;
-          }
-        }
-      } else {
-        // doc root
-        if (maptoLast[slug]) {
-          // get map
-          href = `${origin}/${maptoLast[slug]}/`;
-        } else {
-          href = `${origin}/`;
-        }
-      }
-      location.href = href;
-    }
-  </script>
-</body>
+  <title>404 Redirect</title>
 
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-EB9G06L3DL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+
+    gtag('js', new Date());
+    gtag('config', 'G-EB9G06L3DL');
+
+    gtag("event", "redirect_404", {
+      path: location.pathname
+    });
+
+    gtag('consent','default',{
+      ad_storage:'denied',
+      analytics_storage:'denied',
+      ad_user_data:'denied',
+      ad_personalization:'denied'
+    });
+  </script>
+</head>
+
+<body>
+<script>
+(function () {
+  var origin = location.origin;
+  var path = location.pathname;
+
+  // 防止死循环（如果已经在根路径就不跳了）
+  if (path === "/" || path === "") return;
+
+  // 去掉首尾 /
+  var segments = path.replace(/^\/|\/$/g, "").split("/");
+
+  // 只保留第一级路径
+  var first = segments[0];
+
+  // 构造一级路径
+  var firstLevelUrl = origin + "/" + first + "/";
+
+  // 如果当前已经是一级路径 → 跳到根目录
+  if (segments.length === 1) {
+    location.replace(origin + "/");
+    return;
+  }
+
+  // 否则跳到一级路径
+  location.replace(firstLevelUrl);
+
+})();
+</script>
+</body>
 </html>

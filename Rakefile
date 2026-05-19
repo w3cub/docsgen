@@ -278,7 +278,7 @@ end
 
 desc "test preview"
 task :test_preview do |t, args|
-  Rake::Task[:copy_html].invoke('zsh/*.html')
+  Rake::Task[:copy_html].invoke('deno~2/*.html')
   Rake::Task[:preview].invoke
 end
 
@@ -371,6 +371,7 @@ task :multi_gen_deploy do
   # Rake::Task[:gitinit].invoke
   queueNames = 
 [
+  'deno~2'
 # 'angular',
 # 'angularjs~1.8',
 # 'ansible',

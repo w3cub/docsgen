@@ -1,6 +1,12 @@
 {
+	"scripts": {
+		"build:widgets": "node tools/build-widget-config.js",
+		"watch:widgets": "node tools/build-widget-config.js --watch",
+		"gulp": "gulp"
+	},
 	"devDependencies": {
 		"jscodeshift": "^17.3.0",
-		"prettier": "3.8.1"
+		"prettier": "3.8.1",
+		"gulp": "^4.0.2"
 	}
 }

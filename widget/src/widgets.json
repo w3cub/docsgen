@@ -1,0 +1,129 @@
+{
+  "version": "3.6.0",
+  "_comment": "WR v3 — 配合 widget-runtime-v3.js 使用",
+  "widgets": [
+    {
+      "_comment": "2. Google Analytics SDK — 只加载一次",
+      "id": "gtag-sdk",
+      "type": "script",
+      "src": "https://www.googletagmanager.com/gtag/js?id=G-EB9G06L3DL",
+      "inject": {
+        "container": "head"
+      },
+      "attrs": {
+        "async": true
+      },
+      "stage": "head",
+      "priority": 98,
+      "routeMode": "once",
+      "tags": ["analytics", "external", "sdk"]
+    },
+    {
+      "id": "consent-bridge",
+      "type": "inline-script",
+      "stage": "head",
+      "priority": 97,
+      "routeMode": "once",
+      "content": "file:01-consent-bridge.js",
+      "tags": ["consent", "analytics", "inline"]
+    },
+    {
+      "_comment": "3. Google Analytics 初始化 — 依赖 SDK 加载完成（v3 会真正等待）",
+      "id": "gtag-init",
+      "type": "inline-script",
+      "dependsOn": [
+        "gtag-sdk"
+      ],
+      "stage": "head",
+      "priority": 96,
+      "routeMode": "once",
+      "content": "file:02-gtag-init.js",
+      "tags": ["analytics", "init", "inline"]
+    },
+    {
+      "_comment": "4. Adsense Loader — 直接加载，consent 信号由 Google CMP 全权管理",
+      "id": "adsense-loader",
+      "type": "inline-script",
+      "stage": "load",
+      "priority": 95,
+      "routeMode": "once",
+      "content": "file:03-adsense-loader.js",
+      "tags": ["ads", "external", "loader"]
+    },
+
+    {
+      "_comment": "6. 顶部广告 HTML",
+      "id": "ads-top",
+      "type": "html",
+      "priority": 90,
+      "content": "file:04-ads-top.html",
+      "inject": {
+        "selector": "#adtop",
+        "position": "beforeend"
+      },
+      "tags": ["ads", "html", "slot-top"]
+    },
+    {
+      "_comment": "7. 中间广告",
+      "id": "ads-middle",
+      "type": "inline-script",
+      "stage": "load",
+      "priority": 85,
+      "content": "file:05-ads-middle.js",
+      "tags": ["ads", "inline", "slot-mid"]
+    },
+    {
+      "_comment": "8. 底部广告 HTML",
+      "id": "ads-bottom",
+      "type": "html",
+      "priority": 80,
+      "content": "file:06-ads-bottom.html",
+      "inject": {
+        "selector": "#adbottom",
+        "position": "beforeend"
+      },
+      "tags": ["ads", "html", "slot-bottom"]
+    },
+    {
+      "_comment": "9. 广告统一初始化",
+      "id": "ads-all-init",
+      "type": "inline-script",
+      "stage": "load",
+      "priority": 75,
+      "content": "file:07-ads-all-init.js",
+      "tags": ["ads", "init"]
+    },
+    {
+      "_comment": "10. Lazy Load",
+      "id": "ads-lazy-trigger",
+      "type": "inline-script",
+      "priority": 70,
+      "content": "file:08-ads-lazy-trigger.js",
+      "tags": ["ads", "lazy"]
+    },
+    {
+      "_comment": "11. 顶部自推广",
+      "id": "adtop-image",
+      "type": "html",
+      "priority": 60,
+      "content": "file:09-adtop-image.html",
+      "inject": {
+        "selector": "#adtop",
+        "position": "afterend"
+      },
+      "tags": ["ads", "promo", "html"]
+    },
+    {
+      "_comment": "12. 底部自推广",
+      "id": "adbottom-image",
+      "type": "html",
+      "priority": 55,
+      "content": "file:10-adbottom-image.html",
+      "inject": {
+        "selector": "#adbottom",
+        "position": "beforeend"
+      },
+      "tags": ["ads", "promo", "html"]
+    }
+  ]
+}
